@@ -1,0 +1,4 @@
+# requirements-torch.txt — torch separado (no se instala con `make setup`).
+# Ajustá cu121 a tu versión CUDA (cpu / cu118 / cu121 / cu124).
+--index-url https://download.pytorch.org/whl/cu121
+torch==2.4.0

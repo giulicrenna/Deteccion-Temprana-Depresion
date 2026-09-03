@@ -1,0 +1,40 @@
+# configs/preprocessing.yaml — parámetros de limpieza y tokenización.
+preprocessing:
+  text:
+    min_length_chars: 5
+    max_length_chars: 2000
+    remove_duplicates: true
+    dedup_by: "text_clean"
+  tokenize:
+    spacy_model: "es_core_news_md"
+    extra_stopwords:
+      - "http"
+      - "https"
+      - "rt"
+  features:
+    liwc:
+      lexicon_path: "src/features/lexicons/leis_lexicon.csv"
+      first_person_singular:
+        - "yo"
+        - "mi"
+        - "mí"
+        - "mismo"
+        - "conmigo"
+      absolutist:
+        - "siempre"
+        - "nunca"
+        - "nada"
+        - "todo"
+        - "jamás"
+        - "absolutamente"
+        - "completamente"
+    temporal:
+      enabled: true
+      extract:
+        - hour_of_day
+        - day_of_week
+        - is_night
+        - inter_message_seconds
+    polarity:
+      backend: "nltk_vader"  # nltk_vader | lexicon_es
+      fallback_lexicon: "src/features/lexicons/polarity_es.csv"

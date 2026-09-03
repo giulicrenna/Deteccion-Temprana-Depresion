@@ -1,0 +1,60 @@
+{"user_id": "synthetic_dep_00", "text": "me siento vacía otra vez, no tengo ganas de nada", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_00", "text": "hoy fue un día horrible, todo me sale mal", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_00", "text": "estoy cansada de fingir que estoy bien", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_00", "text": "no encuentro motivación para levantarme de la cama", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_00", "text": "me siento sola aunque estoy rodeada de gente", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_01", "text": "no le importo a nadie, ya no sé para qué sigo aquí", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_01", "text": "el futuro me da miedo, no veo salida", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_01", "text": "siempre estoy triste, no recuerdo la última vez que fui feliz", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_01", "text": "no tengo energía para nada, ni para comer", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_01", "text": "me duele el pecho de la angustia, no sé qué me pasa", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_02", "text": "todo me abruma, hasta las cosas más simples", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_02", "text": "me siento una carga para mi familia", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_02", "text": "no me reconozco, antes era otra persona", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_02", "text": "la ansiedad no me deja dormir, son las 4am", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_02", "text": "no tengo ganas de hablar con nadie, prefiero aislarme", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_03", "text": "me odio a mí misma, no valgo nada", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_03", "text": "siempre arruino todo lo que toco", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_03", "text": "nadie me entiende, estoy completamente sola", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_03", "text": "no encuentro sentido a levantarme cada mañana", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_03", "text": "estoy harta de sentir este vacío constante", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_04", "text": "el insomnio me está destruyendo, llevo semanas sin dormir bien", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_04", "text": "no me sale nada bien, ni lo más mínimo", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_04", "text": "siento que soy invisible, nadie me ve", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_04", "text": "tengo miedo de lo que pueda pasar si sigo así", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_04", "text": "estoy exhausta emocionalmente, no puedo más", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_05", "text": "me cuesta respirar cuando pienso en todo", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_05", "text": "no quiero salir de mi cuarto, no quiero ver a nadie", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_05", "text": "siempre estoy llorando, no puedo parar", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_05", "text": "la tristeza me pesa como una losa", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_dep_05", "text": "no sé qué hice mal, pero merezco lo que me pasa", "label": 2, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_00", "text": "hoy fue un día increíble, salimos a caminar por el parque", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_00", "text": "aprobé el examen de matemáticas, estoy contentísima", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_00", "text": "me encanta el café por las mañanas, es mi momento favorito", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_00", "text": "estoy organizando un viaje con amigos para fin de año", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_00", "text": "compré unas plantas nuevas para el balcón, quedaron hermosas", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_01", "text": "mi perrito aprendió un truco nuevo, qué orgullosa estoy", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_01", "text": "estoy leyendo un libro muy bueno, se los recomiendo", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_01", "text": "hoy cociné pasta con pesto, quedó espectacular", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_01", "text": "salí a correr temprano y el amanecer estaba precioso", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_01", "text": "mi hermano viene a visitarme este finde, qué alegría", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_02", "text": "empecé un curso nuevo de fotografía, me encanta", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_02", "text": "conseguí entradas para el recital, no puedo esperar", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_02", "text": "el café con leche de esta mañana me salvó el día", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_02", "text": "terminé el maratón de la serie, me enganché totalmente", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_02", "text": "pinté un cuadro nuevo, creo que me quedó bastante bien", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_03", "text": "fuimos a comer sushi, estaba riquísimo", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_03", "text": "estoy aprendiendo a tocar la guitarra, es un desafío lindo", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_03", "text": "hoy me reí muchísimo con mis amigas, las adoro", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_03", "text": "el domingo hago un asado con la familia, ya tengo todo listo", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_03", "text": "estoy planeando mudarme a un depto más grande", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_04", "text": "me regalaron un libro precioso por mi cumpleaños", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_04", "text": "estoy entrenando para una carrera de 10k, voy progresando", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_04", "text": "descubrí un podcast increíble sobre ciencia, recomiendo", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_04", "text": "mi jardín está lleno de flores, quedó hermoso", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_04", "text": "hoy fui al cine y la película me encantó", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_05", "text": "conseguí el trabajo que quería, estoy re contenta", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_05", "text": "tuve una tarde tranquila leyendo en el sillón", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_05", "text": "mi sobrina me mandó un dibujo que me hizo llorar de emoción", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_05", "text": "estoy organizando mi planner para el mes que viene", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}
+{"user_id": "synthetic_ctl_05", "text": "hoy hice una receta nueva de cocina tailandesa, deliciosa", "label": 0, "label_source": "synthetic", "timestamp": "2025-01-01T00:00:00Z"}

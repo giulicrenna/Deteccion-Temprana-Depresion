@@ -1,0 +1,61 @@
+# --- Byte-compiled / cache ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# --- Distribution / packaging ---
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+
+# --- Virtualenvs ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Secrets / local config ---
+.env
+.env.local
+*.pem
+*.key
+
+# --- Data (NO subir texto crudo) ---
+data/raw/*
+!data/raw/.gitkeep
+data/interim/*
+!data/interim/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+# Excepción: subimos manifiestos y corpus_statistics.json
+!data/processed/splits/
+
+# --- Notebooks ---
+.ipynb_checkpoints/
+profile_default/
+ipython_config.py
+
+# --- MLflow ---
+mlruns/
+mlruns.db
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# --- Logs ---
+*.log
+logs/

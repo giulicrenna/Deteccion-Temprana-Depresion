@@ -1,0 +1,16 @@
+# environment.yml — conda equivalente a requirements.txt + requirements-dev.txt.
+# Uso:
+#   conda env create -f environment.yml
+#   conda activate tesis-depresion
+name: tesis-depresion
+channels:
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.11
+  - pip
+  # torch via conda para resolver CUDA en el canal pytorch
+  - pytorch::pytorch-cpu=2.4.0
+  - pip:
+      - -r requirements.txt
+      - -r requirements-dev.txt

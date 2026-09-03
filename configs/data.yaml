@@ -1,0 +1,55 @@
+# configs/data.yaml — rutas, versiones de datasets, splits.
+# Consumido por src/data/make_dataset.py, merge_corpora.py, build_splits.py.
+data:
+  root: ./data
+  raw_subdir: raw
+  interim_subdir: interim
+  processed_subdir: processed
+  sources:
+    coello_guilarte:
+      enabled: true
+      url: "https://ccc.inaoep.mx/~mmontesg/resources/CrossLingualDepression.zip"
+      license: "Research use, citation required"
+      cite: "Coello-Guilarte et al. (2019). Cross-Lingual Depression Detection in Twitter"
+    mentalriskes_github:
+      enabled: false  # cifrado con contraseña (ver src/data/download/download_mentalriskes_github.py)
+      url: "https://github.com/sinai-uja/corpusMentalRiskES/raw/main/corpusMentalRiskES.zip"
+      license: "Gated — contact authors"
+    redsm5_sample:
+      enabled: true
+      hf_id: "irlab-udc/redsm5"
+      config: "redsm5-sample"
+      license: "MIT"
+    emoevales:
+      enabled: true
+      hf_id: "JaviBoyaEmotionAnalyzer/emoevales"
+      license: "Research use"
+    swmh_es:
+      enabled: true
+      hf_id: "jorgeortizfuentes/swmh_es"
+      license: "Mixed (see HF dataset card)"
+    synthetic:
+      enabled: true
+      path: "src/data/synthetic/sample.jsonl"
+      license: "Generated for pipeline testing only"
+  label_map:
+    0: control
+    1: moderate
+    2: depressive
+
+splits:
+  strategy: "user_level_stratified"
+  train: 0.7
+  val: 0.1
+  test: 0.2
+  seed: 42
+  min_messages_per_user: 1
+
+anonymize:
+  remove_urls: true
+  remove_mentions: true
+  remove_emails: true
+  remove_phones: true
+  keep_hashtags: false
+  normalize_whitespace: true
+  lowercase: false  # BETO usa cased
