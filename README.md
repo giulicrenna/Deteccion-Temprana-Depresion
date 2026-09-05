@@ -4,9 +4,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-**Autores:** Giuliano Crenna, Juan Ignacio Pace
-**Institución:** Universidad de Granada (UGR)
-**Carrera:** Ingeniería en Tecnología / Ciencias de Datos
+**Autores:** Giuliano Crenna, Bruno Emmanuel Pace
+**Institución:** Universidad del gran Rosario (UGR)
+**Carrera:** Licenciatura Ciencias de Datos
 **Director:** (a confirmar)
 
 ---
