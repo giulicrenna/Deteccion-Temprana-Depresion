@@ -7,8 +7,15 @@
 .PHONY: help setup data eda test lint format clean zip all
 .DEFAULT_GOAL := help
 
-PY ?= python3.11
+ifeq ($(OS),Windows_NT)
+    PY ?= python
+    VENV_BIN := .venv/Scripts
+else
+    PY ?= python3.11
+    VENV_BIN := .venv/bin
+endif
 PIP ?= $(PY) -m pip
+VENV_PY := $(VENV_BIN)/python
 
 DATA_DIR ?= ./data
 SEED ?= 42
@@ -20,13 +27,12 @@ help:  ## Mostrar este catálogo de comandos.
 setup:  ## Crear venv, instalar deps runtime + dev + pre-commit.
 	@echo ">> creando venv con $(PY)..."
 	@$(PY) -m venv .venv
-	@. .venv/bin/activate && \
-		$(PIP) install --upgrade pip && \
-		$(PIP) install -r requirements.txt && \
-		$(PIP) install -r requirements-dev.txt && \
-		$(PIP) install -r requirements-torch.txt
-	@. .venv/bin/activate && pre-commit install
-	@echo ">> setup OK. Activá con: source .venv/bin/activate"
+	@$(VENV_PY) -m pip install --upgrade pip && \
+		$(VENV_PY) -m pip install -r requirements.txt && \
+		$(VENV_PY) -m pip install -r requirements-dev.txt && \
+		$(VENV_PY) -m pip install -r requirements-torch.txt
+	@$(VENV_PY) -m pre_commit install
+	@echo ">> setup OK. Activá con: source $(VENV_BIN)/activate"
 
 data:  ## Descargar + limpiar + mergear + splitear todos los corpus.
 	@echo ">> [1/4] descargando fuentes públicas..."
