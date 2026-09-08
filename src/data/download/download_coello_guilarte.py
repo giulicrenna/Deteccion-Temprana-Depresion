@@ -11,13 +11,7 @@ import zipfile
 from pathlib import Path
 from typing import Any
 
-from src.data.download._common import (
-    download_file,
-    is_already_downloaded,
-    make_cli,
-    sha256_file,
-    write_manifest,
-)
+from src.data.download._common import download_file, is_already_downloaded, make_cli, write_manifest
 
 URL = "https://ccc.inaoep.mx/~mmontesg/resources/CrossLingualDepression.zip"
 SOURCE = "coello_guilarte"

@@ -1,6 +1,5 @@
 """Tests del merge de corpus."""
 
-import json
 from pathlib import Path
 
 import pandas as pd

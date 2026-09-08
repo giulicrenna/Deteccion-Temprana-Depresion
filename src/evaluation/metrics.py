@@ -14,7 +14,9 @@ from sklearn.metrics import (
 )
 
 
-def compute(y_true: list[int], y_pred: list[int], y_proba: list[list[float]] | None = None) -> dict[str, Any]:
+def compute(
+    y_true: list[int], y_pred: list[int], y_proba: list[list[float]] | None = None
+) -> dict[str, Any]:
     """Devuelve un dict con las métricas estándar del proyecto."""
     out: dict[str, Any] = {
         "accuracy": float(accuracy_score(y_true, y_pred)),

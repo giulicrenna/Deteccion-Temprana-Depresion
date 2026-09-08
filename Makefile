@@ -4,15 +4,19 @@
 #   - Sin autenticación en ningún script (cero tokens, cero keys).
 #   - Verificá `make help` para ver el catálogo completo.
 
-.PHONY: help setup data eda test lint format clean zip all
+.PHONY: help setup data eda baseline test coverage lint format clean zip all
 .DEFAULT_GOAL := help
 
 ifeq ($(OS),Windows_NT)
     PY ?= python
     VENV_BIN := .venv/Scripts
 else
-    PY ?= python3.11
     VENV_BIN := .venv/bin
+    ifneq ($(wildcard $(VENV_BIN)/python),)
+        PY ?= $(VENV_BIN)/python
+    else
+        PY ?= python3
+    endif
 endif
 PIP ?= $(PY) -m pip
 VENV_PY := $(VENV_BIN)/python
@@ -65,6 +69,12 @@ eda:  ## Ejecutar notebooks 01-04 con papermill (outputs en reports/).
 		reports/eda_04_comparacion_entre_corpora.ipynb \
 		-p DATA_DIR $(DATA_DIR) -p SEED $(SEED) -p OUT_DIR reports
 	@echo ">> eda OK. Outputs en reports/."
+
+baseline:  ## Entrenar baseline clásico (TF-IDF + LogReg y SVM).
+	@$(PY) -m src.models.train_baseline --config configs/models.yaml --data-dir $(DATA_DIR)/processed/splits --out-dir models --reports-dir reports/tables
+
+coverage:  ## Correr pytest con reporte de cobertura sobre src/models y src/evaluation.
+	@$(PY) -m pytest tests/ --cov=src/models --cov=src/evaluation --cov-report=term-missing -v
 
 test:  ## Correr pytest.
 	@$(PY) -m pytest tests/ -v --tb=short

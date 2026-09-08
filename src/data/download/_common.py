@@ -13,7 +13,6 @@ from __future__ import annotations
 import datetime as _dt
 import hashlib
 import json
-import os
 import shutil
 import time
 import urllib.error
@@ -32,6 +31,7 @@ MANIFEST_NAME = "manifest.json"
 # Hashing
 # ---------------------------------------------------------------------------
 
+
 def sha256_file(path: Path, chunk: int = 1 << 20) -> str:
     """Calcula el SHA256 de un archivo en chunks (default 1 MB)."""
     h = hashlib.sha256()
@@ -47,6 +47,7 @@ def sha256_file(path: Path, chunk: int = 1 << 20) -> str:
 # ---------------------------------------------------------------------------
 # Descarga HTTP
 # ---------------------------------------------------------------------------
+
 
 def _http_download(url: str, dest: Path, timeout: int = 60, max_retries: int = 3) -> None:
     """Descarga un URL a `dest` con urllib estándar (sin auth, sin headers secretos).
@@ -64,7 +65,7 @@ def _http_download(url: str, dest: Path, timeout: int = 60, max_retries: int = 3
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
             last_err = exc
             if attempt < max_retries:
-                wait = 2 ** attempt
+                wait = 2**attempt
                 log.warning("falló intento %d: %s. Reintentando en %ds...", attempt, exc, wait)
                 time.sleep(wait)
     raise RuntimeError(f"No se pudo descargar {url}: {last_err}")
@@ -89,15 +90,14 @@ def download_file(
     _http_download(url, dest, timeout=timeout)
     actual = sha256_file(dest)
     if expected_sha256 and actual != expected_sha256:
-        raise ValueError(
-            f"SHA256 mismatch en {dest}: esperado {expected_sha256}, real {actual}"
-        )
+        raise ValueError(f"SHA256 mismatch en {dest}: esperado {expected_sha256}, real {actual}")
     return actual
 
 
 # ---------------------------------------------------------------------------
 # Manifest
 # ---------------------------------------------------------------------------
+
 
 def write_manifest(
     target_dir: Path,
@@ -155,6 +155,7 @@ def verify_manifest(target_dir: Path) -> bool:
 # ---------------------------------------------------------------------------
 # CLI helpers
 # ---------------------------------------------------------------------------
+
 
 def make_cli(
     module_name: str,

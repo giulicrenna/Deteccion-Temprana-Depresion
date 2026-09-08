@@ -20,11 +20,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-from src.data.download._common import (
-    is_already_downloaded,
-    make_cli,
-    write_manifest,
-)
+from src.data.download._common import is_already_downloaded, make_cli, write_manifest
 
 URL = "https://github.com/sinai-uja/corpusMentalRiskES/raw/main/corpusMentalRiskES.zip"
 SOURCE = "mentalriskes_github"
