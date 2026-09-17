@@ -142,7 +142,7 @@ de ningún tipo.
 
 ```bibtex
 @thesis{crenna_pace_2026,
-  author = {Crenna, Giuliano and Pace, Juan Ignacio},
+  author = {Crenna, Giuliano and Pace, Bruno Emmanuel},
   title  = {Detección temprana de depresión mediante PLN y aprendizaje automático},
   school = {Universidad de Granada},
   year   = {2026},
