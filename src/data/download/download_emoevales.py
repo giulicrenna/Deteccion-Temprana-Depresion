@@ -34,8 +34,11 @@ def download(target_dir: Path) -> dict[str, Any]:
     if last_err is None:
         for hf_id, cfg in CANDIDATE_HF_IDS:
             try:
-                ds = load_dataset(hf_id, cfg, split="train", trust_remote_code=True) if cfg \
+                ds = (
+                    load_dataset(hf_id, cfg, split="train", trust_remote_code=True)
+                    if cfg
                     else load_dataset(hf_id, split="train", trust_remote_code=True)
+                )
                 with open(out_path, "w", encoding="utf-8") as fh:
                     for row in ds:
                         fh.write(json.dumps(row, ensure_ascii=False) + "\n")

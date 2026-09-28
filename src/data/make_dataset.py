@@ -69,6 +69,7 @@ def hash_id(*parts: str) -> str:
 # Loaders por fuente
 # ---------------------------------------------------------------------------
 
+
 def _parse_twitter_date(s: str) -> str | None:
     """Parsea 'Thu Nov 21 03:45:28 +0000 2013' → ISO8601 UTC."""
     try:
@@ -239,10 +240,19 @@ def _row(
     }
 
 
-def _utc_iso(epoch: Any) -> str:
+def _utc_iso(value: Any) -> str:
+    """Epoch (int/float/str numérico) o fecha ISO → ISO8601 UTC. Vacío si no parsea."""
     try:
-        return datetime.fromtimestamp(float(epoch), tz=timezone.utc).isoformat()
+        return datetime.fromtimestamp(float(value), tz=timezone.utc).isoformat()
     except (TypeError, ValueError, OverflowError):
+        pass
+    try:
+        ts = pd.Timestamp(value)
+        if pd.isna(ts):
+            return ""
+        ts = ts.tz_localize("UTC") if ts.tzinfo is None else ts.tz_convert("UTC")
+        return ts.isoformat()
+    except (TypeError, ValueError):
         return ""
 
 
@@ -337,6 +347,7 @@ LOADERS = {
 # ---------------------------------------------------------------------------
 # Pipeline
 # ---------------------------------------------------------------------------
+
 
 def process_one(
     source: str,

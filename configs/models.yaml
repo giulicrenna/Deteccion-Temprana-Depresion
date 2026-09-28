@@ -1,0 +1,32 @@
+# configs/models.yaml — hiperparámetros de modelos (Etapa 4).
+# Consumido por src/models/train_baseline.py y train_beto.py.
+
+baseline:
+  tfidf:
+    ngram_range: [1, 2]
+    max_features: 15000
+    min_df: 2
+    sublinear_tf: true
+  logreg:
+    C: 1.0
+    class_weight: "balanced"
+    max_iter: 1000
+    solver: "lbfgs"
+    random_state: 42
+  svm:
+    C: 1.0
+    class_weight: "balanced"
+    max_iter: 2000
+    random_state: 42
+
+beto:
+  model_name: "dccuchile/bert-base-spanish-wwm-cased"
+  max_length: 128
+  batch_size: 16
+  eval_batch_size: 32
+  learning_rate: 0.00002  # 2e-5
+  epochs: 3
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  seed: 42
+  fp16: true  # sólo activo si cuda está disponible

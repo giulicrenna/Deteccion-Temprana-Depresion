@@ -11,12 +11,7 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from src.data.download._common import (
-    is_already_downloaded,
-    make_cli,
-    sha256_file,
-    write_manifest,
-)
+from src.data.download._common import is_already_downloaded, make_cli, sha256_file, write_manifest
 from src.utils.seeds import set_seed
 
 SOURCE = "synthetic"

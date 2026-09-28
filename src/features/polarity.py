@@ -23,7 +23,11 @@ def _lexicon_polarity(texts: list[str], lexicon_path: Path) -> pd.DataFrame:
     if not lexicon_path.exists():
         log.warning("no hay lexicon %s — devolviendo ceros", lexicon_path)
         return pd.DataFrame(
-            {"polarity": [0.0] * len(texts), "positives": [0] * len(texts), "negatives": [0] * len(texts)}
+            {
+                "polarity": [0.0] * len(texts),
+                "positives": [0] * len(texts),
+                "negatives": [0] * len(texts),
+            }
         )
     import csv
 
@@ -37,9 +41,7 @@ def _lexicon_polarity(texts: list[str], lexicon_path: Path) -> pd.DataFrame:
         toks = (t or "").lower().split()
         p = sum(1 for w in toks if w in pos)
         n = sum(1 for w in toks if w in neg)
-        rows.append(
-            {"polarity": (p - n) / max(1, p + n), "positives": p, "negatives": n}
-        )
+        rows.append({"polarity": (p - n) / max(1, p + n), "positives": p, "negatives": n})
     return pd.DataFrame(rows)
 
 
@@ -60,7 +62,9 @@ def score(texts: list[str], lexicon_path: Path | None = None) -> pd.DataFrame:
         return df
     except Exception as exc:
         log.warning("VADER no disponible (%s) — usando lexicon fallback", exc)
-        return _lexicon_polarity(texts, lexicon_path or Path("src/features/lexicons/polarity_es.csv"))
+        return _lexicon_polarity(
+            texts, lexicon_path or Path("src/features/lexicons/polarity_es.csv")
+        )
 
 
 __all__ = ["score"]

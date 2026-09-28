@@ -104,7 +104,9 @@ def main() -> None:
         }
         log.info("→ %s : %d filas, %d usuarios", out_path, len(sub), sub["user_id"].nunique())
 
-    (args.out / "split_manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False))
+    (args.out / "split_manifest.json").write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False)
+    )
     log.info("OK.")
 
 

@@ -1,6 +1,13 @@
 """Tests de anonimización."""
 
-from src.data.make_dataset import anonymize
+from src.data.make_dataset import _utc_iso, anonymize
+
+
+def test_utc_iso_accepts_epoch_and_iso():
+    assert _utc_iso(1640197976).startswith("2021-12-22T18:32:56")
+    assert _utc_iso("2021-12-22T18:32:56.000Z").startswith("2021-12-22T18:32:56")
+    assert _utc_iso(None) == ""
+    assert _utc_iso("no es fecha") == ""
 
 
 def test_removes_url():

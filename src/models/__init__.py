@@ -1,5 +1,5 @@
-"""Modelos de la etapa 4 (baseline + BETO).
+"""Módulo de modelado (Etapa 4 de la tesina).
 
-Stubs en esta iteración — implementación prevista en la etapa 4 del
-cronograma de la tesis.
+Contiene los pipelines de entrenamiento para el baseline clásico (TF-IDF + LogReg/SVM),
+fine-tuning de BETO (transformers) e inferencia unificada.
 """
