@@ -4,7 +4,7 @@
 #   - Sin autenticación en ningún script (cero tokens, cero keys).
 #   - Verificá `make help` para ver el catálogo completo.
 
-.PHONY: help setup data eda test lint format clean zip all
+.PHONY: help setup data download translate-estimate translate-pilot translate eda test lint format clean zip all
 .DEFAULT_GOAL := help
 
 ifeq ($(OS),Windows_NT)
@@ -34,14 +34,20 @@ setup:  ## Crear venv, instalar deps runtime + dev + pre-commit.
 	@$(VENV_PY) -m pre_commit install
 	@echo ">> setup OK. Activá con: source $(VENV_BIN)/activate"
 
-data:  ## Descargar + limpiar + mergear + splitear todos los corpus.
-	@echo ">> [1/4] descargando fuentes públicas..."
+download:  ## Descargar todas las fuentes (las gated fallan con instrucciones, sin cortar).
+	@echo ">> descargando fuentes públicas..."
 	@$(PY) -m src.data.download.download_coello_guilarte --out $(DATA_DIR)/raw/coello_guilarte
-	@$(PY) -m src.data.download.download_mentalriskes_github --out $(DATA_DIR)/raw/mentalriskes_github
-	@$(PY) -m src.data.download.download_redsm5_sample --out $(DATA_DIR)/raw/redsm5_sample
-	@$(PY) -m src.data.download.download_emoevales --out $(DATA_DIR)/raw/emoevales
-	@$(PY) -m src.data.download.download_swmh_es --out $(DATA_DIR)/raw/swmh_es
+	@$(PY) -m src.data.download.download_kaggle_sdd --out $(DATA_DIR)/raw/kaggle_sdd
+	@$(PY) -m src.data.download.download_reddit_mh_posts --out $(DATA_DIR)/raw/reddit_mh_posts
+	@$(PY) -m src.data.download.download_depression_reddit --out $(DATA_DIR)/raw/depression_reddit
+	@$(PY) -m src.data.download.download_prevenia_es --out $(DATA_DIR)/raw/prevenia_es
 	@$(PY) -m src.data.download.download_synthetic --out $(DATA_DIR)/raw/synthetic
+	@echo ">> fuentes gated (requieren acceso previo, ver DATA_CARD)..."
+	-@$(PY) -m src.data.download.download_swmh --out $(DATA_DIR)/raw/swmh
+	-@$(PY) -m src.data.download.download_redsm5_sample --out $(DATA_DIR)/raw/redsm5_sample
+	-@$(PY) -m src.data.download.download_mentalriskes_github --out $(DATA_DIR)/raw/mentalriskes_github
+
+data: download  ## Descargar + limpiar + mergear + splitear todos los corpus.
 	@echo ">> [2/4] limpiando + anonimizando → data/interim/..."
 	@$(PY) -m src.data.make_dataset --out $(DATA_DIR)/interim --seed $(SEED)
 	@echo ">> [3/4] mergeando corpus → data/processed/corpus_v1.parquet..."
@@ -49,6 +55,21 @@ data:  ## Descargar + limpiar + mergear + splitear todos los corpus.
 	@echo ">> [4/4] split user-level estratificado 70/10/20..."
 	@$(PY) -m src.data.build_splits --in $(DATA_DIR)/processed --out $(DATA_DIR)/processed/splits --seed $(SEED)
 	@echo ">> data OK."
+
+# --- Traducción EN→ES (ver configs/translation.yaml y README) ---
+SOURCE ?= kaggle_sdd
+BACKEND ?= nvidia
+LIMIT ?= 0
+
+translate-estimate:  ## Volumen (docs/caracteres/tokens) de los corpus a traducir.
+	@$(PY) -m src.translation.translate estimate
+
+translate-pilot:  ## Piloto de 200 docs: make translate-pilot SOURCE=kaggle_sdd BACKEND=nvidia
+	@$(PY) -m src.translation.translate run --source $(SOURCE) --backend $(BACKEND) \
+		--limit 200 --out-name pilot_$(BACKEND).parquet
+
+translate:  ## Traducir una fuente: make translate SOURCE=kaggle_sdd BACKEND=nvidia LIMIT=30000
+	@$(PY) -m src.translation.translate run --source $(SOURCE) --backend $(BACKEND) --limit $(LIMIT)
 
 eda:  ## Ejecutar notebooks 01-04 con papermill (outputs en reports/).
 	@mkdir -p reports/figures reports/tables

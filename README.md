@@ -37,16 +37,26 @@ make setup
 # 2) Descargar + limpiar + mergear + splitear
 make data
 
-# 3) Ejecutar los 4 notebooks de EDA (con papermill)
+# 3) (Opcional) Traducir al español los corpus en inglés — ver sección "Traducción"
+make translate-estimate
+make translate SOURCE=kaggle_sdd BACKEND=nvidia LIMIT=30000
+make data   # re-mergea incluyendo lo traducido
+
+# 4) Ejecutar los 4 notebooks de EDA (con papermill)
 make eda
 
-# 4) Correr tests
+# 5) Correr tests
 make test
 ```
 
-> **No requiere tokens ni API keys para descargar datos.** Si una
-> fuente está gated, los scripts de descarga levantan
-> `NotImplementedError` con instrucciones de a quién pedirle acceso.
+> **No requiere tokens ni API keys para descargar datos públicos.** Si
+> una fuente está gated, los scripts de descarga levantan
+> `NotImplementedError` con instrucciones de a quién pedirle acceso
+> (`make data` sigue con el resto).
+
+> **GPU:** `requirements-torch.txt` usa CUDA 12.8 (torch 2.7.1), necesario
+> para GPUs Blackwell (RTX 50xx / RTX PRO Blackwell) y compatible con
+> RTX 30xx/40xx.
 
 ## Estructura del repo
 
@@ -69,6 +79,7 @@ make test
 │   │   ├── make_dataset.py      # raw → interim (limpieza + anonimización)
 │   │   ├── merge_corpora.py     # interim → processed (esquema unificado)
 │   │   └── build_splits.py      # user-level split 70/10/20
+│   ├── translation/             # traducción EN→ES (MarianMT/NLLB local o API LLM)
 │   ├── features/                # LIWC, temporales, polaridad
 │   ├── models/                  # stubs para etapa 4
 │   ├── evaluation/              # métricas
@@ -88,20 +99,57 @@ make test
 
 ## Datasets
 
-| Nombre | Fuente | Licencia | Idioma | Wget-able | Estado |
-|---|---|---|---|---|---|
-| Coello-Guilarte 2019 | INAOE | Research use | es | sí | ✅ incluido |
-| MentalRiskES (muestra) | GitHub UJA | Gated | es | zip cifrado | ⚠️ stub |
-| ReDSM5 paraphrase | HF Hub | MIT | en/es | `datasets` lib | ✅ incluido |
-| EmoEvalEs | HF Hub | Research use | es | `datasets` lib | ✅ best-effort |
-| SWMH-ES | HF Hub | Mixed | es | `datasets` lib | ✅ best-effort |
-| Mini-corpus sintético | local | Generated | es | sí | ✅ dev only |
-| MentalRiskES completo | autores | Gated | es | no | ⚠️ stub |
-| Leis 2019 | Kaggle / F. Ronzano | Gated | es | no | ⚠️ stub |
-| DAIC-WOZ | USC ICT | DUA | en | no | ⚠️ stub |
-| RSDD | — | N/AV | es | — | ❌ N/AV |
+| Nombre | Fuente | Licencia | Idioma | Posts | Acceso | Estado |
+|---|---|---|---|---|---|---|
+| Coello-Guilarte 2019 | INAOE | Research use | es | 1.047.194 tweets | público | ✅ incluido |
+| Suicide and Depression Detection **v13** | Kaggle (Komati) | CC BY-SA 4.0 | en → traducir | 348.103 | público | ✅ descargado |
+| Reddit Mental Health Posts | HF `solomonk/...` | sin declarar | en → traducir | 151.274 | público | ✅ descargado |
+| Depression Reddit Cleaned | HF `mrjunos/...` | CC BY 4.0 | en → traducir | 7.731 | público | ✅ descargado |
+| SWMH (Ji et al. 2021) | HF `AIMH/SWMH` | CC BY-NC 4.0 | en → traducir | ~54k | gated (auto) | ⚠️ falta login HF |
+| ReDSM5 | HF `irlab-udc/redsm5` | Apache-2.0 | en → traducir | 1.484 | gated (manual) | ⚠️ pedir acceso |
+| PrevenIA spanish-suicide-intent | HF | CC BY 4.0 | es | 189.064 | público | ✅ descargado (no se mergea: constructo suicidio) |
+| Mini-corpus sintético | local | Generated | es | 60 | — | ✅ dev only |
+| MentalRiskES (muestra / completo) | UJA | Gated | es | 45k | formulario | ⚠️ stub |
+| Leis 2019 | F. Ronzano | Gated | es | — | mail | ⚠️ stub |
+| DAIC-WOZ | USC ICT | DUA | en | — | DUA | ⚠️ stub |
+| EmoEvalEs / SWMH-ES | — | — | es | — | el ID de HF no existe | ❌ desactivados |
+| RSDD | — | N/AV | — | — | — | ❌ N/AV |
 
-Ver `data/DATA_CARD.md` para el detalle completo.
+La v13 de Kaggle separa `depression` / `SuicideWatch` / `teenagers`
+(la v14 los fusiona en `suicide`). Ver `data/DATA_CARD.md` para el mapeo
+de etiquetas y el detalle completo.
+
+## Traducción EN → ES
+
+Los corpus en inglés quedan en `data/interim/<fuente>/data.parquet`
+(`lang=en`, ya anonimizados). `src/translation/translate.py` genera
+`data_es.parquet` al lado; `merge_corpora` sólo incluye una fuente en
+inglés cuando existe su traducción, deja el español en `text_clean` y
+conserva el original en `text_orig` / `lang_orig` (+ `is_translated`,
+`mt_system`).
+
+Backends (`configs/translation.yaml`):
+
+| Backend | Tipo | Notas |
+|---|---|---|
+| `opus_mt` | local GPU (MarianMT) | rápido (~1,8 posts/s medido en RTX PRO 500), calidad floja con jerga |
+| `nllb` | local GPU (NLLB-200 600M) | licencia CC-BY-NC |
+| `nvidia` | API NVIDIA NIM (Nemotron) | free tier ~40 RPM; key en `.env` (`NVIDIA_API_KEY`) |
+| `ollama` | LLM local vía Ollama | cualquier servidor OpenAI-compatible sirve (vLLM, OpenRouter...) |
+
+```bash
+cp .env.example .env                    # completar NVIDIA_API_KEY
+python -m src.translation.translate list-models --backend nvidia   # copiar el id a translation.yaml
+make translate-estimate                 # volumen a traducir
+make translate-pilot SOURCE=kaggle_sdd BACKEND=nvidia               # 200 docs → pilot_nvidia.parquet
+make translate SOURCE=kaggle_sdd BACKEND=nvidia LIMIT=30000         # muestra estratificada
+```
+
+- Reanudable: caché en `data/interim/<fuente>/translations/<sistema>.jsonl`.
+- `LIMIT` toma una muestra estratificada por label con seed fija.
+- Cada traducción trae `qc_flags` (posible rechazo/nota agregada por el
+  LLM, ratio de longitud anómalo, restos de inglés) para revisión manual.
+- Se traduce el texto anonimizado: ningún handle/URL/email sale a la API.
 
 ## Ética
 
@@ -122,6 +170,7 @@ Ver `data/DATA_CARD.md` para el detalle completo.
 |---|---|---|
 | 1 | Setup del repo + descargas | ✅ v0.1 |
 | 2 | Corpus unificado + anonimización | ✅ v0.1 |
+| 2b | Traducción EN→ES de corpus Reddit | 🔧 pipeline listo, falta correr |
 | 3 | EDA (4 notebooks) | ✅ v0.1 |
 | 4 | Baseline (LogReg) + BETO fine-tuning | ⏳ próximo |
 | 5 | Evaluación comparativa + métricas | ⏳ |
@@ -142,7 +191,7 @@ de ningún tipo.
 
 ```bibtex
 @thesis{crenna_pace_2026,
-  author = {Crenna, Giuliano and Pace, Juan Ignacio},
+  author = {Crenna, Giuliano and Pace, Bruno Emmanuel},
   title  = {Detección temprana de depresión mediante PLN y aprendizaje automático},
   school = {Universidad de Granada},
   year   = {2026},

@@ -1,4 +1,5 @@
-# requirements-torch.txt — torch separado (no se instala con `make setup`).
-# Ajustá cu121 a tu versión CUDA (cpu / cu118 / cu121 / cu124).
---index-url https://download.pytorch.org/whl/cu121
-torch==2.4.0
+# requirements-torch.txt — torch separado del runtime core.
+# cu128 es obligatorio para GPUs Blackwell (RTX 50xx / RTX PRO Blackwell, sm_120);
+# también funciona en Ampere/Ada (RTX 30xx/40xx). Sin GPU: usar .../whl/cpu
+--index-url https://download.pytorch.org/whl/cu128
+torch==2.7.1

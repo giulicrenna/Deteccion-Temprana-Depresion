@@ -95,6 +95,80 @@ def download_file(
     return actual
 
 
+def download_kaggle_dataset(
+    slug: str, dest: Path, version: Optional[int] = None, timeout: int = 300
+) -> str:
+    """Baja un dataset PÚBLICO de Kaggle como zip, sin credenciales.
+
+    Usa el endpoint `api/v1/datasets/download/<owner>/<dataset>` que Kaggle
+    expone para datasets públicos (el mismo del snippet `curl` del sitio).
+    `version` fija una versión concreta (reproducibilidad). Devuelve el SHA256.
+    """
+    url = f"https://www.kaggle.com/api/v1/datasets/download/{slug}"
+    if version is not None:
+        url += f"?datasetVersionNumber={version}"
+    return download_file(url, dest, timeout=timeout)
+
+
+# ---------------------------------------------------------------------------
+# Hugging Face Hub
+# ---------------------------------------------------------------------------
+
+def download_hf_dataset(
+    target_dir: Path,
+    source: str,
+    license: str,
+    hf_id: str,
+    config: Optional[str] = None,
+    gated: bool = False,
+    extra: Optional[dict[str, Any]] = None,
+) -> dict[str, Any]:
+    """Baja TODOS los splits de un dataset HF a `target_dir/data.jsonl`.
+
+    Cada fila lleva un campo `_split` con el split original. Para datasets
+    gated, el token NO se lee en este código: `datasets` usa el login local
+    (`huggingface-cli login`) si existe.
+    """
+    target_dir.mkdir(parents=True, exist_ok=True)
+    out_path = target_dir / "data.jsonl"
+    if is_already_downloaded(target_dir) and out_path.exists():
+        return read_manifest(target_dir) or {}
+
+    from datasets import load_dataset  # import lazy
+
+    try:
+        dsd = load_dataset(hf_id, config) if config else load_dataset(hf_id)
+    except Exception as exc:
+        if gated:
+            raise NotImplementedError(
+                f"{hf_id} es gated en Hugging Face. Pasos:\n"
+                f"  1. Abrir https://huggingface.co/datasets/{hf_id} y aceptar las condiciones.\n"
+                "  2. Loguearse localmente: `huggingface-cli login` (token read).\n"
+                "  3. Re-correr este script.\n"
+                f"Error original: {exc}"
+            ) from exc
+        raise
+
+    n_rows: dict[str, int] = {}
+    with open(out_path, "w", encoding="utf-8") as fh:
+        for split, ds in dsd.items():
+            n_rows[split] = len(ds)
+            for row in ds:
+                row = {k: (str(v) if isinstance(v, (_dt.date, _dt.datetime)) else v) for k, v in row.items()}
+                row["_split"] = split
+                fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+    return write_manifest(
+        target_dir=target_dir,
+        source=source,
+        license=license,
+        sha256=sha256_file(out_path),
+        path=str(out_path),
+        n_files=1,
+        extra={"hf_id": hf_id, "hf_config": config, "n_rows": n_rows, **(extra or {})},
+    )
+
+
 # ---------------------------------------------------------------------------
 # Manifest
 # ---------------------------------------------------------------------------
@@ -120,7 +194,9 @@ def write_manifest(
     }
     if extra:
         manifest.update(extra)
-    (target_dir / MANIFEST_NAME).write_text(json.dumps(manifest, indent=2, ensure_ascii=False))
+    (target_dir / MANIFEST_NAME).write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
     return manifest
 
 
@@ -128,7 +204,7 @@ def read_manifest(target_dir: Path) -> Optional[dict[str, Any]]:
     """Lee un manifest.json si existe, sino None."""
     p = target_dir / MANIFEST_NAME
     if p.exists():
-        return json.loads(p.read_text())
+        return json.loads(p.read_text(encoding="utf-8"))
     return None
 
 
@@ -190,6 +266,8 @@ __all__ = [
     "MANIFEST_NAME",
     "sha256_file",
     "download_file",
+    "download_kaggle_dataset",
+    "download_hf_dataset",
     "write_manifest",
     "read_manifest",
     "is_already_downloaded",

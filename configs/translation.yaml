@@ -1,0 +1,51 @@
+# configs/translation.yaml — traducción EN → ES de los corpus con `translate: true`.
+# Consumido por src/translation/translate.py.
+#
+# Las API keys NUNCA van acá: se leen de la variable de entorno indicada en
+# `api_key_env` (ponela en .env, que está en .gitignore).
+
+target_language: "español neutro latinoamericano"
+
+backends:
+  # --- Local, GPU, modelos de MT dedicados (gratis, rápido, calidad media) ---
+  opus_mt:
+    type: hf
+    model: "Helsinki-NLP/opus-mt-en-es"   # Marian 77M, CC-BY 4.0
+    batch_size: 32
+    num_beams: 4
+    max_segment_words: 120
+  nllb:
+    type: hf
+    model: "facebook/nllb-200-distilled-600M"  # CC-BY-NC 4.0 (uso académico OK)
+    src_lang: "eng_Latn"
+    tgt_lang: "spa_Latn"
+    batch_size: 16
+    num_beams: 4
+    max_segment_words: 120
+
+  # --- LLM vía API compatible con OpenAI ---
+  nvidia:
+    type: openai
+    base_url: "https://integrate.api.nvidia.com/v1"
+    api_key_env: "NVIDIA_API_KEY"
+    # Copiá el id exacto desde build.nvidia.com o con:
+    #   python -m src.translation.translate list-models --backend nvidia
+    model: "CAMBIAR-por-id-de-nemotron"
+    rpm: 40            # límite del free tier
+    concurrency: 8
+    temperature: 0.0
+    max_tokens: 4096
+    system_prefix: "/no_think"   # desactiva el razonamiento en modelos Nemotron híbridos
+  ollama:
+    type: openai
+    base_url: "http://localhost:11434/v1"
+    api_key_env: ""    # Ollama no pide key
+    model: "gemma3:4b"
+    rpm: 0             # 0 = sin límite
+    concurrency: 1
+    temperature: 0.0
+    max_tokens: 4096
+    system_prefix: ""
+
+# Posts más largos que esto se parten por párrafos para el backend LLM.
+llm_max_chars: 6000

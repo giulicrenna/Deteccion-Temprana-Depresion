@@ -1,48 +1,51 @@
-"""ReDSM5 paraphrase sample — dataset público en HF Hub.
+"""ReDSM5 (Bao et al., CIKM 2025) — inglés, a traducir.
 
-HF: irlab-udc/redsm5, config redsm5-sample (25 entries, MIT).
-No requiere token. Usa `datasets.load_dataset` (público).
+HF: irlab-udc/redsm5 (1.484 posts de Reddit anotados por psicólogos con
+los 9 síntomas del DSM-5). Apache-2.0.
+GATED con aprobación MANUAL: pedir acceso en la ficha HF (indicar uso
+académico/tesis), esperar aprobación y hacer `huggingface-cli login`.
+El token nunca se lee desde este código.
 """
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
 from src.data.download._common import make_cli, write_manifest
 
 SOURCE = "redsm5_sample"
-LICENSE = "MIT"
+LICENSE = "Apache-2.0 (gated, aprobación manual)"
 HF_ID = "irlab-udc/redsm5"
-HF_CONFIG = "redsm5-sample"
 
 
 def download(target_dir: Path) -> dict[str, Any]:
-    """Baja la muestra paraphrase de ReDSM5 desde Hugging Face (público, sin token)."""
+    """Baja el snapshot completo del repo (CSV de posts + anotaciones)."""
     target_dir.mkdir(parents=True, exist_ok=True)
+    from huggingface_hub import snapshot_download  # import lazy
 
-    from datasets import load_dataset  # import lazy
+    try:
+        local = snapshot_download(HF_ID, repo_type="dataset", local_dir=target_dir / "repo")
+    except Exception as exc:
+        raise NotImplementedError(
+            f"{HF_ID} es gated con aprobación manual. Pasos:\n"
+            f"  1. Pedir acceso en https://huggingface.co/datasets/{HF_ID}\n"
+            "  2. Esperar el mail de aprobación.\n"
+            "  3. `huggingface-cli login` y re-correr este script.\n"
+            f"Error original: {exc}"
+        ) from exc
 
-    ds = load_dataset(HF_ID, HF_CONFIG, split="train", trust_remote_code=True)
-    out_path = target_dir / "data.jsonl"
-    with open(out_path, "w", encoding="utf-8") as fh:
-        for row in ds:
-            fh.write(json.dumps(row, ensure_ascii=False) + "\n")
-
-    from src.data.download._common import sha256_file
-
-    sha = sha256_file(out_path)
+    files = [p for p in Path(local).rglob("*") if p.is_file() and ".cache" not in p.parts]
     return write_manifest(
         target_dir=target_dir,
         source=SOURCE,
         license=LICENSE,
-        sha256=sha,
-        path=str(out_path),
-        n_files=1,
-        extra={"hf_id": HF_ID, "hf_config": HF_CONFIG, "n_rows": len(ds)},
+        sha256="(snapshot multi-archivo, ver repo/)",
+        path=str(local),
+        n_files=len(files),
+        extra={"hf_id": HF_ID, "lang": "en"},
     )
 
 
 if __name__ == "__main__":
-    make_cli(__name__, download, "ReDSM5 paraphrase sample (HF, sin token)")
+    make_cli(__name__, download, "ReDSM5 (HF gated manual, EN)")

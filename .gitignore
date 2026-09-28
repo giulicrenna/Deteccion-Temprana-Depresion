@@ -56,6 +56,9 @@ Thumbs.db
 *.swo
 *~
 
+# --- Notas locales (no versionar) ---
+CAMBIOS_LOCAL.md
+
 # --- Logs ---
 *.log
 logs/

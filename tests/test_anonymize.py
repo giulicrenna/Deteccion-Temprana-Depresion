@@ -16,6 +16,14 @@ def test_removes_email():
     out = anonymize("contactame a juan.perez@gmail.com porfa")
     assert "@" not in out
     assert "gmail" not in out
+    assert "juan" not in out  # antes quedaba "juan.perez.com"
+
+
+def test_removes_reddit_user():
+    out = anonymize("thanks u/some_user and /u/Other-One, see r/depression")
+    assert "some_user" not in out
+    assert "Other-One" not in out
+    assert "r/depression" in out  # los subreddits no son PII
 
 
 def test_removes_phone():

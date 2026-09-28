@@ -10,6 +10,9 @@ umbral o parámetro del pipeline se lee desde acá.
   `build_splits.py`.
 - `preprocessing.yaml` — parámetros de limpieza, tokenización, features
   (LIWC, temporales, polaridad).
+- `translation.yaml` — backends de traducción EN→ES (MarianMT/NLLB local,
+  NVIDIA NIM, Ollama), límites de RPM y prompt. Las API keys van en `.env`.
+  Por fuente, `translate: true` / `merge: false` se definen en `data.yaml`.
 
 ## Cómo agregar un config nuevo
 
@@ -30,5 +33,6 @@ umbral o parámetro del pipeline se lee desde acá.
 | `src/data/make_dataset.py` | `data.yaml` (sección `anonymize`, `data.sources`) |
 | `src/data/merge_corpora.py` | `data.yaml` (sección `data.sources`, `label_map`) |
 | `src/data/build_splits.py` | `data.yaml` (sección `splits`) |
+| `src/translation/translate.py` | `translation.yaml`, `data.yaml` (`translate: true`) |
 | `src/features/*` | `preprocessing.yaml` |
 | `src/models/*` (etapa 4) | `configs/model/*.yaml` (próximamente) |

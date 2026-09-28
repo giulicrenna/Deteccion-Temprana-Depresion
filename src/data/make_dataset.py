@@ -33,6 +33,7 @@ log = get_logger(__name__)
 
 URL_RE = re.compile(r"https?://\S+|www\.\S+")
 MENTION_RE = re.compile(r"@\w+")
+REDDIT_USER_RE = re.compile(r"(?<![\w/])/?u/[A-Za-z0-9_-]+")
 HASHTAG_RE = re.compile(r"#\w+")
 EMAIL_RE = re.compile(r"\b[\w._%+-]+@[\w.-]+\.[A-Za-z]{2,}\b")
 PHONE_RE = re.compile(r"\+?\d[\d\s().-]{7,}\d")
@@ -45,8 +46,9 @@ def anonymize(text: str) -> str:
     if not isinstance(text, str):
         return ""
     t = URL_RE.sub("", text)
-    t = MENTION_RE.sub("", t)
     t = EMAIL_RE.sub("", t)
+    t = MENTION_RE.sub("", t)
+    t = REDDIT_USER_RE.sub("", t)
     t = PHONE_RE.sub("", t)
     t = HASHTAG_RE.sub("", t)
     t = RT_RE.sub("", t)
@@ -204,6 +206,134 @@ def load_hf_jsonl(raw_dir: Path, source_name: str, label_map: dict | None = None
     return pd.DataFrame(rows)
 
 
+def _iter_jsonl(p: Path) -> Iterable[dict[str, Any]]:
+    with open(p, encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if line:
+                yield json.loads(line)
+
+
+def _row(
+    source: str,
+    key: str,
+    user: str,
+    text: str,
+    label: int,
+    label_source: str,
+    lang: str,
+    timestamp: str = "",
+    orig_split: str = "",
+) -> dict[str, Any]:
+    return {
+        "doc_id": hash_id(source, key),
+        "user_id": hash_id(source + "_user", user),
+        "source": source,
+        "timestamp": timestamp,
+        "text_raw": text,
+        "text_clean": anonymize(text),
+        "label": label,
+        "label_source": label_source,
+        "lang": lang,
+        "orig_split": orig_split,
+    }
+
+
+def _utc_iso(epoch: Any) -> str:
+    try:
+        return datetime.fromtimestamp(float(epoch), tz=timezone.utc).isoformat()
+    except (TypeError, ValueError, OverflowError):
+        return ""
+
+
+def load_kaggle_sdd(raw_dir: Path) -> pd.DataFrame:
+    """Kaggle SDD v13: r/depression y r/SuicideWatch → 2, r/teenagers → 0.
+
+    El subreddit queda en `label_source` para poder excluir SuicideWatch
+    (riesgo suicida ≠ depresión) en experimentos de sensibilidad.
+    Sin autor en el CSV → cada post es su propio "usuario".
+    """
+    zip_path = raw_dir / "kaggle_sdd.zip"
+    with zipfile.ZipFile(zip_path) as zf, zf.open("SuicideAndDepression_Detection.csv") as fh:
+        df = pd.read_csv(fh)
+    labels = {"depression": 2, "SuicideWatch": 2, "teenagers": 0}
+    rows = [
+        _row("kaggle_sdd", str(i), str(i), str(text), labels[cls],
+             f"subreddit_membership:r/{cls}", "en")
+        for i, (text, cls) in enumerate(zip(df["text"], df["class"]))
+        if cls in labels
+    ]
+    return pd.DataFrame(rows)
+
+
+def load_reddit_mh_posts(raw_dir: Path) -> pd.DataFrame:
+    """solomonk/reddit_mental_health_posts: r/depression → 2, resto (ADHD, OCD, ...) → 0.
+
+    Los otros subreddits de salud mental son negativos "difíciles": controlan
+    que el modelo aprenda depresión y no "habla de salud mental" en general.
+    """
+    rows = []
+    for r in _iter_jsonl(raw_dir / "data.jsonl"):
+        body = (r.get("body") or "").strip()
+        if body in {"[removed]", "[deleted]"}:
+            body = ""
+        text = "\n\n".join(t for t in [(r.get("title") or "").strip(), body] if t)
+        if not text:
+            continue
+        sub = str(r.get("subreddit", ""))
+        author = str(r.get("author") or "")
+        if author in {"", "[deleted]", "None"}:
+            author = f"anon_{r.get('id')}"
+        rows.append(
+            _row("reddit_mh_posts", str(r.get("id")), author, text,
+                 2 if sub.lower() == "depression" else 0,
+                 f"subreddit_membership:r/{sub}", "en", _utc_iso(r.get("created_utc")))
+        )
+    return pd.DataFrame(rows)
+
+
+def load_depression_reddit(raw_dir: Path) -> pd.DataFrame:
+    """mrjunos/depression-reddit-cleaned: label 1 → 2, 0 → 0."""
+    rows = [
+        _row("depression_reddit", str(i), str(i), str(r["text"]), 2 if int(r["label"]) == 1 else 0,
+             "subreddit_membership", "en", orig_split=r.get("_split", ""))
+        for i, r in enumerate(_iter_jsonl(raw_dir / "data.jsonl"))
+    ]
+    return pd.DataFrame(rows)
+
+
+def load_swmh(raw_dir: Path) -> pd.DataFrame:
+    """AIMH/SWMH: `self.depression` → 2, resto de subreddits → 0."""
+    rows = []
+    for i, r in enumerate(_iter_jsonl(raw_dir / "data.jsonl")):
+        sub = str(r.get("label", "")).replace("self.", "")
+        rows.append(
+            _row("swmh", str(i), str(i), str(r.get("text", "")),
+                 2 if sub.lower() == "depression" else 0,
+                 f"subreddit_membership:r/{sub}", "en", orig_split=r.get("_split", ""))
+        )
+    return pd.DataFrame(rows)
+
+
+def load_prevenia_es(raw_dir: Path) -> pd.DataFrame:
+    """PrevenIA: Label 1 (intención suicida) → 2, 0 → 0. Ya en español."""
+    rows = [
+        _row("prevenia_es", str(i), str(i), str(r.get("Text", "")), 2 if int(r["Label"]) == 1 else 0,
+             f"suicide_intent:{r.get('dataset', '')}", "es", orig_split=r.get("_split", ""))
+        for i, r in enumerate(_iter_jsonl(raw_dir / "data.jsonl"))
+    ]
+    return pd.DataFrame(rows)
+
+
+LOADERS = {
+    "kaggle_sdd": load_kaggle_sdd,
+    "reddit_mh_posts": load_reddit_mh_posts,
+    "depression_reddit": load_depression_reddit,
+    "swmh": load_swmh,
+    "prevenia_es": load_prevenia_es,
+}
+
+
 # ---------------------------------------------------------------------------
 # Pipeline
 # ---------------------------------------------------------------------------
@@ -225,7 +355,9 @@ def process_one(
         df = load_coello_guilarte(raw_dir)
     elif source == "synthetic":
         df = load_synthetic(raw_dir)
-    elif source in {"redsm5_sample", "emoevales", "swmh_es"}:
+    elif source in LOADERS:
+        df = LOADERS[source](raw_dir)
+    elif source in {"emoevales", "swmh_es"}:
         df = load_hf_jsonl(raw_dir, source, label_map=label_map)
     else:
         log.warning("fuente %s no implementada — saltando", source)
@@ -234,6 +366,11 @@ def process_one(
     if df.empty:
         log.warning("fuente %s vacía — saltando", source)
         return None
+
+    # Fuentes nuevas: textos vacíos tras anonimizar no aportan nada (ni se traducen).
+    # Coello-Guilarte se deja intacto para no alterar las tablas de EDA ya reportadas.
+    if source in LOADERS:
+        df = df[df["text_clean"].str.len() > 0].reset_index(drop=True)
 
     out_dir = interim_root / source
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -252,13 +389,13 @@ def main() -> None:
     args = parser.parse_args()
 
     set_seed(args.seed)
-    cfg = yaml.safe_load(args.config.read_text())
+    cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
     label_map = cfg.get("data", {}).get("label_map", None)
 
     sources = [
         s
         for s, meta in cfg["data"]["sources"].items()
-        if meta.get("enabled", False) and (args.raw / s).exists()
+        if meta.get("enabled", False) and (args.raw / s / "manifest.json").exists()
     ]
 
     written: list[Path] = []

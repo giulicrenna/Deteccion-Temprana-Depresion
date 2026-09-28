@@ -15,17 +15,46 @@ data:
       enabled: false  # cifrado con contraseña (ver src/data/download/download_mentalriskes_github.py)
       url: "https://github.com/sinai-uja/corpusMentalRiskES/raw/main/corpusMentalRiskES.zip"
       license: "Gated — contact authors"
+    # --- Corpus en inglés: se procesan a interim/ con lang=en y se traducen
+    #     con `make translate`. merge_corpora sólo los incluye cuando existe
+    #     interim/<fuente>/data_es.parquet (translate: true).
+    kaggle_sdd:
+      enabled: true
+      translate: true
+      kaggle_slug: "nikhileswarkomati/suicide-watch"
+      license: "Ver ficha Kaggle; datos públicos de Reddit"
+    reddit_mh_posts:
+      enabled: true
+      translate: true
+      hf_id: "solomonk/reddit_mental_health_posts"
+      license: "Sin licencia declarada; datos públicos de Reddit"
+    depression_reddit:
+      enabled: true
+      translate: true
+      hf_id: "mrjunos/depression-reddit-cleaned"
+      license: "CC BY 4.0"
+    swmh:
+      enabled: true  # gated (auto): aceptar términos en HF + huggingface-cli login
+      translate: true
+      hf_id: "AIMH/SWMH"
+      license: "CC BY-NC 4.0"
     redsm5_sample:
-      enabled: true
+      enabled: false  # gated (manual): pedir acceso en HF; loader pendiente de ver el formato
+      translate: true
       hf_id: "irlab-udc/redsm5"
-      config: "redsm5-sample"
-      license: "MIT"
-    emoevales:
+      license: "Apache-2.0"
+    # --- Ya en español ---
+    prevenia_es:
       enabled: true
+      merge: false  # constructo = intención suicida, no depresión; se usa aparte
+      hf_id: "PrevenIA/spanish-suicide-intent"
+      license: "CC BY 4.0"
+    emoevales:
+      enabled: false  # el ID de HF no existe (401); emociones, baja relevancia
       hf_id: "JaviBoyaEmotionAnalyzer/emoevales"
       license: "Research use"
     swmh_es:
-      enabled: true
+      enabled: false  # el ID de HF no existe (401); reemplazado por `swmh` + traducción
       hf_id: "jorgeortizfuentes/swmh_es"
       license: "Mixed (see HF dataset card)"
     synthetic:
