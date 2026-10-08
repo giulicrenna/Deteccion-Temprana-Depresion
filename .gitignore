@@ -63,3 +63,7 @@ CAMBIOS_LOCAL.md
 *.log
 logs/
 *.parquet
+*.pth
+*.pt
+*.safetensors
+*.joblib

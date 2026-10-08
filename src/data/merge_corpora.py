@@ -80,11 +80,24 @@ def main() -> None:
         if meta.get("translate", False):
             p_es = args.interim / src / "data_es.parquet"
             if not p_es.exists():
-                log.warning("%s está en inglés y no tiene %s — saltando (correr `make translate`)",
-                            src, p_es)
-                continue
+                # Fallback: usar el JSONL append-only del traductor (cubre traducciones
+                # parciales si el proceso murió antes de escribir data_es.parquet).
+                tr_dir = args.interim / src / "translations"
+                p_jsonl = next(tr_dir.glob("*.jsonl"), None) if tr_dir.exists() else None
+                if p_jsonl is None:
+                    log.warning("%s está en inglés y no tiene %s — saltando (correr `make translate`)",
+                                src, p_es)
+                    continue
+                log.info("%s sin data_es.parquet, usando cache parcial: %s", src, p_jsonl.name)
+                tr_df = pd.DataFrame([json.loads(line) for line in p_jsonl.read_text(encoding="utf-8").splitlines() if line.strip()])
+                tr_df = tr_df.rename(columns={"translation": "text_es"})
+                if "mt_system" not in tr_df.columns:
+                    tr_df["mt_system"] = ""
+                translated = tr_df[["doc_id", "text_es", "mt_system"]]
+            else:
+                translated = pd.read_parquet(p_es)
             n_before = len(df)
-            df = attach_translation(df, pd.read_parquet(p_es))
+            df = attach_translation(df, translated)
             log.info("%s: %d/%d filas con traducción", src, len(df), n_before)
         else:
             df["text_orig"] = df["text_clean"]

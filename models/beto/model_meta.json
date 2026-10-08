@@ -1,0 +1,23 @@
+{
+  "model_name": "dccuchile/bert-base-spanish-wwm-cased",
+  "label2id": {
+    "0": 0,
+    "2": 1
+  },
+  "id2label": {
+    "0": 0,
+    "1": 2
+  },
+  "max_length": 128,
+  "test_metrics": {
+    "eval_loss": 0.5767449736595154,
+    "eval_accuracy": 0.7551934047447248,
+    "eval_f1_macro": 0.7168936140229227,
+    "eval_f1_weighted": 0.7624922994410467,
+    "eval_kappa": 0.43698622408684284,
+    "eval_runtime": 350.0351,
+    "eval_samples_per_second": 716.634,
+    "eval_steps_per_second": 22.395,
+    "epoch": 3.0
+  }
+}

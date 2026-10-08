@@ -11,8 +11,8 @@ backends:
   opus_mt:
     type: hf
     model: "Helsinki-NLP/opus-mt-en-es"   # Marian 77M, CC-BY 4.0
-    batch_size: 32
-    num_beams: 4
+    batch_size: 16       # bajamos de 32 → 16: en RTX 3060 Ti 8GB los textos largos de kaggle_sdd OOM-eban
+    num_beams: 1         # 4 → 1: num_beams=4 cuadruplica VRAM y baja ~3x throughput sin mejorar traducción EN→ES para este dominio
     max_segment_words: 120
   nllb:
     type: hf

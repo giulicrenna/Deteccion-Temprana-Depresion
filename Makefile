@@ -10,6 +10,7 @@
 ifeq ($(OS),Windows_NT)
     PY ?= python
     VENV_BIN := .venv/Scripts
+    PY_CUDA ?= "C:\Users\giuli\AppData\Local\Programs\Python\Python312\python.exe"
 else
     VENV_BIN := .venv/bin
     ifneq ($(wildcard $(VENV_BIN)/python),)
@@ -17,6 +18,7 @@ else
     else
         PY ?= python3
     endif
+    PY_CUDA ?= python3
 endif
 PIP ?= $(PY) -m pip
 VENV_PY := $(VENV_BIN)/python

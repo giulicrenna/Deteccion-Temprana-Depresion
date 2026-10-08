@@ -132,7 +132,7 @@ Backends (`configs/translation.yaml`):
 
 | Backend | Tipo | Notas |
 |---|---|---|
-| `opus_mt` | local GPU (MarianMT) | rápido (~1,8 posts/s medido en RTX PRO 500), calidad floja con jerga |
+| `opus_mt` | local GPU (MarianMT) | rápido (~4,2 posts/s medido en RTX 3060 Ti 8GB, batch=32, num_beams=4), calidad floja con jerga |
 | `nllb` | local GPU (NLLB-200 600M) | licencia CC-BY-NC |
 | `nvidia` | API NVIDIA NIM (Nemotron) | free tier ~40 RPM; key en `.env` (`NVIDIA_API_KEY`) |
 | `ollama` | LLM local vía Ollama | cualquier servidor OpenAI-compatible sirve (vLLM, OpenRouter...) |
@@ -150,6 +150,51 @@ make translate SOURCE=kaggle_sdd BACKEND=nvidia LIMIT=30000         # muestra es
 - Cada traducción trae `qc_flags` (posible rechazo/nota agregada por el
   LLM, ratio de longitud anómalo, restos de inglés) para revisión manual.
 - Se traduce el texto anonimizado: ningún handle/URL/email sale a la API.
+
+## Pipeline multi-corpus (Etapa 2b)
+
+Pipeline end-to-end para unificar **Coello-Guilarte + 3 corpus en inglés
+traducidos** (`kaggle_sdd`, `reddit_mh_posts`, `depression_reddit`) y
+re-entrenar BETO sobre el corpus multi. **Todos los pasos se ejecutan
+desde notebooks** en `notebooks/06_translate/`:
+
+| # | Notebook | Qué hace | Tiempo |
+|---|---|---|---|
+| 1 | [01_project_user_csvs.ipynb](notebooks/06_translate/01_project_user_csvs.ipynb) | Anonimiza los 3 CSV crudos → `data/interim/<fuente>/data.parquet` | ~2 min |
+| 2 | [02_translate_multi.ipynb](notebooks/06_translate/02_translate_multi.ipynb) | MarianMT EN→ES con GPU, cache append-only | ~7h |
+| 3 | [03_merge_multi.ipynb](notebooks/06_translate/03_merge_multi.ipynb) | Inner-join corpus + traducciones → `corpus_v1.parquet` | ~5 min |
+| 4 | [04_build_splits_multi.ipynb](notebooks/06_translate/04_build_splits_multi.ipynb) | Splits user-level 70/10/20 → `splits_multi/` | ~2 min |
+| 5 | [04_beto/03_finetune_beto_multi.ipynb](notebooks/04_beto/03_finetune_beto_multi.ipynb) | Re-entrena BETO multi (~50 min GPU) + eval batched | ~50 min |
+
+> **Pre-requisito del paso 2**: el notebook usa el Python del sistema
+> con CUDA (`C:\Users\giuli\AppData\Local\Programs\Python\Python312\python.exe`),
+> no el `.venv`.
+
+### Estimaciones de traducción (RTX 3060 Ti 8GB)
+
+Piloto con 200 docs estratificados: **4.20 docs/s**.
+
+- **kaggle_sdd**: 80k docs (default) → ~5h · 232k completos → ~15h
+- **reddit_mh_posts**: 24k (completo, todos label=2) → ~1.6h
+- **depression_reddit**: 7.7k (completo, 50/50) → ~0.5h
+- **Total default**: ~7h para los 3 corpus.
+
+> `reddit_mh_posts` solo aporta positivos (filtrado a `r/depression`
+> puro). Si querés recortar para no desbalancear, agregá `--limit N`
+> en la celda correspondiente de `02_translate_multi.ipynb`.
+
+### Leaderboard final (test)
+
+| Modelo | Feature set | F1-macro | AUC depressive | F1 depressive |
+|---|---|---|---|---|
+| `logreg_full_balanced` | tfidf | ~0,655 | ~0,755 | … |
+| `logreg_downsampled` | tfidf | … | … | … |
+| `logreg_combined` | tfidf+handcrafted | ~0,644 | … | … |
+| `beto` (mono) | beto_transformer | ~0,717 | … | … |
+| `beto_multi` (multi) | beto_transformer_multi | TBD | TBD | TBD |
+
+> Los números del mono ya están en `reports/tables/all_models_metrics.csv`.
+> El multi se appendea al ejecutar `notebooks/04_beto/03_finetune_beto_multi.ipynb`.
 
 ## Ética
 
