@@ -28,15 +28,25 @@ ENV/
 *.pem
 *.key
 
-# --- Data (NO subir texto crudo) ---
-data/raw/*
-!data/raw/.gitkeep
-data/interim/*
-!data/interim/.gitkeep
-data/processed/*
-!data/processed/.gitkeep
-# Excepción: subimos manifiestos y corpus_statistics.json
-!data/processed/splits/
+# --- Data (NO subir datasets ni datos sensibles) ---
+# Excluir TODO dentro de data/ por defecto
+data/**
+
+# Conservar marcadores de carpetas vacías
+!data/**/.gitkeep
+
+# Conservar SOLO los manifiestos de fuentes (metadatos de descarga, sin datos de usuarios)
+# Estos contienen: nombre de fuente, licencia, hash SHA256, URL y fecha de descarga
+!data/raw/coello_guilarte/manifest.json
+!data/raw/depression_reddit/manifest.json
+!data/raw/kaggle_sdd/manifest.json
+!data/raw/prevenia_es/manifest.json
+!data/raw/reddit_mh_posts/manifest.json
+!data/raw/synthetic/manifest.json
+
+# --- Modelos entrenados (NO subir) ---
+models/
+!models/.gitkeep
 
 # --- Notebooks ---
 .ipynb_checkpoints/
@@ -60,10 +70,60 @@ Thumbs.db
 CAMBIOS_LOCAL.md
 
 # --- Logs ---
-*.log
 logs/
 *.parquet
 *.pth
 *.pt
 *.safetensors
 *.joblib
+
+# --- LaTeX: ignorar archivos generados por compilación ---
+# Se conservan: *.tex, *.bib, imágenes (*.png, *.jpg, *.pdf de figuras)
+# Se ignoran: todos los artefactos intermedios y el PDF final del informe
+
+informe/*.aux
+informe/*.bbl
+informe/*.blg
+informe/*.fdb_latexmk
+informe/*.fls
+informe/*.log
+informe/*.out
+informe/*.toc
+informe/*.lof
+informe/*.lot
+informe/*.synctex.gz
+informe/*.synctex(busy)
+informe/*.dvi
+informe/*.pdf
+
+# Si hay subdirectorios dentro de informe/ con más .tex (ej: propuesta_de_tesis)
+informe/**/*.aux
+informe/**/*.bbl
+informe/**/*.blg
+informe/**/*.fdb_latexmk
+informe/**/*.fls
+informe/**/*.log
+informe/**/*.out
+informe/**/*.toc
+informe/**/*.lof
+informe/**/*.lot
+informe/**/*.synctex.gz
+informe/**/*.synctex(busy)
+informe/**/*.dvi
+informe/**/*.pdf
+
+# Excepciones: mantener fuentes e imágenes
+!informe/*.tex
+!informe/*.bib
+!informe/*.png
+!informe/*.jpg
+!informe/*.jpeg
+!informe/*.eps
+!informe/*.svg
+!informe/**/*.tex
+!informe/**/*.bib
+!informe/**/*.png
+!informe/**/*.jpg
+!informe/**/*.jpeg
+!informe/**/*.eps
+!informe/**/*.svg

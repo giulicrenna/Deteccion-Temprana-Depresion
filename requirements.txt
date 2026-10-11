@@ -19,6 +19,7 @@ tqdm==4.66.5
 spacy==3.7.6
 nltk==3.8.1
 transformers==4.44.2
+accelerate>=0.21.0
 sentencepiece==0.2.0
 tokenizers==0.19.1
 

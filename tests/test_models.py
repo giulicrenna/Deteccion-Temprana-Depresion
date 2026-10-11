@@ -179,3 +179,13 @@ def test_beto_text_dataset():
     assert "labels" in item
     assert item["labels"].item() == 0
     assert item["input_ids"].shape == (16,)
+
+
+def test_build_baseline_multi_pipeline():
+    from src.models.train_baseline_multi import build_pipeline
+
+    pipe = build_pipeline(class_weight="balanced")
+    assert "tfidf" in pipe.named_steps
+    assert "clf" in pipe.named_steps
+    assert hasattr(pipe.named_steps["clf"], "predict_proba")
+

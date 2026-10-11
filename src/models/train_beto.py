@@ -242,6 +242,11 @@ def main() -> None:
         help="Ejecuta 1 paso de prueba sobre datos mínimos para validar el pipeline sin GPU.",
     )
     parser.add_argument("--synthetic-dev", action="store_true", help="Usar dataset sintético.")
+    parser.add_argument(
+        "--downsample",
+        action="store_true",
+        help="Aplica downsampling 50/50 de la clase mayoritaria en train (metodología tesina).",
+    )
     parser.add_argument("--seed", type=int, default=42, help="Semilla.")
 
     args = parser.parse_args()
@@ -257,6 +262,18 @@ def main() -> None:
         synthetic_dev=args.synthetic_dev or args.dry_run,
         seed=args.seed,
     )
+
+    if args.downsample and not (args.synthetic_dev or args.dry_run):
+        df_pos = df_train[df_train["label"] == 2]
+        df_neg = df_train[df_train["label"] == 0].sample(n=len(df_pos), random_state=args.seed)
+        df_train = (
+            pd.concat([df_pos, df_neg])
+            .sample(frac=1.0, random_state=args.seed)
+            .reset_index(drop=True)
+        )
+        logger.info(
+            f"Train downsampled 50/50: {len(df_train):,} filas ({len(df_pos):,} por clase)."
+        )
 
     epochs = args.epochs or beto_cfg.get("epochs", 3)
     batch_size = args.batch_size or beto_cfg.get("batch_size", 16)

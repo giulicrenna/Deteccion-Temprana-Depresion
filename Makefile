@@ -4,7 +4,7 @@
 #   - Sin autenticación en ningún script (cero tokens, cero keys).
 #   - Verificá `make help` para ver el catálogo completo.
 
-.PHONY: help setup data download translate-estimate translate-pilot translate eda baseline test coverage lint format clean zip all
+.PHONY: help setup data download translate-estimate translate-pilot translate eda baseline baseline-multi beto-multi eval-beto-multi test coverage lint format clean zip all
 .DEFAULT_GOAL := help
 
 ifeq ($(OS),Windows_NT)
@@ -95,6 +95,15 @@ eda:  ## Ejecutar notebooks 01-04 con papermill (outputs en reports/).
 
 baseline:  ## Entrenar baseline clásico (TF-IDF + LogReg y SVM).
 	@$(PY) -m src.models.train_baseline --config configs/models.yaml --data-dir $(DATA_DIR)/processed/splits --out-dir models --reports-dir reports/tables
+
+baseline-multi:  ## Entrenar y evaluar baselines sobre el corpus multi-fuente (splits_multi).
+	@$(PY) -m src.models.train_baseline_multi --data-dir $(DATA_DIR)/processed/splits_multi
+
+beto-multi:  ## Fine-tuning de BETO sobre corpus multi-fuente con GPU (downsampled 50/50).
+	@$(PY) -m src.models.train_beto --data-dir $(DATA_DIR)/processed/splits_multi --output-dir models/beto_multi --downsample
+
+eval-beto-multi:  ## Evaluar BETO multi post-hoc en batches sobre val y test.
+	@$(PY) -m src.models.evaluate_beto_multi
 
 coverage:  ## Correr pytest con reporte de cobertura sobre src/models y src/evaluation.
 	@$(PY) -m pytest tests/ --cov=src/models --cov=src/evaluation --cov-report=term-missing -v
