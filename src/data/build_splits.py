@@ -87,7 +87,13 @@ def main() -> None:
     df = pd.read_parquet(corpus_path)
     log.info("corpus: %d filas, %d usuarios", len(df), df["user_id"].nunique())
 
-    user_assignment = assign_users(df, train_p, val_p, test_p, args.seed)
+    # Partición independiente por fuente: cada corpus queda 70/10/20 con sus
+    # clases, y la asignación de una fuente no depende de las demás.
+    user_assignment: dict[str, str] = {}
+    group_col = "corpus_source" if "corpus_source" in df.columns else None
+    groups = df.groupby(group_col) if group_col else [(None, df)]
+    for _, sub in groups:
+        user_assignment.update(assign_users(sub, train_p, val_p, test_p, args.seed))
     df["split"] = df["user_id"].map(user_assignment)
     assert df["split"].notna().all(), "quedaron usuarios sin split"
 
@@ -102,6 +108,8 @@ def main() -> None:
             "n_users": int(sub["user_id"].nunique()),
             "by_label": sub["label"].value_counts().to_dict(),
         }
+        if group_col:
+            manifest[split]["by_corpus_source"] = sub[group_col].value_counts().to_dict()
         log.info("→ %s : %d filas, %d usuarios", out_path, len(sub), sub["user_id"].nunique())
 
     (args.out / "split_manifest.json").write_text(

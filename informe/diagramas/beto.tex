@@ -1,0 +1,17 @@
+% Arquitectura del ajuste fino de BETO para clasificación binaria.
+\begin{tikzpicture}[font=\footnotesize, node distance=0.55cm]
+    \node[proceso=2.6cm, fill=ugrGris!8, draw=ugrGris] (tx) {\textbf{Texto}\\ \emph{``no me}\\ \emph{siento bien''}};
+    \node[proceso=2.6cm, right=of tx] (tok) {\textbf{Tokenización}\\ WordPiece\\ \texttt{[CLS]} \dots{} \texttt{[SEP]}\\ máx.\ 128 tokens};
+    \node[proceso=2.9cm, right=of tok, minimum height=2.6cm, fill=ugrAzul!10, line width=0.9pt] (enc)
+        {\textbf{BETO}\\ codificador Transformer\\ 12 capas \texttimes{} 12 cabezas\\ $d = 768$\\ {\color{ugrGris}\scriptsize preentrenado, se ajusta}};
+    \node[proceso=2.2cm, right=of enc] (cls) {\textbf{Vector}\\ $h_{\texttt{[CLS]}} \in \mathbb{R}^{768}$};
+    \node[proceso=2.2cm, right=of cls, draw=ugrNaranja, fill=ugrNaranja!8] (lin) {\textbf{Capa lineal}\\ $768 \to 2$\\ + softmax};
+    \node[resultado=2.9cm, below=0.7cm of lin] (out) {$P(\text{depresivo}\mid x)$};
+
+    \draw[flecha] (tx) -- (tok);
+    \draw[flecha] (tok) -- (enc);
+    \draw[flecha] (enc) -- (cls);
+    \draw[flecha] (cls) -- (lin);
+    \draw[flecha] (lin) -- (out);
+    \node[below=0.15cm of enc, font=\scriptsize, text=ugrGris, align=center] {AdamW, $\eta = 2\times10^{-5}$, lote 16, FP16};
+\end{tikzpicture}

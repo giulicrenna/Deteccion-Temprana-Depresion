@@ -1,0 +1,27 @@
+% Diseño 2x2 (datos de entrenamiento x modelo) evaluado sobre dos dominios de prueba.
+\begin{tikzpicture}[font=\footnotesize]
+    % Encabezados
+    \node[font=\footnotesize\bfseries, text=ugrAzul] at (-0.6, 1.25) {Datos de entrenamiento};
+    \node[font=\footnotesize\bfseries, text=ugrAzul] at (3.0, 1.25) {TF-IDF + LR};
+    \node[font=\footnotesize\bfseries, text=ugrAzul] at (6.0, 1.25) {BETO};
+
+    \node[nodoES, text width=3.3cm] (dmono) at (-0.6, 0.35) {\textbf{Mono}\\ solo tweets nativos};
+    \node[nodoEN, text width=3.3cm] (dmulti) at (-0.6, -1.15) {\textbf{Multi}\\ tweets nativos +\\ Reddit traducido};
+
+    \node[proceso=2.4cm] (lrm)  at (3.0,  0.35) {LR mono};
+    \node[proceso=2.4cm] (btm)  at (6.0,  0.35) {BETO mono};
+    \node[proceso=2.4cm] (lrx)  at (3.0, -1.15) {LR multi};
+    \node[proceso=2.4cm] (btx)  at (6.0, -1.15) {BETO multi};
+    \draw[flecha] (dmono) -- (lrm);
+    \draw[flecha] (dmulti) -- (lrx);
+
+    \begin{scope}[on background layer]
+        \node[draw=ugrAzul!45, dashed, rounded corners=4pt, fill=ugrAzul!3, inner sep=7pt, fit=(lrm)(btm)(lrx)(btx)] (grp) {};
+    \end{scope}
+
+    % Conjuntos de prueba
+    \node[resultado=4.4cm] (tn) at (11.4, 0.35) {\textbf{Test nativo común}\\ 250\,847 tweets \textperiodcentered{} 64 usuarios};
+    \node[resultado=4.4cm, draw=ugrNaranja, fill=ugrNaranja!8] (tt) at (11.4, -1.15) {\textbf{Test traducido}\\ 52\,757 textos de Reddit};
+    \draw[flecha] (grp.east |- tn) -- (tn) node[midway, above, font=\scriptsize, text=ugrGris] {todos};
+    \draw[flecha] (grp.east |- tt) -- (tt) node[midway, below, font=\scriptsize, text=ugrGris] {todos};
+\end{tikzpicture}

@@ -1,0 +1,32 @@
+% Partición independiente por fuente: cada corpus se divide 70/10/20 por usuario.
+\begin{tikzpicture}[font=\footnotesize, x=1cm, y=1cm]
+    % Leyenda
+    \node[anchor=west] at (0, 1.3) {%
+        \tikz\fill[ugrAzul] (0,0) rectangle (0.3,0.3); Entrenamiento (70\,\%)\qquad
+        \tikz\fill[ugrCeleste] (0,0) rectangle (0.3,0.3); Validación (10\,\%)\qquad
+        \tikz\fill[ugrNaranja] (0,0) rectangle (0.3,0.3); Prueba (20\,\%)};
+
+    % Barras por fuente
+    \foreach \y/\nombre/\info in {
+        0/Coello-Guilarte/317 usuarios,
+        -1.05/Kaggle SDD/232\,067 usuarios sintéticos,
+        -2.1/Reddit MH Posts/20\,242 usuarios,
+        -3.15/Depression Reddit/7\,731 usuarios sintéticos} {
+        \node[anchor=east, align=right] at (-0.25, \y) {\textbf{\nombre}\\[-1pt] {\color{ugrGris}\info}};
+        \fill[ugrAzul]    (0, \y - 0.32) rectangle (7, \y + 0.32);
+        \fill[ugrCeleste] (7, \y - 0.32) rectangle (8, \y + 0.32);
+        \fill[ugrNaranja] (8, \y - 0.32) rectangle (10, \y + 0.32);
+        \draw[white, line width=1.4pt] (7, \y - 0.32) -- (7, \y + 0.32) (8, \y - 0.32) -- (8, \y + 0.32);
+        \node[text=white, font=\scriptsize\bfseries] at (3.5, \y) {usuarios completos, estratificados por clase};
+    }
+
+    % Test nativo común
+    \draw[ugrRojo, line width=1.1pt, dashed, rounded corners=2pt] (7.92, -0.42) rectangle (10.08, 0.42);
+    \node[ugrRojo, anchor=south, font=\scriptsize\bfseries] at (9.0, 0.44) {test nativo común};
+
+    % Llaves
+    \draw[decorate, decoration={brace, amplitude=5pt}, line width=0.8pt, ugrAzul] (10.35, 0.36) -- (10.35, -0.36)
+        node[midway, right=7pt, text=ugrAzul] {\textbf{splits mono}};
+    \draw[decorate, decoration={brace, amplitude=7pt}, line width=0.8pt, ugrNaranja!90!black] (12.75, 0.42) -- (12.75, -3.5)
+        node[midway, right=9pt, align=left, text=ugrNaranja!90!black] {\textbf{splits multi}\\ unión de las\\ cuatro fuentes};
+\end{tikzpicture}

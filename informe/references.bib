@@ -1,233 +1,407 @@
 % =====================================================================
-%  references.bib — Bibliografía del Proyecto de Trabajo Final
-%  "Detección temprana de depresión mediante lenguaje"
-%  Crenna, G. & Pace, B. — Universidad de Granada
+%  references.bib — Bibliografía de la tesis de grado
+%  "Detección temprana de depresión mediante procesamiento de lenguaje
+%   natural y aprendizaje automático"
+%  Crenna, G. & Pace, B. — Universidad del Gran Rosario
+%  Entradas verificadas contra la fuente original (octubre de 2026).
 % =====================================================================
 
-@article{nature2026review,
-    author  = {Le Glaz, Azé and et al.},
-    title   = {Language-based detection of depression with machine learning: systematic review and meta-analysis},
-    journal = {npj Digital Medicine},
-    volume  = {9},
-    pages   = {1--15},
-    year    = {2026},
-    doi     = {10.1038/s41746-026-02448-1},
-    url     = {https://www.nature.com/articles/s41746-026-02448-1}
-}
-
-@article{who2025depression,
-    author  = {{World Health Organization}},
-    title   = {Depressive disorder (depression) -- Fact sheet},
-    year    = {2025},
-    url     = {https://www.who.int/news-room/fact-sheets/detail/depression},
-    note    = {Accessed: 2025-08-25}
+% ---------------------------------------------------------------------
+% Epidemiología y clínica
+% ---------------------------------------------------------------------
+@misc{who2026depression,
+    author       = {{World Health Organization}},
+    title        = {Depressive disorder (depression) -- Fact sheet},
+    year         = {2026},
+    howpublished = {\url{https://www.who.int/news-room/fact-sheets/detail/depression}},
+    note         = {Actualizado el 11 de septiembre de 2026. Consultado el 14 de octubre de 2026}
 }
 
 @techreport{who2025mentalhealth,
     author      = {{World Health Organization}},
     title       = {World mental health today: latest data},
     institution = {World Health Organization},
+    address     = {Geneva},
     year        = {2025},
-    url         = {https://iris.who.int/server/api/core/bitstreams/31714489-1345-4439-8b37-6cbdc52e15ca/content}
+    note        = {ISBN 978-92-4-011381-7},
+    url         = {https://www.who.int/publications/i/item/9789240113817}
 }
 
-@article{pmc11574504,
-    author  = {Calvo, R. A. and et al.},
-    title   = {Screening for Depression Using Natural Language Processing: A Systematic Review},
-    journal = {Journal of Medical Internet Research},
-    year    = {2024},
-    url     = {https://pmc.ncbi.nlm.nih.gov/articles/PMC11574504/}
+@book{apa2013dsm5,
+    author    = {{American Psychiatric Association}},
+    title     = {Diagnostic and Statistical Manual of Mental Disorders (DSM-5)},
+    edition   = {5},
+    publisher = {American Psychiatric Publishing},
+    address   = {Arlington, VA},
+    year      = {2013}
 }
 
-@article{pmc8993841,
-    author  = {Le Glaz, A. and et al.},
+@article{kroenke2001phq9,
+    author  = {Kroenke, K. and Spitzer, R. L. and Williams, J. B. W.},
+    title   = {The {PHQ-9}: Validity of a Brief Depression Severity Measure},
+    journal = {Journal of General Internal Medicine},
+    volume  = {16},
+    number  = {9},
+    pages   = {606--613},
+    year    = {2001}
+}
+
+% ---------------------------------------------------------------------
+% Psicolingüística
+% ---------------------------------------------------------------------
+@book{pennebaker2001liwc,
+    author    = {Pennebaker, J. W. and Francis, M. E. and Booth, R. J.},
+    title     = {Linguistic Inquiry and Word Count: {LIWC} 2001},
+    publisher = {Lawrence Erlbaum Associates},
+    address   = {Mahwah, NJ},
+    year      = {2001}
+}
+
+@article{rude2004language,
+    author  = {Rude, S. S. and Gortner, E.-M. and Pennebaker, J. W.},
+    title   = {Language use of depressed and depression-vulnerable college students},
+    journal = {Cognition \& Emotion},
+    volume  = {18},
+    number  = {8},
+    pages   = {1121--1133},
+    year    = {2004}
+}
+
+@article{almosaiwi2018absolutist,
+    author  = {Al-Mosaiwi, M. and Johnstone, T.},
+    title   = {In an Absolute State: Elevated Use of Absolutist Words Is a Marker Specific to Anxiety, Depression, and Suicidal Ideation},
+    journal = {Clinical Psychological Science},
+    volume  = {6},
+    number  = {4},
+    pages   = {529--542},
+    year    = {2018},
+    doi     = {10.1177/2167702617747074}
+}
+
+% ---------------------------------------------------------------------
+% Revisiones sobre PLN y salud mental
+% ---------------------------------------------------------------------
+@misc{fisher2025metaanalisis,
+    author       = {Fisher, H. and Jaffe, N. M. and Pidvirny, K. and Tierney, A. O. and Vaidean, M. S. and Dongre, P. and Webb, C. A.},
+    title        = {Language-Based Detection of Depression with Machine Learning: Systematic Review and Meta-Analysis},
+    howpublished = {Research Square, preprint},
+    year         = {2025},
+    doi          = {10.21203/rs.3.rs-8067325/v1}
+}
+
+@article{zhang2022nlp,
+    author  = {Zhang, T. and Schoene, A. M. and Ji, S. and Ananiadou, S.},
     title   = {Natural language processing applied to mental illness detection: a narrative review},
     journal = {npj Digital Medicine},
     volume  = {5},
-    number  = {1},
-    pages   = {86},
+    pages   = {46},
     year    = {2022},
-    url     = {https://pmc.ncbi.nlm.nih.gov/articles/PMC8993841/}
+    doi     = {10.1038/s41746-022-00589-7}
 }
 
-@article{jmir2019spanish,
-    author  = {Leis, A. and Ronzano, F. and Saggion, H. and Furlong, L. I. and Sanz, F.},
-    title   = {Detecting Signs of Depression in Tweets in Spanish: Behavioral and Linguistic Analysis},
+@article{aleman2024pln,
+    author  = {Alem{\'a}n Acu{\~n}a, R. S. and Pereira Montiel, E. and Torres Silva, E. A. and Montoya Arenas, D. A.},
+    title   = {Procesamiento de lenguaje natural en la Salud Mental: Revisi{\'o}n de alcance},
+    journal = {Revista Iberoamericana de Psicolog{\'i}a},
+    volume  = {17},
+    number  = {2},
+    pages   = {11--22},
+    year    = {2024},
+    doi     = {10.33881/2027-1786.rip.17202}
+}
+
+@article{mieles2024revision,
+    author  = {Mieles Toloza, I. and Delgado Meza, J. and Acevedo, J.},
+    title   = {An{\'a}lisis del Lenguaje Natural para la Identificaci{\'o}n de Alteraciones Mentales en Redes Sociales: Una Revisi{\'o}n Sistem{\'a}tica de Estudios},
+    journal = {Revista Polit{\'e}cnica},
+    volume  = {53},
+    number  = {1},
+    year    = {2024},
+    doi     = {10.33333/rp.vol53n1.06}
+}
+
+@article{mao2025transformer,
+    author  = {Mao, H. and Han, Q.},
+    title   = {Applications of Transformer-Based Language Models for Depression Detection: A Scoping Review},
+    journal = {Journal of Integrated Social Sciences and Humanities},
+    volume  = {2},
+    number  = {1},
+    year    = {2025},
+    doi     = {10.62836/jissh.v2i1.437}
+}
+
+@inproceedings{bucur2025datasets,
+    author    = {Bucur, A.-M. and Moldovan, A. and Parvatikar, K. and Zampieri, M. and KhudaBukhsh, A. R. and Dinu, L. P.},
+    title     = {Datasets for Depression Modeling in Social Media: An Overview},
+    booktitle = {Proceedings of the 10th Workshop on Computational Linguistics and Clinical Psychology (CLPsych 2025)},
+    pages     = {116--126},
+    year      = {2025},
+    url       = {https://aclanthology.org/2025.clpsych-1.10}
+}
+
+@mastersthesis{yanez2023upm,
+    author = {Y{\'a}nez Soffia, M. A.},
+    title  = {An{\'a}lisis sobre modelos predictores de depresi{\'o}n mediante la interpretaci{\'o}n de lenguaje natural a partir de textos usando machine learning},
+    school = {E.T.S. de Ingenieros Inform{\'a}ticos, Universidad Polit{\'e}cnica de Madrid},
+    type   = {Trabajo Fin de Grado},
+    year   = {2023},
+    url    = {https://oa.upm.es/75140/}
+}
+
+% ---------------------------------------------------------------------
+% Detección de depresión: trabajos y corpus
+% ---------------------------------------------------------------------
+@article{leis2019detecting,
+    author  = {Leis, A. and Ronzano, F. and Mayer, M. A. and Furlong, L. I. and Sanz, F.},
+    title   = {Detecting Signs of Depression in Tweets in {Spanish}: Behavioral and Linguistic Analysis},
     journal = {Journal of Medical Internet Research},
     volume  = {21},
     number  = {6},
     pages   = {e14199},
     year    = {2019},
-    doi     = {10.2196/14199},
-    url     = {https://www.jmir.org/2019/6/e14199/}
+    doi     = {10.2196/14199}
 }
 
-@phdthesis{leis2019tesis,
-    author      = {Leis, A.},
-    title       = {Detection of signs of depression in tweets in Spanish},
-    school      = {Universitat Pompeu Fabra},
-    year        = {2019},
-    url         = {https://www.tdx.cat/bitstream/10803/671365/1/talm.pdf}
+@phdthesis{leis2021tesis,
+    author = {Leis Mach{\'i}n, A.},
+    title  = {Studying depression through big data analytics on {Twitter}},
+    school = {Universitat Pompeu Fabra},
+    year   = {2021},
+    url    = {http://hdl.handle.net/10803/671365}
 }
 
-@inproceedings{aclanthology2024mentalriskes,
-    author    = {M{\'a}rmol-Romero, A. M. and Moreno-Mu{\~n}oz, A. and {\'A}lvez, J. H. and Tom{\'a}s, D. and Garc{\'i}a-Vega, M. and Garc{\'i}a-Cumbreras, M. {\'A}. and Montejo-R{\'a}ez, A. and Ure{\~n}a-L{\'o}pez, L. A. and Mart{\'i}n-Valdivia, M. T.},
-    title     = {MentalRiskES: A New Corpus for Early Detection of Mental Disorders in Spanish},
+@inproceedings{coello2019,
+    author    = {Coello-Guilarte, L. and Ortega-Mendoza, R. M. and Villase{\~n}or-Pineda, L. and Montes-y-G{\'o}mez, M.},
+    title     = {Crosslingual Depression Detection in {Twitter} Using Bilingual Word Alignments},
+    booktitle = {Experimental IR Meets Multilinguality, Multimodality, and Interaction. CLEF 2019},
+    series    = {Lecture Notes in Computer Science},
+    volume    = {11696},
+    publisher = {Springer},
+    year      = {2019},
+    doi       = {10.1007/978-3-030-28577-7_2}
+}
+
+@inproceedings{marmol2024mentalriskes,
+    author    = {M{\'a}rmol-Romero, A. M. and Moreno-Mu{\~n}oz, A. and Plaza-del-Arco, F. M. and Molina-Gonz{\'a}lez, M. D. and Montejo-R{\'a}ez, A.},
+    title     = {{MentalRiskES}: A New Corpus for Early Detection of Mental Disorders in {Spanish}},
     booktitle = {Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024)},
+    pages     = {11204--11214},
+    address   = {Torino, Italia},
+    publisher = {ELRA and ICCL},
     year      = {2024},
-    pages     = {10104--10115},
-    url       = {https://aclanthology.org/2024.lrec-main.978.pdf}
+    url       = {https://aclanthology.org/2024.lrec-main.978}
+}
+
+@article{marmol2023overview,
+    author  = {M{\'a}rmol-Romero, A. M. and Moreno-Mu{\~n}oz, A. and Plaza-del-Arco, F. M. and Molina-Gonz{\'a}lez, M. D. and Mart{\'i}n-Valdivia, M. T. and Ure{\~n}a-L{\'o}pez, L. A. and Montejo-R{\'a}ez, A.},
+    title   = {Overview of {MentalRiskES} at {IberLEF} 2023: Early Detection of Mental Disorders Risk in {Spanish}},
+    journal = {Procesamiento del Lenguaje Natural},
+    volume  = {71},
+    pages   = {329--350},
+    year    = {2023}
 }
 
 @inproceedings{losada2017erisk,
     author    = {Losada, D. E. and Crestani, F. and Parapar, J.},
-    title     = {eRisk 2017: CLEF Lab on Early Risk Prediction on the Internet: Experimental Foundations},
-    booktitle = {Experimental IR Meets Multilinguality, Multimodality, and Interaction -- 8th International Conference of the CLEF Association, CLEF 2017},
+    title     = {{eRISK} 2017: {CLEF} Lab on Early Risk Prediction on the Internet: Experimental Foundations},
+    booktitle = {Experimental IR Meets Multilinguality, Multimodality, and Interaction. CLEF 2017},
+    series    = {Lecture Notes in Computer Science},
+    volume    = {10456},
+    pages     = {346--360},
+    publisher = {Springer},
     year      = {2017},
-    url       = {https://erisk.irlab.org/2017/index.html}
+    doi       = {10.1007/978-3-319-65813-1_30}
 }
 
-@inproceedings{aisel2023mentalbert,
-    author    = {Ji, S. and Li, X. and Sun, L. and Wang, H. and Peng, W. and McMann, T. and Scalzo, F.},
-    title     = {Early Depression Detection with Transformer Models: MentalBERT and RoBERTa},
-    booktitle = {Proceedings of the 56th Hawaii International Conference on System Sciences (HICSS)},
+@inproceedings{gratch2014daic,
+    author    = {Gratch, J. and Artstein, R. and Lucas, G. and Stratou, G. and Scherer, S. and Nazarian, A. and Wood, R. and Boberg, J. and DeVault, D. and Marsella, S. and Traum, D. and Rizzo, S. and Morency, L.-P.},
+    title     = {The Distress Analysis Interview Corpus of human and computer interviews},
+    booktitle = {Proceedings of the Ninth International Conference on Language Resources and Evaluation (LREC'14)},
+    pages     = {3123--3128},
+    address   = {Reykjavik, Iceland},
+    publisher = {ELRA},
+    year      = {2014},
+    url       = {https://aclanthology.org/L14-1421}
+}
+
+@inproceedings{yates2017rsdd,
+    author    = {Yates, A. and Cohan, A. and Goharian, N.},
+    title     = {Depression and Self-Harm Risk Assessment in Online Forums},
+    booktitle = {Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+    pages     = {2968--2978},
+    year      = {2017}
+}
+
+@inproceedings{ji2022mentalbert,
+    author    = {Ji, S. and Zhang, T. and Ansari, L. and Fu, J. and Tiwari, P. and Cambria, E.},
+    title     = {{MentalBERT}: Publicly Available Pretrained Language Models for Mental Healthcare},
+    booktitle = {Proceedings of the Thirteenth Language Resources and Evaluation Conference (LREC 2022)},
+    pages     = {7184--7190},
+    address   = {Marseille, France},
+    publisher = {ELRA},
+    year      = {2022},
+    url       = {https://aclanthology.org/2022.lrec-1.778}
+}
+
+@inproceedings{halimeh2023transformers,
+    author    = {Halimeh, H. and Caron, M. and M{\"u}ller, O.},
+    title     = {Early Depression Detection with Transformer Models: Analyzing the Relationship between Linguistic and Psychology-Based Features},
+    booktitle = {Proceedings of the 56th Hawaii International Conference on System Sciences (HICSS-56)},
     year      = {2023},
-    pages     = {3379--3388},
-    url       = {https://aisel.aisnet.org/cgi/viewcontent.cgi?article=1540&context=hicss-56}
+    doi       = {10.24251/HICSS.2023.415}
+}
+
+@article{wan2025depression,
+    author  = {Wan, Q. and Pan, Y. and Zakeri, S.},
+    title   = {Analyzing Depression in College Students Using {NLP} and Transformer Models: Implications for Career and Educational Counseling},
+    journal = {Brain and Behavior},
+    volume  = {15},
+    number  = {9},
+    pages   = {e70828},
+    year    = {2025},
+    doi     = {10.1002/brb3.70828}
+}
+
+@inproceedings{harrigian2020generalize,
+    author    = {Harrigian, K. and Aguirre, C. and Dredze, M.},
+    title     = {Do Models of Mental Health Based on Social Media Data Generalize?},
+    booktitle = {Findings of the Association for Computational Linguistics: EMNLP 2020},
+    pages     = {3774--3788},
+    year      = {2020}
+}
+
+% ---------------------------------------------------------------------
+% Conjuntos de datos utilizados
+% ---------------------------------------------------------------------
+@misc{komati2021sdd,
+    author       = {Komati, N.},
+    title        = {Suicide and Depression Detection},
+    howpublished = {Kaggle Datasets},
+    year         = {2021},
+    url          = {https://www.kaggle.com/datasets/nikhileswarkomati/suicide-watch}
+}
+
+@misc{solomonk_rmhp,
+    author       = {{solomonk}},
+    title        = {Reddit Mental Health Posts},
+    howpublished = {Hugging Face Datasets},
+    year         = {2022},
+    url          = {https://huggingface.co/datasets/solomonk/reddit_mental_health_posts}
+}
+
+@misc{mrjunos_drc,
+    author       = {{mrjunos}},
+    title        = {Depression: Reddit Dataset (Cleaned)},
+    howpublished = {Hugging Face Datasets, licencia CC BY 4.0},
+    year         = {2023},
+    url          = {https://huggingface.co/datasets/mrjunos/depression-reddit-cleaned}
+}
+
+% ---------------------------------------------------------------------
+% Modelos, métodos y software
+% ---------------------------------------------------------------------
+@inproceedings{vaswani2017attention,
+    author    = {Vaswani, A. and Shazeer, N. and Parmar, N. and Uszkoreit, J. and Jones, L. and Gomez, A. N. and Kaiser, {\L}. and Polosukhin, I.},
+    title     = {Attention Is All You Need},
+    booktitle = {Advances in Neural Information Processing Systems 30 (NeurIPS 2017)},
+    pages     = {5998--6008},
+    year      = {2017}
+}
+
+@inproceedings{devlin2019bert,
+    author    = {Devlin, J. and Chang, M.-W. and Lee, K. and Toutanova, K.},
+    title     = {{BERT}: Pre-training of Deep Bidirectional Transformers for Language Understanding},
+    booktitle = {Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL-HLT)},
+    pages     = {4171--4186},
+    year      = {2019}
+}
+
+@inproceedings{canete2020beto,
+    author    = {Ca{\~n}ete, J. and Chaperon, G. and Fuentes, R. and Ho, J.-H. and Kang, H. and P{\'e}rez, J.},
+    title     = {Spanish Pre-Trained {BERT} Model and Evaluation Data},
+    booktitle = {PML4DC Workshop at ICLR 2020},
+    year      = {2020}
 }
 
 @misc{betohf,
-    author       = {C{\'a}ceres, J. P. and et al.},
-    title        = {BETO: The Pre-trained BERT Model for Spanish (dccuchile/bert-base-spanish-wwm-uncased / -cased)},
+    author       = {{Departamento de Ciencias de la Computaci{\'o}n, Universidad de Chile}},
+    title        = {{BETO}: Spanish {BERT} (\texttt{dccuchile/bert-base-spanish-wwm-cased})},
     howpublished = {Hugging Face Model Hub},
     year         = {2020},
-    note         = {DCC Universidad de Chile},
     url          = {https://huggingface.co/dccuchile/bert-base-spanish-wwm-cased}
 }
 
-@article{frontiers2025xai,
-    author  = {Ahmad, S. and et al.},
-    title   = {Explainable AI-driven depression detection from social media using NLP and machine learning},
-    journal = {Frontiers in Artificial Intelligence},
-    volume  = {8},
-    year    = {2025},
-    doi     = {10.3389/frai.2025.1627078},
-    url     = {https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2025.1627078/full}
-}
-
-@mastersthesis{yanez2023upm,
-    author      = {Y{\'a}nez Soffia, M. A.},
-    title       = {An{\'a}lisis sobre modelos predictores de depresi{\'o}n mediante la interpretaci{\'o}n de lenguaje natural a partir de textos usando machine learning},
-    school      = {E.T.S. de Ingenieros Inform{\'a}ticos, Universidad Polit{\'e}cnica de Madrid},
-    year        = {2023},
-    url         = {https://oa.upm.es/75140/}
-}
-
-@techreport{daicwoz2014,
-    author      = {Gratch, J. and Artstein, R. and Lucas, G. and Stratou, G. and Scherer, S. and Nazarian, A. and Wood, R. and Boberg, J. and DeVault, D. and Marsella, S. and Traum, D. and Rizzo, S. and Morency, L.-P.},
-    title       = {The Distress Analysis Interview Corpus of human and computer interviews},
-    institution = {University of Southern California, Institute for Creative Technologies},
-    year        = {2014},
-    url         = {https://dcapswoz.ict.usc.edu/}
-}
-
-@article{reviberopsicologia2024,
-    author  = {Alem{\'a}n Acu{\~n}a, R. S. and Pereira Montiel, E. and Torres Silva, E. A. and Montoya Arenas, D. A.},
-    title   = {Uso del Procesamiento de Lenguaje Natural en la Salud Mental: Revisi{\'o}n de alcance},
-    journal = {Revista Iberoamericana de Psicolog{\'i}a},
-    year    = {2024},
-    url     = {https://reviberopsicologia.ibro.edu.co/article/view/2731}
-}
-
-@article{dialnet2024,
-    author  = {V{\'a}squez, A. and et al.},
-    title   = {An{\'a}lisis del Lenguaje Natural para la Identificaci{\'o}n de Alteraciones Mentales en Redes Sociales: Una Revisi{\'o}n Sistem{\'a}tica de Estudios},
-    journal = {Revista de Investigaci{\'o}n en Tecnolog{\'i}as de la Informaci{\'o}n},
-    year    = {2024},
-    url     = {https://dialnet.unirioja.es/servlet/articulo?codigo=9617523}
-}
-
-@misc{bucuram2025datasets,
-    author       = {Bucuram, S.},
-    title        = {Datasets for Depression Modeling in Social Media: An Overview},
-    howpublished = {arXiv preprint arXiv:2503.21513},
-    year         = {2025},
-    url          = {https://arxiv.org/html/2503.21513v1},
-    note         = {Repositorio: https://github.com/bucuram/depression-datasets-nlp}
-}
-
-@article{pmc12417627,
-    author  = {Amanat, A. and et al.},
-    title   = {Analyzing Depression in College Students Using NLP and a Hybrid RoBERTa--GRU Framework},
-    journal = {Journal of Healthcare Engineering},
-    year    = {2025},
-    url     = {https://pmc.ncbi.nlm.nih.gov/articles/PMC12417627/}
-}
-
-@article{saeedi2024transformer,
-    author  = {Saeedi, M. and et al.},
-    title   = {Applications of Transformer-Based Language Models for Depression Detection: A Scoping Review},
-    journal = {Journal of Information Security and Safety},
-    year    = {2024},
-    url     = {https://ojs.sgsci.org/journals/jissh/article/download/437/319/1903}
-}
-
-@misc{romero2023mentalriskes,
-    author       = {M{\'a}rmol-Romero, A. M. and et al.},
-    title        = {Overview of MentalRiskES at IberLEF 2023: Early Detection of Mental Disorders Risk in Spanish},
-    howpublished = {Procesamiento del Lenguaje Natural, 71},
-    year         = {2023},
-    url          = {https://rua.ua.es/dspace/bitstream/10045/137191/1/PLN_71_26.pdf}
-}
-
-@inproceedings{coello2019,
-    author    = {Coello-Guilarte, K. and et al.},
-    title     = {Detecting Signs of Depression in Mexican Twitter Users},
-    booktitle = {Proceedings of the Mexican Conference on Pattern Recognition (MCPR)},
-    year      = {2019},
-    pages     = {275--285},
-    publisher = {Springer}
+@inproceedings{junczys2018marian,
+    author    = {Junczys-Dowmunt, M. and Grundkiewicz, R. and Dwojak, T. and Hoang, H. and Heafield, K. and Neckermann, T. and Seide, F. and Germann, U. and Aji, A. F. and Bogoychev, N. and Martins, A. F. T. and Birch, A.},
+    title     = {Marian: Fast Neural Machine Translation in {C++}},
+    booktitle = {Proceedings of ACL 2018, System Demonstrations},
+    pages     = {116--121},
+    year      = {2018}
 }
 
 @inproceedings{tiedemann2020opus,
     author    = {Tiedemann, J. and Thottingal, S.},
-    title     = {OPUS-MT -- Building open translation services for the World},
-    booktitle = {Proceedings of the 22nd Annual Conference of the European Association for Machine Translation},
-    year      = {2020},
-    pages     = {479--480}
+    title     = {{OPUS-MT} -- Building open translation services for the World},
+    booktitle = {Proceedings of the 22nd Annual Conference of the European Association for Machine Translation (EAMT)},
+    pages     = {479--480},
+    year      = {2020}
+}
+
+@inproceedings{wolf2020transformers,
+    author    = {Wolf, T. and Debut, L. and Sanh, V. and Chaumond, J. and Delangue, C. and Moi, A. and others},
+    title     = {Transformers: State-of-the-Art Natural Language Processing},
+    booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations},
+    pages     = {38--45},
+    year      = {2020}
 }
 
 @article{pedregosa2011scikit,
-    author  = {Pedregosa, F. and et al.},
-    title   = {Scikit-learn: Machine Learning in Python},
+    author  = {Pedregosa, F. and Varoquaux, G. and Gramfort, A. and Michel, V. and Thirion, B. and Grisel, O. and others},
+    title   = {Scikit-learn: Machine Learning in {Python}},
     journal = {Journal of Machine Learning Research},
     volume  = {12},
     pages   = {2825--2830},
     year    = {2011}
 }
 
-@inproceedings{wolf2020transformers,
-    author    = {Wolf, T. and et al.},
-    title     = {Transformers: State-of-the-Art Natural Language Processing},
-    booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing: System Demonstrations},
-    year      = {2020},
-    pages     = {38--45}
+@inproceedings{hutto2014vader,
+    author    = {Hutto, C. J. and Gilbert, E.},
+    title     = {{VADER}: A Parsimonious Rule-based Model for Sentiment Analysis of Social Media Text},
+    booktitle = {Proceedings of the 8th International AAAI Conference on Weblogs and Social Media (ICWSM)},
+    year      = {2014}
 }
 
-@book{pennebaker2001liwc,
-    author    = {Pennebaker, J. W. and Francis, M. E. and Booth, R. J.},
-    title     = {Linguistic Inquiry and Word Count: LIWC 2001},
-    publisher = {Lawrence Erlbaum Associates},
-    year      = {2001}
+@inproceedings{lundberg2017shap,
+    author    = {Lundberg, S. M. and Lee, S.-I.},
+    title     = {A Unified Approach to Interpreting Model Predictions},
+    booktitle = {Advances in Neural Information Processing Systems 30 (NeurIPS 2017)},
+    pages     = {4765--4774},
+    year      = {2017}
 }
 
-@article{rude2004language,
-    author  = {Rude, S. and Gortner, E.-M. and Pennebaker, J.},
-    title   = {Language use of currently and formerly depressed college students},
-    journal = {Cognition \& Emotion},
-    volume  = {18},
-    number  = {6},
-    pages   = {821--833},
-    year    = {2004}
+@inproceedings{ribeiro2016lime,
+    author    = {Ribeiro, M. T. and Singh, S. and Guestrin, C.},
+    title     = {`Why Should {I} Trust You?': Explaining the Predictions of Any Classifier},
+    booktitle = {Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+    pages     = {1135--1144},
+    year      = {2016}
 }
 
+@article{geirhos2020shortcut,
+    author  = {Geirhos, R. and Jacobsen, J.-H. and Michaelis, C. and Zemel, R. and Brendel, W. and Bethge, M. and Wichmann, F. A.},
+    title   = {Shortcut learning in deep neural networks},
+    journal = {Nature Machine Intelligence},
+    volume  = {2},
+    pages   = {665--673},
+    year    = {2020}
+}
+
+@article{cohen1960kappa,
+    author  = {Cohen, J.},
+    title   = {A Coefficient of Agreement for Nominal Scales},
+    journal = {Educational and Psychological Measurement},
+    volume  = {20},
+    number  = {1},
+    pages   = {37--46},
+    year    = {1960}
+}

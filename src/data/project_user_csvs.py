@@ -17,7 +17,6 @@ mergear igual que cualquier corpus procesado por la pipeline estándar.
 
 from __future__ import annotations
 
-import hashlib
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -32,7 +31,7 @@ except (AttributeError, OSError):
 
 # Reutilizamos la función de anonimización del pipeline estándar
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from src.data.make_dataset import anonymize  # noqa: E402
+from src.data.make_dataset import anonymize, hash_id  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 INTERIM = REPO / "data" / "interim"
@@ -40,11 +39,6 @@ INTERIM = REPO / "data" / "interim"
 # Mapeos de label específicos para cada CSV del usuario
 KAGGLE_V14_LABEL = {"suicide": 2, "non-suicide": 0}    # depression+suicideWatch fusionados
 DEPRESSION_REDDIT_LABEL = {"1": 2, "0": 0}              # mrjunos usa {0,1}
-
-
-def hash_id(*parts: str) -> str:
-    """SHA-256 truncado a 16 chars, igual que en make_dataset.py."""
-    return hashlib.sha256("|".join(parts).encode("utf-8")).hexdigest()[:16]
 
 
 def _utc_iso_from_csv(value) -> str:
@@ -77,9 +71,9 @@ def project_kaggle_sdd() -> pd.DataFrame:
             continue
         rows.append({
             "doc_id": hash_id("kaggle_sdd", str(i)),
-            # Agrupamos user_id por clase: cada subreddit es un "usuario" sintético
-            # para que build_splits los distribuya y no se vaya todo a train.
-            "user_id": hash_id("kaggle_sdd_user", cls),
+            # v14 no trae autor: un usuario sintético por documento. Agrupar por
+            # clase dejaba cada clase entera en una sola partición.
+            "user_id": hash_id("kaggle_sdd_user", str(i)),
             "source": "kaggle_sdd",
             "timestamp": "",  # Kaggle SDD v14 no preserva timestamp
             "text_raw": text,

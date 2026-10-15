@@ -102,6 +102,14 @@ def main() -> None:
         pos_idx = 1 if id2label.get(1) == 2 else 0
         auc_bin = float(roc_auc_score(y_true, proba[:, pos_idx]))
 
+        pd.DataFrame({
+            "doc_id": df_split["doc_id"].to_numpy(),
+            "corpus_source": df_split["corpus_source"].to_numpy(),
+            "label": y_true,
+            "pred": y_pred,
+            "proba_dep": proba[:, pos_idx],
+        }).to_parquet(MODEL_DIR.parent / f"predictions_{split_name}.parquet", index=False)
+
         m = compute(y_true, y_pred, y_proba=proba.tolist())
         rows.append({
             "model": "beto_multi",

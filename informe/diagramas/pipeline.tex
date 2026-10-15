@@ -1,0 +1,54 @@
+% Pipeline de datos: fuentes -> anonimización -> traducción -> unificación -> partición -> modelado -> evaluación
+\begin{tikzpicture}[font=\footnotesize]
+    % Fuentes
+    \node[nodoES] (c) at (-5.85, 0) {\textbf{Coello-Guilarte}\\ Twitter \textperiodcentered{} español\\ 1\,047\,194 textos};
+    \node[nodoEN] (k) at (-1.95, 0) {\textbf{Kaggle SDD}\\ Reddit \textperiodcentered{} inglés\\ 232\,067 textos};
+    \node[nodoEN] (m) at ( 1.95, 0) {\textbf{Reddit MH Posts}\\ Reddit \textperiodcentered{} inglés\\ 24\,031 textos};
+    \node[nodoEN] (d) at ( 5.85, 0) {\textbf{Depression Reddit}\\ Reddit \textperiodcentered{} inglés\\ 7\,731 textos};
+
+    % Procesamiento
+    \node[proceso=15.3cm] (an) at (0, -1.95)
+        {\textbf{Limpieza y anonimización}: URLs, menciones, correos y teléfonos; identificadores \emph{hash} SHA-256\\
+         \codigo{make\_dataset.py \textperiodcentered{} project\_user\_csvs.py}};
+    \node[proceso=11.1cm, draw=ugrNaranja, fill=ugrNaranja!7] (tr) at (1.95, -3.7)
+        {\textbf{Traducción EN$\to$ES} con MarianMT (\texttt{opus-mt-en-es}): 263\,829 textos, caché JSONL y control de calidad\\
+         \codigo{translation/translate.py}};
+    \node[proceso=15.3cm] (un) at (0, -5.45)
+        {\textbf{Unificación} en \texttt{corpus\_v1.parquet}: 1\,311\,023 textos de 260\,357 usuarios\\
+         \codigo{merge\_corpora.py}};
+    \node[proceso=15.3cm] (sp) at (0, -7.2)
+        {\textbf{Partición por fuente y por usuario} (70/10/20, estratificada por clase, semilla 42)\\
+         \codigo{build\_splits.py}};
+    \node[nodoES, text width=7.1cm] (mono) at (-3.95, -8.95)
+        {\textbf{splits mono}: solo Coello-Guilarte\\ 700\,717 / 95\,630 / 250\,847 textos};
+    \node[nodoEN, text width=7.1cm] (multi) at (3.95, -8.95)
+        {\textbf{splits multi}: las cuatro fuentes\\ 885\,381 / 122\,038 / 303\,604 textos};
+
+    % Modelado
+    \node[font=\footnotesize\bfseries, text=ugrAzul] (mt) at (0, -10.3) {Modelado (mismos hiperparámetros en ambos esquemas)};
+    \node[proceso=4.6cm] (m1) at (-5.2, -11.25) {\textbf{TF-IDF + LR / SVM}\\ submuestreo o ponderación};
+    \node[proceso=4.6cm] (m2) at ( 0.0, -11.25) {\textbf{TF-IDF + rasgos}\\ LIWC, polaridad, temporales};
+    \node[proceso=4.6cm] (m3) at ( 5.2, -11.25) {\textbf{BETO}\\ ajuste fino, 3 épocas};
+    \begin{scope}[on background layer]
+        \node[draw=ugrAzul!45, dashed, rounded corners=4pt, fill=ugrAzul!3, inner sep=6pt, fit=(mt)(m1)(m2)(m3)] (grp) {};
+    \end{scope}
+
+    % Evaluación
+    \node[resultado=7.1cm] (ev) at (-3.95, -13.2)
+        {\textbf{Evaluación por fuente}\\ test nativo común y test traducido\\ F1-macro, F1 depresivo, AUC, $\kappa$};
+    \node[resultado=7.1cm] (xi) at (3.95, -13.2)
+        {\textbf{Interpretabilidad y auditoría}\\ coeficientes del modelo lineal\\ verificación de particiones};
+
+    % Flechas
+    \foreach \n in {c, k, m, d} { \draw[flecha] (\n) -- (\n |- an.north); }
+    \draw[flecha] (an.south -| c) -- (un.north -| c);
+    \foreach \n in {k, m, d} { \draw[flecha] (an.south -| \n) -- (tr.north -| \n); }
+    \draw[flecha] (tr) -- (tr |- un.north);
+    \draw[flecha] (un) -- (sp);
+    \draw[flecha] (sp.south -| mono) -- (mono);
+    \draw[flecha] (sp.south -| multi) -- (multi);
+    \draw[flecha] (mono) -- (mono |- grp.north);
+    \draw[flecha] (multi) -- (multi |- grp.north);
+    \draw[flecha] (grp.south -| ev) -- (ev);
+    \draw[flecha] (grp.south -| xi) -- (xi);
+\end{tikzpicture}

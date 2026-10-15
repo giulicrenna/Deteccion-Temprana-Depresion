@@ -127,3 +127,4 @@ informe/**/*.pdf
 !informe/**/*.jpeg
 !informe/**/*.eps
 !informe/**/*.svg
+*.7z
