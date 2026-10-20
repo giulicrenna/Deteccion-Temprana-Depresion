@@ -1,0 +1,17 @@
+﻿python : 2026-10-16 10:17:17 | INFO    | run_validation | [native_test] filas=250,847 usuarios=64
+En línea: 1 Carácter: 332
++ ... S='ignore'; python -m src.evaluation.run_validation *> temp/run_valid ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (2026-10-16 10:1...847 usuarios=64:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+2026-10-16 10:18:42 | INFO    | run_validation | [multi_test] filas=303,604 usuarios=52,074
+2026-10-16 10:20:26 | INFO    | run_validation | [depression_reddit] filas=1,547 usuarios=1,547
+2026-10-16 10:20:41 | INFO    | run_validation | [kaggle_sdd] filas=46,414 usuarios=46,414
+2026-10-16 10:20:53 | INFO    | run_validation | [reddit_mh_posts] filas=4,796 usuarios=4,049
+2026-10-16 10:20:56 | INFO    | linear_coefficients | [lr_mono] vocabulario=15,000 | tablas en 
+D:\Github\Deteccion-Temprana-Depresion\reports\tables
+2026-10-16 10:20:57 | INFO    | linear_coefficients | [lr_mono_downsampled] vocabulario=15,000 | tablas en 
+D:\Github\Deteccion-Temprana-Depresion\reports\tables
+2026-10-16 10:22:00 | INFO    | run_validation | Tablas en D:\Github\Deteccion-Temprana-Depresion\reports\tables 
+(copiadas a D:\Github\Deteccion-Temprana-Depresion\informe\tables)

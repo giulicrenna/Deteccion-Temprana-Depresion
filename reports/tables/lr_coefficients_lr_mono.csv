@@ -1,0 +1,201 @@
+term,coef,is_unigram,rank_dep,side
+os,9.71272167554858,True,1,depresivo
+piñera,7.8904374782461755,True,2,depresivo
+ahre,7.39288448800749,True,3,depresivo
+vos,7.187463043267459,True,4,depresivo
+uribe,6.886841778873831,True,5,depresivo
+gilipollas,6.7013450083506605,True,6,depresivo
+tenéis,6.6333506343349,True,7,depresivo
+trans,6.598251875213027,True,8,depresivo
+bangtan,6.563674677709,True,9,depresivo
+army,6.559338226666724,True,10,depresivo
+joder,6.393969827345124,True,11,depresivo
+sois,6.0779161345831305,True,12,depresivo
+ud,5.973721934675138,True,13,depresivo
+bts,5.880536338420829,True,14,depresivo
+sabéis,5.763064061172759,True,15,depresivo
+wea,5.662305427644622,True,16,depresivo
+csm,5.6444591735942335,True,17,depresivo
+paja,5.6277115224281,True,18,depresivo
+hostia,5.614843116053258,True,19,depresivo
+murcia,5.48686454936797,True,20,depresivo
+bogotá,5.4264929030239335,True,21,depresivo
+venezolanos,5.320866166016022,True,22,depresivo
+podéis,5.303549168637189,True,23,depresivo
+mud,5.2837011648903145,True,24,depresivo
+sorteo,5.2591042273128945,True,25,depresivo
+hilo,5.247397972237504,True,26,depresivo
+venezuela,5.221734975464912,True,27,depresivo
+wn,5.146251015041547,True,28,depresivo
+vosotros,5.127090988163573,True,29,depresivo
+follar,5.124102074673047,True,30,depresivo
+cojones,5.092484970475349,True,31,depresivo
+mv,5.085278238886314,True,32,depresivo
+jo,5.004716455198975,True,33,depresivo
+mirad,4.9919139297274455,True,34,depresivo
+duque,4.9896677059757994,True,35,depresivo
+bisexual,4.939382756606774,True,36,depresivo
+ot,4.847735108396452,True,37,depresivo
+estáis,4.8351165204835,True,38,depresivo
+la an,4.819929442633178,False,39,depresivo
+mimos,4.819814936787583,True,40,depresivo
+madre mía,4.797961250689293,False,41,depresivo
+vuestra,4.784627846809601,True,42,depresivo
+parce,4.783687119826376,True,43,depresivo
+uwu,4.783613671019001,True,44,depresivo
+fandom,4.730571718532269,True,45,depresivo
+feminismo,4.682411781063093,True,46,depresivo
+dalas,4.669694573908592,True,47,depresivo
+idol,4.660827719875092,True,48,depresivo
+guay,4.66055432079479,True,49,depresivo
+chucha,4.6551518398337,True,50,depresivo
+nuevo video,4.645604897549465,False,51,depresivo
+habéis,4.604747345028106,True,52,depresivo
+maduro,4.588100715238819,True,53,depresivo
+mierda,4.576157319136444,True,54,depresivo
+yoongi,4.539615550564492,True,55,depresivo
+colombia,4.537894426447303,True,56,depresivo
+queréis,4.504592649787183,True,57,depresivo
+lpm,4.438844680744464,True,58,depresivo
+venezolano,4.394621322172206,True,59,depresivo
+mi madre,4.338574422615427,False,60,depresivo
+morirme,4.308914973350921,True,61,depresivo
+dictadura,4.29488525093683,True,62,depresivo
+vuestro,4.277329127683323,True,63,depresivo
+pololo,4.2409387043750355,True,64,depresivo
+xdddd,4.2386758746963125,True,65,depresivo
+encima,4.235089253639098,True,66,depresivo
+re,4.2082433175488045,True,67,depresivo
+distrito federal,4.191430169328812,False,68,depresivo
+reseña,4.18615505064819,True,69,depresivo
+amaia,4.1309061561536184,True,70,depresivo
+namjoon,4.066365098169195,True,71,depresivo
+club in,4.048087677065329,False,72,depresivo
+géminis,4.024455022432959,True,73,depresivo
+suicidio,4.023687703995756,True,74,depresivo
+overwatch,4.012273730948674,True,75,depresivo
+mola,3.984329246522324,True,76,depresivo
+orto,3.9779649429397983,True,77,depresivo
+switch,3.9767577599330317,True,78,depresivo
+plata,3.9723240859425184,True,79,depresivo
+polla,3.9484898993225412,True,80,depresivo
+en plan,3.943756788208942,False,81,depresivo
+wakfu,3.937552628068046,True,82,depresivo
+hetero,3.9253407041424837,True,83,depresivo
+galicia,3.915550575067696,True,84,depresivo
+petro,3.8884319799514575,True,85,depresivo
+vais,3.839489177263392,True,86,depresivo
+sar,3.8204632318950256,True,87,depresivo
+gracia,3.817777766836239,True,88,depresivo
+pereza,3.8076276867258865,True,89,depresivo
+chaval,3.8046018398392176,True,90,depresivo
+régimen,3.802754479801282,True,91,depresivo
+__,3.7990767831627474,True,92,depresivo
+mi padre,3.7540026289289576,False,93,depresivo
+la mud,3.715837432111765,False,94,depresivo
+morgan,3.7024251488039983,True,95,depresivo
+euros,3.696349630076945,True,96,depresivo
+supongo,3.689774668768783,True,97,depresivo
+stream,3.687976917069695,True,98,depresivo
+chicos,3.684961291253289,True,99,depresivo
+cicatrices,3.676125751449534,True,100,depresivo
+autoridades,-3.067913323363235,True,14901,control
+secretario,-3.072335147117951,True,14902,control
+lqm,-3.0727505569547753,True,14903,control
+pus,-3.0883868040502356,True,14904,control
+neta,-3.0891865930297686,True,14905,control
+encuestados,-3.094163475272835,True,14906,control
+ahuevo,-3.0957782162986978,True,14907,control
+humor en,-3.1017835892709735,False,14908,control
+tuiteros,-3.105046126142222,True,14909,control
+mexico,-3.10694664770397,True,14910,control
+zacatecas,-3.1110482386149068,True,14911,control
+antro,-3.120003083468361,True,14912,control
+trump,-3.1213533120196737,True,14913,control
+escobedo,-3.1460137610934735,True,14914,control
+you re,-3.149013443975446,False,14915,control
+asegura,-3.1538048690775606,True,14916,control
+peda,-3.1559175153900263,True,14917,control
+pendejo,-3.167763874260567,True,14918,control
+días tuiteros,-3.1734212028495175,False,14919,control
+pumas,-3.175712354137048,True,14920,control
+desmadre,-3.192242127898633,True,14921,control
+prepa,-3.199741383852567,True,14922,control
+gobernadora,-3.207261722945998,True,14923,control
+espn,-3.2092789842785336,True,14924,control
+elote,-3.215128115573434,True,14925,control
+clima,-3.262716848505655,True,14926,control
+yo mas,-3.2869069684766523,False,14927,control
+triunfo,-3.297258975785318,True,14928,control
+afición,-3.312053787533058,True,14929,control
+chapo,-3.315523255720148,True,14930,control
+chiapas,-3.3229999041429608,True,14931,control
+cabina,-3.324498125886023,True,14932,control
+boletos,-3.335863079525513,True,14933,control
+nfl,-3.3381346077076657,True,14934,control
+municipal,-3.340312741705481,True,14935,control
+chava,-3.3518539237718614,True,14936,control
+tlaxcala,-3.3599656821560293,True,14937,control
+equipo,-3.3606482637756634,True,14938,control
+sonora,-3.3637013473540516,True,14939,control
+apple,-3.3820140478609733,True,14940,control
+muero por,-3.3852240177973285,False,14941,control
+http,-3.3854876302812444,True,14942,control
+sismo,-3.387736452982727,True,14943,control
+cruz azul,-3.3946150440645,False,14944,control
+jalo,-3.404654157979641,True,14945,control
+futbol,-3.4060169246717114,True,14946,control
+real madrid,-3.4165090465798142,False,14947,control
+fifa,-3.422243218781029,True,14948,control
+pachuca,-3.4323606294813733,True,14949,control
+tequila,-3.433648336023121,True,14950,control
+todo mundo,-3.4485805285911932,False,14951,control
+lic,-3.4538595050118905,True,14952,control
+me choca,-3.454135387626637,False,14953,control
+me caga,-3.4547521286629728,False,14954,control
+rayados,-3.455158789355828,True,14955,control
+coraje,-3.4745843943527497,True,14956,control
+liguilla,-3.4768684274547077,True,14957,control
+duarte,-3.5103003004090554,True,14958,control
+talavante,-3.528859604734296,True,14959,control
+propuestas,-3.556894958491346,True,14960,control
+monterrey,-3.5889899084627115,True,14961,control
+cel,-3.613897234152753,True,14962,control
+tmb,-3.632144824903539,True,14963,control
+mdp,-3.6603608906166043,True,14964,control
+chingado,-3.6655467506403054,True,14965,control
+mexicana,-3.7135663905684915,True,14966,control
+dlv,-3.75846390732041,True,14967,control
+coahuila,-3.7698571504194676,True,14968,control
+mexicano,-3.7860403203969724,True,14969,control
+inicia,-3.7921205138664504,True,14970,control
+gignac,-3.8016313845054523,True,14971,control
+hrs,-3.8418118157948853,True,14972,control
+ya quiero,-3.8425187808412278,False,14973,control
+gt gt,-3.851395127258637,False,14974,control
+tabasco,-3.9138003909082806,True,14975,control
+debería de,-3.925152393066688,False,14976,control
+lit,-3.9624796937830298,True,14977,control
+estadio,-3.9701197977484544,True,14978,control
+semestre,-3.9726150671476876,True,14979,control
+méxico,-4.01091669810657,True,14980,control
+oaxaca,-4.033618410290546,True,14981,control
+snap,-4.0919733640024365,True,14982,control
+les comparto,-4.102152471485611,False,14983,control
+wey,-4.137888584763139,True,14984,control
+tarea,-4.187685246845923,True,14985,control
+mty,-4.2363493785934825,True,14986,control
+saludos,-4.258318069141415,True,14987,control
+adriana,-4.287051709825647,True,14988,control
+mx,-4.4224402563339895,True,14989,control
+chivas,-4.558352255121553,True,14990,control
+nadamas,-4.613685741083391,True,14991,control
+veracruz,-4.686530931659245,True,14992,control
+mexicanos,-4.740608104001301,True,14993,control
+chihuahua,-4.760137576232809,True,14994,control
+necaxa,-4.840754042045105,True,14995,control
+haha,-4.97717755799517,True,14996,control
+gobernador,-5.508008048437422,True,14997,control
+tigres,-5.756400045845878,True,14998,control
+colima,-6.223396908402672,True,14999,control
+puebla,-9.195753858304977,True,15000,control

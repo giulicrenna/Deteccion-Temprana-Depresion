@@ -1,0 +1,207 @@
+# Marcadores diatópicos para el control de atajos dialectales.
+#
+# Lista inicial derivada de los coeficientes extremos de la regresión logística TF-IDF
+# (reports/tables/lr_coefficients_lr_mono.csv), ampliada con variantes morfológicas y
+# revisada a mano. Se excluyen términos ambiguos con uso general en todo el español
+# (vale, tío, plata, santiago, córdoba, podemos, español, américa).
+#
+# `terms`: palabras o expresiones literales (coincidencia de palabra completa, sin
+# distinguir mayúsculas). `patterns`: expresiones regulares de palabra completa.
+
+dialectal:
+  terms:
+    # España
+    - os
+    - vosotros
+    - vosotras
+    - vuestro
+    - vuestra
+    - vuestros
+    - vuestras
+    - sois
+    - mirad
+    - joder
+    - gilipollas
+    - hostia
+    - hostias
+    - guay
+    - mola
+    - molar
+    - cojones
+    - coño
+    - follar
+    - polla
+    - flipar
+    - currar
+    - curro
+    - chaval
+    - mogollón
+    - madre mía
+    - jo
+    # Río de la Plata (voseo y léxico)
+    - vos
+    - sos
+    - tenés
+    - querés
+    - podés
+    - sabés
+    - decís
+    - ahre
+    - lpm
+    - che
+    - boludo
+    - boluda
+    - pelotudo
+    - pelotuda
+    - posta
+    - laburo
+    - pibe
+    - piba
+    - quilombo
+    - bondi
+    - orto
+    - re
+    # Chile
+    - wea
+    - weá
+    - weon
+    - weón
+    - wn
+    - csm
+    - po
+    - cachai
+    - pololo
+    - polola
+    - fome
+    - chucha
+    - bacán
+    - al tiro
+    # Colombia y Venezuela
+    - parce
+    - parcero
+    - chimba
+    - berraco
+    - vaina
+    - chamo
+    - pana
+    # México
+    - wey
+    - güey
+    - guey
+    - chingado
+    - chingada
+    - chingar
+    - chido
+    - neta
+    - pinche
+    - no mames
+    - me caga
+    - me choca
+    - nadamas
+    - nomás
+    - ahorita
+    - desmadre
+    - chava
+    - prepa
+    - chamba
+    - cuate
+    - órale
+    - jalo
+    - elote
+  patterns:
+    # Segunda persona del plural peninsular (tenéis, sabéis, estáis, queréis, habéis).
+    - '\w+[áé]is'
+
+toponimos:
+  terms:
+    # México: estados, ciudades, gentilicios y clubes locales
+    - méxico
+    - mexico
+    - mexicano
+    - mexicana
+    - mexicanos
+    - mexicanas
+    - mx
+    - cdmx
+    - distrito federal
+    - puebla
+    - colima
+    - chihuahua
+    - veracruz
+    - oaxaca
+    - tabasco
+    - coahuila
+    - sonora
+    - tlaxcala
+    - chiapas
+    - jalisco
+    - sinaloa
+    - michoacán
+    - querétaro
+    - yucatán
+    - guadalajara
+    - monterrey
+    - mty
+    - cancún
+    - tijuana
+    - tigres
+    - necaxa
+    - chivas
+    - rayados
+    - pachuca
+    - cruz azul
+    - liguilla
+    # España
+    - españa
+    - españoles
+    - madrid
+    - real madrid
+    - barcelona
+    - murcia
+    - valencia
+    - sevilla
+    # Cono sur
+    - chile
+    - chileno
+    - chilena
+    - chilenos
+    - chilenas
+    - valparaíso
+    - argentina
+    - argentino
+    - argentinos
+    - argentinas
+    - buenos aires
+    # Colombia, Venezuela
+    - colombia
+    - colombiano
+    - colombiana
+    - colombianos
+    - bogotá
+    - medellín
+    - cali
+    - venezuela
+    - venezolano
+    - venezolana
+    - venezolanos
+    - caracas
+  patterns: []
+
+politicos:
+  terms:
+    - piñera
+    - bachelet
+    - uribe
+    - duque
+    - petro
+    - maduro
+    - chávez
+    - macri
+    - kirchner
+    - rajoy
+    - pedro sánchez
+    - amlo
+    - peña nieto
+    - duarte
+    - el bronco
+  patterns: []
