@@ -81,6 +81,22 @@ logs/
 # Se conservan: *.tex, *.bib, imágenes (*.png, *.jpg, *.pdf de figuras)
 # Se ignoran: todos los artefactos intermedios y el PDF final del informe
 
+# Archivos generados en la raíz o en informe/
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.synctex.gz
+*.synctex(busy)
+*.dvi
+*.pdf
+
 informe/*.aux
 informe/*.bbl
 informe/*.blg
@@ -128,3 +144,4 @@ informe/**/*.pdf
 !informe/**/*.eps
 !informe/**/*.svg
 *.7z
+texput.log

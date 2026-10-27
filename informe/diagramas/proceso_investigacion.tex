@@ -1,0 +1,125 @@
+% Diagrama integral del proceso de investigación en Ciencia de Datos
+% Fases: 1. Datos y Traducción -> 2. Partición por Usuario -> 3. Modelado Supervisado -> 4. Evaluación -> 5. Auditoría y Contrastación
+\begin{tikzpicture}[font=\footnotesize, node distance=0.45cm and 0.55cm]
+
+    % =========================================================================
+    % FASE 1: FUENTES, TRADUCCIÓN Y ANONIMIZACIÓN
+    % =========================================================================
+    \node[font=\small\bfseries\color{ugrAzul}, anchor=west] at (-6.8, 0.6) {1. Ingesta, traducción y preparación de datos};
+
+    \node[nodoES, text width=3.4cm] (f_nativo) at (-4.7, -0.2)
+        {\textbf{Corpus nativo (Twitter)}\\ Coello-Guilarte (español)\\ 1\,047\,194 tweets \textperiodcentered{} 317 usuarios};
+
+    \node[nodoEN, text width=4.8cm] (f_trad) at (0.2, -0.2)
+        {\textbf{Corpus traducido (Reddit)}\\ Kaggle SDD, Reddit MH, Depression\\ 263\,829 publicaciones (inglés)};
+
+    \node[proceso=4.8cm, draw=ugrNaranja, fill=ugrNaranja!8] (trad) at (0.2, -1.35)
+        {\textbf{Traducción automática neuronal}\\ MarianMT (\texttt{opus-mt-en-es})\\ Caché JSONL y control de calidad};
+
+    \node[proceso=10.2cm, fill=white] (anon) at (-2.25, -2.5)
+        {\textbf{Limpieza y anonimización estricta}\\ Supresión de URLs, menciones, correos y teléfonos; identificadores \emph{hash} SHA-256\\
+         \codigo{make\_dataset.py}};
+
+    \node[proceso=10.2cm, fill=ugrAzul!6, draw=ugrAzul] (unif) at (-2.25, -3.55)
+        {\textbf{Corpus consolidado}\\ 1\,311\,023 textos anonimizados (866\,202 controles, 444\,821 depresión)\\
+         \codigo{corpus\_v1.parquet}};
+
+    % =========================================================================
+    % FASE 2: PARTICIÓN ESTRATIFICADA POR USUARIO
+    % =========================================================================
+    \node[font=\small\bfseries\color{ugrAzul}, anchor=west] at (-6.8, -4.35) {2. Partición por usuario (70/10/20, estratificada, sin fuga)};
+
+    \node[proceso=4.7cm] (sp_mono) at (-4.7, -5.2)
+        {\textbf{Esquema Mono (solo nativo)}\\
+         Train: 700\,717 (221 usuarios)\\
+         Val: 95\,630 (32 usuarios)\\
+         Test: 250\,847 (64 usuarios)};
+
+    \node[proceso=4.8cm] (sp_multi) at (0.2, -5.2)
+        {\textbf{Esquema Multi (nativas + trad.)}\\
+         Train: 846\,939 textos\\
+         Val: 104\,409 textos\\
+         Test: 359\,675 textos};
+
+    % =========================================================================
+    % FASE 3: MODELADO SUPERVISADO (ENTORNO GPU LOCAL)
+    % =========================================================================
+    \node[font=\small\bfseries\color{ugrAzul}, anchor=west] at (-6.8, -6.35) {3. Modelado supervisado (GPU NVIDIA RTX 3060 Ti 8\,GB)};
+
+    \node[proceso=3.1cm] (m_lex) at (-5.0, -7.35)
+        {\textbf{Líneas base léxicas}\\ TF-IDF (1--2 gramas)\\ Regresión Logística\\ SVM lineal (hinge)};
+
+    \node[proceso=3.1cm] (m_comb) at (-1.5, -7.35)
+        {\textbf{Modelo combinado}\\ TF-IDF + 19 rasgos\\ psicolingüísticos LIWC\\ y temporales};
+
+    \node[proceso=3.3cm, draw=ugrAzul, fill=ugrAzul!8] (m_beto) at (2.05, -7.35)
+        {\textbf{BETO contextual}\\ Transformer (110M params)\\ Ajuste fino, AdamW, FP16\\ Lote 16, máx.\ 128 tokens};
+
+    % =========================================================================
+    % FASE 4: EVALUACIÓN MULTIDIMENSIONAL E INCERTIDUMBRE
+    % =========================================================================
+    \node[font=\small\bfseries\color{ugrAzul}, anchor=west] at (-6.8, -8.6) {4. Protocolo de evaluación e inferencia desagregada};
+
+    \node[resultado=4.8cm] (ev_nativo) at (-4.2, -9.6)
+        {\textbf{Evaluación en test nativo común}\\
+         250\,847 tweets (64 usuarios)\\
+         F1-macro, AUC-ROC, $\kappa$, clases};
+
+    \node[resultado=4.8cm, draw=ugrNaranja, fill=ugrNaranja!8] (ev_trad) at (1.1, -9.6)
+        {\textbf{Evaluación en test traducido}\\
+         Reddit traducido (fuera de dominio)\\
+         Robustez e impacto del aumento};
+
+    \node[proceso=10.2cm, fill=white] (boot) at (-1.55, -10.8)
+        {\textbf{Cuantificación de incertidumbre estadística}\\
+         \emph{Bootstrap} de 2\,000 réplicas por usuario \textperiodcentered{} Diferencias pareadas con IC 95\,\%\\
+         \codigo{src/evaluation/bootstrap.py}};
+
+    % =========================================================================
+    % FASE 5: AUDITORÍA DE VALIDEZ Y CONTRASTACIÓN
+    % =========================================================================
+    \node[font=\small\bfseries\color{ugrAzul}, anchor=west] at (-6.8, -11.65) {5. Auditoría de validez metodológica y contrastación de hipótesis};
+
+    \node[resultado=3.1cm] (aud_dial) at (-5.0, -12.75)
+        {\textbf{Control dialectal}\\
+         Enmascarado de 175\\ términos regionales\\ vs.\ control al azar};
+
+    \node[resultado=3.1cm] (aud_user) at (-1.5, -12.75)
+        {\textbf{Agregación por usuario}\\
+         Voto y score medio\\ en los 64 usuarios\\ (validez de constructo)};
+
+    \node[resultado=3.3cm, draw=ugrVerde, fill=ugrVerde!12, line width=0.9pt] (dec_hyp) at (2.05, -12.75)
+        {\textbf{Contraste de $H_0$}\\
+         $\Delta F_1 = +0{,}062$\\
+         $\Delta\text{AUC} = +0{,}052$\\
+         \textbf{Rechazo formal de $H_0$}};
+
+    % =========================================================================
+    % CONEXIONES / FLECHAS
+    % =========================================================================
+    \draw[flecha] (f_nativo) -- (f_nativo |- anon.north);
+    \draw[flecha] (f_trad) -- (trad);
+    \draw[flecha] (trad) -- (trad |- anon.north);
+    \draw[flecha] (anon) -- (unif);
+    \draw[flecha] (unif.south -| sp_mono) -- (sp_mono);
+    \draw[flecha] (unif.south -| sp_multi) -- (sp_multi);
+
+    \draw[flecha] (sp_mono.south) -- (sp_mono.south |- m_lex.north);
+    \draw[flecha] (sp_mono.south) -- (sp_mono.south |- m_comb.north);
+    \draw[flecha] (sp_mono.south) -- (m_beto.north);
+    \draw[flecha] (sp_multi.south) -- (m_beto.north);
+    \draw[flecha] (sp_multi.south) -- (m_lex.north);
+
+    \draw[flecha] (m_lex.south) -- (m_lex.south |- ev_nativo.north);
+    \draw[flecha] (m_comb.south) -- (m_comb.south |- ev_nativo.north);
+    \draw[flecha] (m_beto.south) -- (m_beto.south |- ev_trad.north);
+    \draw[flecha] (m_beto.south) -- (m_beto.south |- ev_nativo.north);
+
+    \draw[flecha] (ev_nativo) -- (ev_nativo |- boot.north);
+    \draw[flecha] (ev_trad) -- (ev_trad |- boot.north);
+
+    \draw[flecha] (boot.south -| aud_dial) -- (aud_dial);
+    \draw[flecha] (boot.south -| aud_user) -- (aud_user);
+    \draw[flecha] (boot.south -| dec_hyp) -- (dec_hyp);
+
+\end{tikzpicture}
