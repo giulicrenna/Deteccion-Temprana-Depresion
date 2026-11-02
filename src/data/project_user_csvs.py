@@ -23,20 +23,17 @@ from pathlib import Path
 
 import pandas as pd
 
-# ponytail: Windows cp1252 rompe con caracteres no-ASCII al imprimir
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except (AttributeError, OSError):
     pass
 
-# Reutilizamos la función de anonimización del pipeline estándar
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from src.data.make_dataset import anonymize, hash_id  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 INTERIM = REPO / "data" / "interim"
 
-# Mapeos de label específicos para cada CSV del usuario
 KAGGLE_V14_LABEL = {"suicide": 2, "non-suicide": 0}    # depression+suicideWatch fusionados
 DEPRESSION_REDDIT_LABEL = {"1": 2, "0": 0}              # mrjunos usa {0,1}
 
@@ -46,12 +43,10 @@ def _utc_iso_from_csv(value) -> str:
     if pd.isna(value) or value == "":
         return ""
     s = str(value).strip()
-    # ISO 8601 directo (caso típico en el CSV que descargó el usuario)
     try:
         return pd.Timestamp(s).tz_convert("UTC").isoformat()
     except (ValueError, TypeError):
         pass
-    # Fallback: epoch segundos
     try:
         return datetime.fromtimestamp(float(s), tz=timezone.utc).isoformat()
     except (TypeError, ValueError, OverflowError):
@@ -71,15 +66,12 @@ def project_kaggle_sdd() -> pd.DataFrame:
             continue
         rows.append({
             "doc_id": hash_id("kaggle_sdd", str(i)),
-            # v14 no trae autor: un usuario sintético por documento. Agrupar por
-            # clase dejaba cada clase entera en una sola partición.
             "user_id": hash_id("kaggle_sdd_user", str(i)),
             "source": "kaggle_sdd",
             "timestamp": "",  # Kaggle SDD v14 no preserva timestamp
             "text_raw": text,
             "text_clean": text_clean,
             "label": KAGGLE_V14_LABEL[cls],
-            # v14 fusiona r/depression + r/SuicideWatch bajo "suicide"
             "label_source": "subreddit_membership:suicide_or_suicidewatch",
             "lang": "en",
             "orig_split": "",

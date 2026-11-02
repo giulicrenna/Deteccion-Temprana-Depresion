@@ -16,12 +16,9 @@ def set_seed(seed: int = 42) -> int:
     Idempotente: llamar más de una vez no rompe.
     Devuelve el seed efectivamente aplicado.
     """
-    # 1) Variables de entorno que afectan a las estructuras hash de Python
-    #    y a las semillas de torch/transformers antes de cualquier import lazy.
     os.environ["PYTHONHASHSEED"] = str(seed)
     os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
 
-    # 2) random + numpy (disponibles casi siempre).
     random.seed(seed)
     try:
         import numpy as np
@@ -30,14 +27,12 @@ def set_seed(seed: int = 42) -> int:
     except Exception:
         pass
 
-    # 3) torch — opcional. Importamos lazy para no romper entornos sin GPU.
     try:
         import torch
 
         torch.manual_seed(seed)
         if torch.cuda.is_available():
             torch.cuda.manual_seed_all(seed)
-        # Algunas ops de cuDNN no son deterministas; las apagamos si podemos.
         try:
             torch.backends.cudnn.deterministic = True
             torch.backends.cudnn.benchmark = False
@@ -46,7 +41,6 @@ def set_seed(seed: int = 42) -> int:
     except Exception:
         pass
 
-    # 4) transformers — setea el seed de su generador interno.
     try:
         from transformers import set_seed as _hf_set_seed
 

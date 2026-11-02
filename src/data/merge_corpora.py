@@ -72,7 +72,6 @@ def main() -> None:
             log.warning("no existe %s — saltando", src)
             continue
         df = pd.read_parquet(p)
-        # Asegurar el esquema.
         for col in SCHEMA:
             if col not in df.columns:
                 df[col] = "" if col != "label" else 0
@@ -80,8 +79,6 @@ def main() -> None:
         if meta.get("translate", False):
             p_es = args.interim / src / "data_es.parquet"
             if not p_es.exists():
-                # Fallback: usar el JSONL append-only del traductor (cubre traducciones
-                # parciales si el proceso murió antes de escribir data_es.parquet).
                 tr_dir = args.interim / src / "translations"
                 p_jsonl = next(tr_dir.glob("*.jsonl"), None) if tr_dir.exists() else None
                 if p_jsonl is None:
@@ -113,7 +110,6 @@ def main() -> None:
         raise SystemExit("No hay interim/<fuente>/data.parquet para mergear.")
 
     corpus = pd.concat(frames, ignore_index=True)
-    # Deduplicar por doc_id.
     before = len(corpus)
     corpus = corpus.drop_duplicates(subset=["doc_id"]).reset_index(drop=True)
     log.info("dedup: %d → %d", before, len(corpus))
@@ -122,7 +118,6 @@ def main() -> None:
     corpus.to_parquet(out_path, index=False)
     log.info("→ %s : %d filas", out_path, len(corpus))
 
-    # Estadísticas.
     stats: dict = {
         "n_rows": int(len(corpus)),
         "n_users": int(corpus["user_id"].nunique()),

@@ -32,7 +32,6 @@ def build_regex(markers: dict[str, dict[str, list[str]]], categories: list[str])
     for cat in categories:
         terms.update(t.lower() for t in markers[cat]["terms"])
         patterns.extend(markers[cat]["patterns"])
-    # Los términos más largos primero, para que "real madrid" gane sobre "madrid".
     alternatives = [re.escape(t) for t in sorted(terms, key=len, reverse=True)] + patterns
     return re.compile(r"(?<!\w)(?:" + "|".join(alternatives) + r")(?!\w)", re.IGNORECASE)
 

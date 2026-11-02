@@ -58,10 +58,6 @@ EN_STOP = {"the", "and", "is", "are", "you", "that", "with", "have", "this", "wa
 SENT_SPLIT_RE = re.compile(r"(?<=[.!?…])\s+|\n+")
 
 
-# ---------------------------------------------------------------------------
-# Utilidades
-# ---------------------------------------------------------------------------
-
 def load_cfg(path: Path) -> dict[str, Any]:
     return yaml.safe_load(path.read_text(encoding="utf-8"))
 
@@ -108,10 +104,6 @@ def read_cache(path: Path) -> dict[str, dict[str, Any]]:
                     done[r["doc_id"]] = r
     return done
 
-
-# ---------------------------------------------------------------------------
-# Backend HF (MarianMT / NLLB) — local en GPU
-# ---------------------------------------------------------------------------
 
 def split_segments(text: str, max_words: int) -> list[str]:
     """Parte en oraciones; oraciones muy largas se cortan cada `max_words` palabras."""
@@ -166,10 +158,6 @@ class HFTranslator:
         flat_tr = iter(self._translate_segments(flat))
         return [" ".join(next(flat_tr) for _ in segs) for segs in per_doc]
 
-
-# ---------------------------------------------------------------------------
-# Backend OpenAI-compatible (NVIDIA NIM / Nemotron, Ollama, vLLM, OpenRouter...)
-# ---------------------------------------------------------------------------
 
 class RateLimiter:
     def __init__(self, rpm: int):
@@ -234,7 +222,6 @@ class OpenAITranslator:
     def translate_one(self, text: str) -> str:
         if len(text) <= self.max_chars:
             return self._chat(text)
-        # Posts muy largos: por párrafos, agrupados hasta max_chars.
         chunks, cur = [], ""
         for para in text.split("\n"):
             if cur and len(cur) + len(para) > self.max_chars:
@@ -249,10 +236,6 @@ class OpenAITranslator:
         r.raise_for_status()
         return sorted(m["id"] for m in r.json()["data"])
 
-
-# ---------------------------------------------------------------------------
-# Subcomandos
-# ---------------------------------------------------------------------------
 
 def cmd_estimate(args: argparse.Namespace) -> None:
     data_cfg = load_cfg(args.data_config)

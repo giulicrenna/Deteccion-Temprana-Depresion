@@ -5,7 +5,6 @@ B) lr_coello: entrenada solo sobre filas Coello-Guilarte del train multi (downsa
 Ambas se evalúan sobre el mismo test multi, global y desagregado por fuente.
 """
 
-import sys
 from pathlib import Path
 
 import matplotlib
@@ -23,11 +22,10 @@ from sklearn.metrics import (
     roc_curve,
 )
 
-REPO = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPO))
+from src.models.train_baseline import build_baseline_pipeline, load_config
+from src.utils.seeds import set_seed
 
-from src.models.train_baseline import build_baseline_pipeline, load_config  # noqa: E402
-from src.utils.seeds import set_seed  # noqa: E402
+REPO = Path(__file__).resolve().parents[2]
 
 SEED = 42
 DEP = 2
@@ -85,7 +83,7 @@ def main() -> None:
         classes = list(pipe.classes_)
         score = pipe.predict_proba(test["text_clean"].tolist())[:, classes.index(DEP)]
         pred = pipe.predict(test["text_clean"].tolist())
-        pd.DataFrame({"doc_id": test_ids, "label": y_test, "pred": pred, "proba_dep": score}).to_parquet(REPO / "temp" / f"scores_{name}.parquet", index=False)
+        pd.DataFrame({"doc_id": test_ids, "label": y_test, "pred": pred, "proba_dep": score}).to_parquet(REPO / "reports" / "predictions" / f"scores_{name}.parquet", index=False)
         rows.append({"model": name, "subset": "test_total", **metrics(y_test, pred, score)})
         for src in sorted(test["corpus_source"].unique()):
             m = (test["corpus_source"] == src).to_numpy()

@@ -33,7 +33,6 @@ def assign_users(
     frecuente de sus mensajes). Si el usuario es 50/50, queda como `train`
     por default (caso degenerado, raro en este corpus).
     """
-    # Etiqueta modal por usuario.
     modal = (
         user_df.groupby("user_id")["label"]
         .agg(lambda s: int(s.mode().iloc[0]) if not s.mode().empty else int(s.iloc[0]))
@@ -41,14 +40,12 @@ def assign_users(
         .rename(columns={"label": "modal_label"})
     )
 
-    # Split 1: train+val vs test
     train_val, test = train_test_split(
         modal,
         test_size=test,
         stratify=modal["modal_label"],
         random_state=seed,
     )
-    # Split 2: train vs val
     val_ratio = val / (train + val)
     train, val = train_test_split(
         train_val,
@@ -87,8 +84,6 @@ def main() -> None:
     df = pd.read_parquet(corpus_path)
     log.info("corpus: %d filas, %d usuarios", len(df), df["user_id"].nunique())
 
-    # Partición independiente por fuente: cada corpus queda 70/10/20 con sus
-    # clases, y la asignación de una fuente no depende de las demás.
     user_assignment: dict[str, str] = {}
     group_col = "corpus_source" if "corpus_source" in df.columns else None
     groups = df.groupby(group_col) if group_col else [(None, df)]

@@ -49,7 +49,6 @@ SKLEARN_MODELS = {
     "lr_mono_downsampled": "models/logreg_downsampled.joblib",
     "svm_mono": "models/baseline_svm.joblib",
 }
-# fp16 replica la precisión con que se generaron las predicciones originales guardadas.
 BETO_MODELS = {
     "beto_mono": ("models/beto/best_model", True),
     "beto_multi": ("models/beto_multi/best_model", False),

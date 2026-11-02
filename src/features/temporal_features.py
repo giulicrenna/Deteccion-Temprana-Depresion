@@ -19,7 +19,6 @@ def extract(df: pd.DataFrame, ts_col: str = "timestamp") -> pd.DataFrame:
     out["is_weekend"] = (out["day_of_week"] >= 5).astype(int)
     out["month"] = ts.dt.month.fillna(-1).astype(int)
 
-    # Densidad: #mensajes por usuario (proxy de cadencia).
     counts = df.groupby("user_id").size().rename("msg_per_user")
     out = out.join(counts, on="user_id").fillna({"msg_per_user": 0})
     out["msg_per_user"] = out["msg_per_user"].astype(int)

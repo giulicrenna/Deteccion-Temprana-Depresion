@@ -37,7 +37,6 @@ logger = get_logger("run_validation")
 NATIVE_SCOPE = "native_test"
 MULTI_SCOPE = "multi_test"
 
-# (hipótesis, modelo A, modelo B, alcances); se reporta A − B.
 COMPARISONS = [
     ("H_principal", "beto_mono", "lr_mono", [NATIVE_SCOPE]),
     ("H_principal", "beto_mono", "svm_mono", [NATIVE_SCOPE]),

@@ -32,14 +32,12 @@ NATIVE_SOURCE = "coello_guilarte"
 TEST_COLUMNS = ["doc_id", "user_id", "corpus_source", "label", "text_clean"]
 PRED_COLUMNS = ["doc_id", "user_id", "corpus_source", "label", "pred", "score"]
 
-# Pipelines entrenados sobre el train mono (Coello-Guilarte); sin predicciones guardadas.
 JOBLIB_MODELS = {
     "lr_mono": "models/baseline_logreg.joblib",
     "lr_mono_downsampled": "models/logreg_downsampled.joblib",
     "svm_mono": "models/baseline_svm.joblib",
 }
 
-# Predicciones ya existentes: nombre → lista de parquets con doc_id, pred, proba_dep.
 SAVED_PREDICTIONS = {
     "beto_mono": ["temp/scores_beto_mono.parquet", "temp/scores_beto_mono_reddit.parquet"],
     "beto_multi": ["models/beto_multi/predictions_test.parquet"],
@@ -62,7 +60,6 @@ def score_pipeline(pipeline, texts: list[str]) -> tuple[np.ndarray, np.ndarray]:
     if hasattr(pipeline, "predict_proba"):
         score = pipeline.predict_proba(texts)[:, classes.index(DEP)]
     else:
-        # En binario decision_function > 0 favorece a classes_[1].
         sign = 1.0 if classes[1] == DEP else -1.0
         score = sign * pipeline.decision_function(texts)
     return np.asarray(pred), np.asarray(score, dtype=float)

@@ -97,7 +97,7 @@ baseline:  ## Entrenar baseline clásico (TF-IDF + LogReg y SVM).
 	@$(PY) -m src.models.train_baseline --config configs/models.yaml --data-dir $(DATA_DIR)/processed/splits --out-dir models --reports-dir reports/tables
 
 baseline-multi:  ## Entrenar y evaluar baselines sobre el corpus multi-fuente (splits_multi).
-	@$(PY) -m src.models.train_baseline_multi --data-dir $(DATA_DIR)/processed/splits_multi
+	@$(PY) -m src.evaluation.ablation_per_source
 
 beto-multi:  ## Fine-tuning de BETO sobre corpus multi-fuente con GPU (downsampled 50/50).
 	@$(PY) -m src.models.train_beto --data-dir $(DATA_DIR)/processed/splits_multi --output-dir models/beto_multi --downsample

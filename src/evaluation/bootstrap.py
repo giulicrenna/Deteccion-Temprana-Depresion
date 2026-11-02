@@ -103,7 +103,6 @@ class UserBootstrap:
             pd.Series(self.is_pos).groupby(self.user_codes).agg(lambda s: s.mode().iloc[0])
         )
         rng = np.random.default_rng(seed)
-        # float32 representa exactamente conteos < 2**24 y evita copias float64 en el matmul.
         self.multiplicity = np.zeros((n_boot, self.n_users), dtype=np.float32)
         for stratum in (True, False):
             members = user_label.index[user_label.to_numpy() == stratum].to_numpy()

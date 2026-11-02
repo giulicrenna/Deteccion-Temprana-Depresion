@@ -44,7 +44,6 @@ def download(target_dir: Path) -> dict[str, Any]:
     target_dir.mkdir(parents=True, exist_ok=True)
     zip_path = target_dir / f"{SOURCE}.zip"
 
-    # Si el archivo ya está bajado manualmente, manifest y fuera.
     if zip_path.exists() and zip_path.stat().st_size > 0:
         from src.data.download._common import read_manifest, sha256_file
 
@@ -61,13 +60,10 @@ def download(target_dir: Path) -> dict[str, Any]:
             )
         return read_manifest(target_dir) or {}
 
-    # No está local. No intentamos descarga porque el zip está cifrado y no
-    # podemos procesarlo sin la contraseña.
     raise NotImplementedError(_instructions())
 
 
 if __name__ == "__main__":
-    # Permitir que se importe sin ejecutar; gateamos solo en CLI.
     if os.environ.get("MENTALRISKES_PASSPHRASE"):
         print(
             "WARNING: variable MENTALRISKES_PASSPHRASE seteada pero el script no la usa. "

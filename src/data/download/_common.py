@@ -27,10 +27,6 @@ log = get_logger(__name__)
 MANIFEST_NAME = "manifest.json"
 
 
-# ---------------------------------------------------------------------------
-# Hashing
-# ---------------------------------------------------------------------------
-
 
 def sha256_file(path: Path, chunk: int = 1 << 20) -> str:
     """Calcula el SHA256 de un archivo en chunks (default 1 MB)."""
@@ -43,10 +39,6 @@ def sha256_file(path: Path, chunk: int = 1 << 20) -> str:
             h.update(buf)
     return h.hexdigest()
 
-
-# ---------------------------------------------------------------------------
-# Descarga HTTP
-# ---------------------------------------------------------------------------
 
 
 def _http_download(url: str, dest: Path, timeout: int = 60, max_retries: int = 3) -> None:
@@ -109,10 +101,6 @@ def download_kaggle_dataset(
     return download_file(url, dest, timeout=timeout)
 
 
-# ---------------------------------------------------------------------------
-# Hugging Face Hub
-# ---------------------------------------------------------------------------
-
 def download_hf_dataset(
     target_dir: Path,
     source: str,
@@ -167,10 +155,6 @@ def download_hf_dataset(
         extra={"hf_id": hf_id, "hf_config": config, "n_rows": n_rows, **(extra or {})},
     )
 
-
-# ---------------------------------------------------------------------------
-# Manifest
-# ---------------------------------------------------------------------------
 
 
 def write_manifest(
@@ -227,10 +211,6 @@ def verify_manifest(target_dir: Path) -> bool:
         return False
     return sha256_file(p) == m.get("sha256", "")
 
-
-# ---------------------------------------------------------------------------
-# CLI helpers
-# ---------------------------------------------------------------------------
 
 
 def make_cli(

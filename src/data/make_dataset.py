@@ -27,10 +27,6 @@ from src.utils.seeds import set_seed
 
 log = get_logger(__name__)
 
-# ---------------------------------------------------------------------------
-# Anonimización
-# ---------------------------------------------------------------------------
-
 URL_RE = re.compile(r"https?://\S+|www\.\S+")
 MENTION_RE = re.compile(r"@\w+")
 REDDIT_USER_RE = re.compile(r"(?<![\w/])/?u/[A-Za-z0-9_-]+")
@@ -65,10 +61,6 @@ def hash_id(*parts: str) -> str:
     return h.hexdigest()[:16]
 
 
-# ---------------------------------------------------------------------------
-# Loaders por fuente
-# ---------------------------------------------------------------------------
-
 
 def _parse_twitter_date(s: str) -> str | None:
     """Parsea 'Thu Nov 21 03:45:28 +0000 2013' → ISO8601 UTC."""
@@ -94,7 +86,6 @@ def load_coello_guilarte(raw_dir: Path) -> pd.DataFrame:
     extract_dir = raw_dir / "_extracted"
     extract_dir.mkdir(exist_ok=True)
 
-    # Extraer zip con filenames correctos (los nombres tienen \u00f1 → ñ).
     with zipfile.ZipFile(zip_path) as zf:
         for member in zf.namelist():
             target_name = member.replace("Espa#U00f1ol", "Español")
@@ -107,7 +98,6 @@ def load_coello_guilarte(raw_dir: Path) -> pd.DataFrame:
     dep_path = extract_dir / "tweets_Español_depresivos.json"
     nodep_path = extract_dir / "tweets_Español_no-depresivos.json"
 
-    # El archivo depresivo es un TAR dentro del zip; los no-depresivos es JSONL.
     if tarfile.is_tarfile(dep_path):
         with tarfile.open(dep_path) as tf:
             tf.extractall(path=extract_dir / "_dep")
@@ -344,10 +334,6 @@ LOADERS = {
 }
 
 
-# ---------------------------------------------------------------------------
-# Pipeline
-# ---------------------------------------------------------------------------
-
 
 def process_one(
     source: str,
@@ -378,8 +364,6 @@ def process_one(
         log.warning("fuente %s vacía — saltando", source)
         return None
 
-    # Fuentes nuevas: textos vacíos tras anonimizar no aportan nada (ni se traducen).
-    # Coello-Guilarte se deja intacto para no alterar las tablas de EDA ya reportadas.
     if source in LOADERS:
         df = df[df["text_clean"].str.len() > 0].reset_index(drop=True)
 
