@@ -1,0 +1,119 @@
+% =====================================================================
+% SECCIÓN 1: INTRODUCCIÓN, MOTIVACIÓN Y PROBLEMA
+% =====================================================================
+
+% ---------------------------------------------------------------------
+% Diapositiva 1: Portada
+% ---------------------------------------------------------------------
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture,overlay]
+    % Barra superior azul institucional
+    \fill[ugrAzul] (current page.north west) rectangle ([yshift=-1.05cm]current page.north east);
+    \node[anchor=west,text=white,font=\scriptsize\bfseries] at ([xshift=1.2cm,yshift=-0.52cm]current page.north west) {UNIVERSIDAD DEL GRAN ROSARIO};
+    \node[anchor=east,text=ugrCeleste!40,font=\scriptsize] at ([xshift=-1.2cm,yshift=-0.52cm]current page.north east) {Licenciatura en Ciencia de Datos};
+
+    % Logo UGR
+    \node[anchor=north east] at ([xshift=-1.1cm,yshift=-1.35cm]current page.north east) {\includegraphics[width=2.5cm]{logo_ugr.png}};
+
+    % Título y subtítulo con acento lateral celeste
+    \fill[ugrCeleste] ([xshift=1.2cm,yshift=-2.2cm]current page.north west) rectangle ([xshift=1.26cm,yshift=-4.6cm]current page.north west);
+    \node[anchor=north west,text width=0.68\paperwidth,text=ugrAzul,font=\fontsize{15}{19}\selectfont\bfseries,align=left] at ([xshift=1.55cm,yshift=-2.15cm]current page.north west) {
+      Detección temprana de indicios de\\ depresión en español mediante PLN
+    };
+    \node[anchor=north west,text width=0.74\paperwidth,text=ugrGris,font=\footnotesize\itshape,align=left] at ([xshift=1.55cm,yshift=-3.75cm]current page.north west) {
+      Evaluación empírica de modelos contextuales y líneas base clásicas
+    };
+
+    % Separador inferior
+    \draw[ugrGris!30,line width=0.5pt] ([xshift=1.2cm,yshift=2.2cm]current page.south west) -- ([xshift=-1.2cm,yshift=2.2cm]current page.south east);
+
+    % Bloque de metadatos (tres columnas espaciadas)
+    \node[anchor=north west,text width=3.8cm,align=left,font=\scriptsize] at ([xshift=1.2cm,yshift=1.95cm]current page.south west) {
+      {\color{ugrAzul}\bfseries AUTORES}\\[2pt]
+      Tec.\ Univ.\ Giuliano Crenna\\
+      Tec.\ Univ.\ Bruno Emmanuel Pace
+    };
+    \node[anchor=north west,text width=4.8cm,align=left,font=\scriptsize] at ([xshift=5.6cm,yshift=1.95cm]current page.south west) {
+      {\color{ugrAzul}\bfseries DOCENTES / EVALUADORES}\\[2pt]
+      Jorge Manuel Fernández Acuña\\
+      Briant Alcides Gauna\\
+      Alejandro Mario Hernández
+    };
+    \node[anchor=north west,text width=3.6cm,align=left,font=\scriptsize] at ([xshift=11.0cm,yshift=1.95cm]current page.south west) {
+      {\color{ugrAzul}\bfseries DEFENSA ORAL}\\[2pt]
+      Rosario, Santa Fe, Argentina\\
+      Tesina de grado -- 2026
+    };
+  \end{tikzpicture}
+
+  \note{
+    Buenos días miembros del tribunal evaluador y docentes presentes. Hoy junto a Bruno Pace tenemos el agrado de presentar la defensa de nuestra tesina de grado para la Licenciatura en Ciencia de Datos de la Universidad del Gran Rosario, titulada: 'Detección temprana de indicios de depresión en español mediante PLN: Evaluación empírica de modelos contextuales y líneas base clásicas'.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 2: Contexto y Motivación
+% ---------------------------------------------------------------------
+\section{Comprensión del problema}
+
+\begin{frame}{Contexto y motivación: salud pública y huella digital}
+  \framesubtitle{Oportunidades y desafíos del Procesamiento del Lenguaje Natural en salud mental}
+  
+  \begin{columns}[T]
+    \column{0.58\textwidth}
+    \begin{itemize}
+      \item \textbf{Crisis global de salud mental:} La depresión afecta a $\sim$5{,}2\,\% de los adultos del mundo (OMS, 2026). Es la principal causa de discapacidad persistente.
+      \item \textbf{Brecha diagnóstica:} Hasta un 60\,\% de las personas con malestar afectivo no acceden a atención oportuna por estigma o barreras asistenciales.
+      \item \textbf{Huella digital en redes:} Señales lingüísticas y cambios de conducta en Twitter o Reddit meses antes de la primera consulta clínica.
+      \item \textbf{Asimetría del español:} La literatura en PLN se concentra en \textbf{inglés}; en español los corpus anotados son escasos y de acceso restringido.
+    \end{itemize}
+
+    \column{0.40\textwidth}
+    \begin{center}
+      \includegraphics[width=\textwidth,height=0.34\textheight,keepaspectratio]{eda_02_distribucion_clases.png}
+      \vskip-0.05cm
+      {\tiny\color{ugrGris}Figura 1: Distribución global de clases en el corpus (1{,}31M de textos).\par}
+    \end{center}
+  \end{columns}
+
+  \vskip0.05cm
+  \ugrblock{Delimitación ética y alcance computacional}{
+    Desarrollamos y evaluamos \textbf{clasificadores estadísticos de texto} como herramientas de apoyo al cribado poblacional. El sistema \textbf{no} constituye ni sustituye un diagnóstico clínico individual.
+  }
+
+  \note{
+    La depresión es una crisis de salud pública de escala mundial. Las redes sociales representan un canal donde los usuarios manifiestan cambios conductuales y léxicos tempranos. Sin embargo, existe una notable asimetría: casi toda la investigación en PLN se realiza en inglés, mientras que en español los recursos abiertos son mínimos. Aclaramos desde el inicio que el trabajo se enmarca en la clasificación supervisada para cribado preventivo, no en el diagnóstico médico.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 3: Planteamiento del Problema
+% ---------------------------------------------------------------------
+\begin{frame}{Planteamiento del problema y preguntas de investigación}
+  \framesubtitle{Pregunta central y dimensiones metodológicas en Ciencia de Datos}
+
+  \ugrblock{Pregunta central de investigación}{
+    \textit{¿Es posible desarrollar un clasificador supervisado en Ciencia de Datos que, a partir de texto en español a nivel de publicación, distinga publicaciones con indicios de depresión frente a controles con un desempeño predictivo significativamente superior al de las representaciones clásicas, manteniendo robustez y evaluación no sesgada?}
+  }
+
+  \vskip0.05cm
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugrblock{1. Transferencia translingüística}{
+      ¿Permite la traducción automática neuronal (EN$\to$ES) aumentar los datos de entrenamiento y beneficiar la detección en el dominio nativo en español?
+    }
+    \column{0.49\textwidth}
+    \ugralert{2. Auditoría de sesgo dialectal}{
+      ¿Capturan los clasificadores marcadores psicopatológicos genuinos o explotan atajos diatópicos y regionales espurios de los corpus abiertos?
+    }
+  \end{columns}
+
+  \vskip0.05cm
+  \begin{itemize}
+    \item \textbf{Unidad de análisis:} Establecer una distinción metódica formal entre la predicción a \textbf{nivel de publicación} (tweet individual) y a \textbf{nivel de usuario} (perfil histórico acumulado).
+  \end{itemize}
+
+  \note{
+    Formulamos una pregunta central con rigor epistemológico: contrastar si las arquitecturas Transformer contextuales superan efectivamente a los modelos clásicos en español bajo un marco no sesgado. A partir de allí exploramos si el aumento translingüístico con MarianMT ayuda al dominio nativo, y si los modelos aprenden atajos dialectales regionales en lugar de sintomatología clínica.
+  }
+\end{frame}

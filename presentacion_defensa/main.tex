@@ -1,0 +1,195 @@
+% =====================================================================
+%  DEFENSA DE TESINA DE GRADO — LICENCIATURA EN CIENCIA DE DATOS
+%  Universidad del Gran Rosario (UGR) — Rosario, Santa Fe, Argentina
+%  Autores: Giuliano Crenna · Bruno Emmanuel Pace
+%  Título: Detección temprana de indicios de depresión en español mediante PLN:
+%          Evaluación empírica de modelos contextuales y líneas base clásicas
+%
+%  Compatibilidad total:
+%    - Tectonic: tectonic main.tex
+%    - pdfLaTeX: pdflatex main.tex
+%    - Overleaf: main.tex como documento principal (pdfLaTeX o XeLaTeX)
+% =====================================================================
+
+\documentclass[10pt,aspectratio=169]{beamer}
+
+\usepackage{iftex}
+\ifXeTeX
+  \usepackage{fontspec}
+\else\ifLuaTeX
+  \usepackage{fontspec}
+\else
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+\fi\fi
+
+\usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{colortbl}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,fit,backgrounds,calc,shapes.geometric,decorations.pathreplacing,positioning}
+\usepackage[most]{tcolorbox}
+\usepackage{multicol}
+
+% Rutas de recursos gráficos
+\graphicspath{{figures/}{../figures/}{informe/figures/}{./}}
+
+% ---------------------------------------------------------------------
+% Paleta cromática institucional y académica (UGR)
+% ---------------------------------------------------------------------
+\definecolor{ugrAzul}{HTML}{0B3D91}
+\definecolor{ugrCeleste}{HTML}{3FA9F5}
+\definecolor{ugrRojo}{HTML}{E5323B}
+\definecolor{ugrNaranja}{HTML}{E07B00}
+\definecolor{ugrVerde}{HTML}{1E7E34}
+\definecolor{ugrGris}{HTML}{555E68}
+\definecolor{ugrFondoClaro}{HTML}{F4F8FC}
+\definecolor{filaResaltada}{HTML}{E5F0FA}
+
+% ---------------------------------------------------------------------
+% Configuración estética de Beamer
+% ---------------------------------------------------------------------
+\usetheme{default}
+\setbeamersize{text margin left=0.6cm,text margin right=0.6cm}
+\usefonttheme{professionalfonts}
+\setbeamertemplate{navigation symbols}{}
+
+\setbeamercolor{structure}{fg=ugrAzul}
+\setbeamercolor{title}{fg=ugrAzul}
+\setbeamercolor{frametitle}{fg=ugrAzul}
+\setbeamercolor{section in toc}{fg=ugrAzul}
+\setbeamercolor{normal text}{fg=black}
+
+% Encabezado compacto y elegante
+\makeatletter
+\setbeamertemplate{frametitle}{
+  \vskip0.08cm
+  \begin{beamercolorbox}[wd=\textwidth,sep=0pt,vmode]{frametitle}
+    {\fontsize{12}{14}\selectfont\bfseries\color{ugrAzul}\insertframetitle}
+    \ifx\insertframesubtitle\@empty\else
+      \vskip1pt
+      {\fontsize{8}{10}\selectfont\color{ugrGris}\textit{\insertframesubtitle}}
+    \fi
+  \end{beamercolorbox}
+  \vskip1pt
+  \textcolor{ugrCeleste!35}{\rule{\textwidth}{0.8pt}}
+  \vskip0.05cm
+}
+\makeatother
+
+% Pie de página discreto con logo UGR y contador
+\setbeamertemplate{footline}{
+  \leavevmode
+  \hbox{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=0.40cm,dp=0.15cm,leftskip=0.5cm,rightskip=0.5cm]{footline}%
+      \raisebox{-0.06cm}{\includegraphics[height=0.34cm]{logo_ugr.png}}%
+      \hspace{0.25cm}%
+      {\fontsize{7}{8.5}\selectfont\color{ugrGris}
+        \ifnum\value{section}>0 CRISP-DM $\cdot$ Fase \insertsectionnumber: \fi\insertsectionhead
+      }%
+      \hfill%
+      {\fontsize{7}{8.5}\selectfont\bfseries\color{ugrAzul}
+        \insertframenumber\,/\,\inserttotalframenumber
+      }%
+    \end{beamercolorbox}%
+  }%
+  \vskip0.04cm
+}
+
+% Listas compactas
+\setbeamertemplate{itemize item}{\textcolor{ugrAzul}{\scriptsize$\blacksquare$}}
+\setbeamertemplate{itemize subitem}{\textcolor{ugrCeleste}{\scriptsize$\blacktriangleright$}}
+\setbeamertemplate{itemize/enumerate body begin}{\setlength{\itemsep}{0.12em}\setlength{\parskip}{0pt}}
+\setbeamerfont{itemize/enumerate body}{size=\scriptsize}
+\setbeamerfont{itemize/enumerate subbody}{size=\tiny}
+
+% ---------------------------------------------------------------------
+% Cajas de contenido tcolorbox compactas
+% ---------------------------------------------------------------------
+\newcommand{\ugrblock}[2]{%
+  \begin{tcolorbox}[
+    enhanced, colback=ugrFondoClaro, colframe=ugrAzul, boxrule=0.7pt, arc=2.5pt,
+    title={\textbf{#1}}, fonttitle=\scriptsize\bfseries, coltitle=white, colbacktitle=ugrAzul,
+    left=5pt, right=5pt, top=2.5pt, bottom=2.5pt, before skip=0.15em, after skip=0.15em
+  ]
+    {\scriptsize #2}
+  \end{tcolorbox}%
+}
+
+\newcommand{\ugrblockok}[2]{%
+  \begin{tcolorbox}[
+    enhanced, colback=ugrVerde!8, colframe=ugrVerde, boxrule=0.7pt, arc=2.5pt,
+    title={\textbf{#1}}, fonttitle=\scriptsize\bfseries, coltitle=white, colbacktitle=ugrVerde,
+    left=5pt, right=5pt, top=2.5pt, bottom=2.5pt, before skip=0.15em, after skip=0.15em
+  ]
+    {\scriptsize #2}
+  \end{tcolorbox}%
+}
+
+\newcommand{\ugralert}[2]{%
+  \begin{tcolorbox}[
+    enhanced, colback=ugrNaranja!8, colframe=ugrNaranja, boxrule=0.7pt, arc=2.5pt,
+    title={\textbf{#1}}, fonttitle=\scriptsize\bfseries, coltitle=white, colbacktitle=ugrNaranja,
+    left=5pt, right=5pt, top=2.5pt, bottom=2.5pt, before skip=0.15em, after skip=0.15em
+  ]
+    {\scriptsize #2}
+  \end{tcolorbox}%
+}
+
+% ---------------------------------------------------------------------
+% Estilos TikZ para diagramas
+% ---------------------------------------------------------------------
+\tikzset{
+    base/.style={rectangle, rounded corners=3pt, align=center, inner sep=3.5pt, line width=0.6pt},
+    nodoES/.style={base, draw=ugrAzul, fill=ugrAzul!9, text width=3.1cm},
+    nodoEN/.style={base, draw=ugrNaranja, fill=ugrNaranja!9, text width=3.1cm},
+    proceso/.style={base, draw=ugrAzul, fill=white, text width=#1},
+    resultado/.style={base, draw=ugrVerde, fill=ugrVerde!9, text width=#1},
+    flecha/.style={-{Stealth[length=2.2mm, width=1.6mm]}, line width=0.7pt, color=ugrGris},
+}
+
+\newcommand{\tikzdiagram}[1]{%
+  \begin{center}
+    \resizebox{0.94\textwidth}{!}{#1}
+  \end{center}%
+}
+
+% ---------------------------------------------------------------------
+% Metadatos
+% ---------------------------------------------------------------------
+\title[Detección de depresión con PLN]{Detección temprana de indicios de depresión en español mediante PLN}
+\subtitle{Evaluación empírica de modelos contextuales y líneas base clásicas}
+\author[Crenna \& Pace]{Giuliano Crenna \and Bruno Emmanuel Pace}
+\institute[UGR]{Universidad del Gran Rosario -- Licenciatura en Ciencia de Datos}
+\date{2026}
+
+% =====================================================================
+% CUERPO MODULAR
+% =====================================================================
+\begin{document}
+
+% 1. Portada, Motivación y Planteamiento del Problema
+\input{sections/01_introduccion}
+
+% 2. Objetivos, Hipótesis y Metodología CRISP-DM
+\input{sections/02_marco_y_objetivos}
+
+% 3. Corpus Masivo, Anonimización y Partición por Usuario
+\input{sections/03_datos_y_preprocesamiento}
+
+% 4. Jerarquía de Modelos y Arquitectura BETO
+\input{sections/04_modelos_y_arquitectura}
+
+% 5. Protocolo de Evaluación, Resultados y Contrastación Formal
+\input{sections/05_resultados_principales}
+
+% 6. Transferencia Translingüística, Sesgo Dialectal y Nivel Usuario
+\input{sections/06_transferencia_y_sesgo}
+
+% 7. Discusión, Limitaciones, Trabajo Futuro y Conclusiones
+\input{sections/07_conclusiones_y_cierre}
+
+\end{document}

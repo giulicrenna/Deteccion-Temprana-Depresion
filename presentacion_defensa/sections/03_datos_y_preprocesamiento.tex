@@ -1,0 +1,118 @@
+% =====================================================================
+% SECCIÓN 3: COMPRENSIÓN Y PREPARACIÓN DE LOS DATOS
+% =====================================================================
+
+% ---------------------------------------------------------------------
+% Diapositiva 7: Corpus Textual Masivo
+% ---------------------------------------------------------------------
+\section{Comprensión y preparación de datos}
+
+\begin{frame}{Corpus textual masivo: fuentes y consolidación}
+  \framesubtitle{1\,311\,023 publicaciones de 260\,357 usuarios en español}
+
+  \begin{table}
+    \centering\scriptsize
+    \setlength{\tabcolsep}{5pt}
+    \caption{Composición del corpus unificado (\texttt{corpus\_v1.parquet}).}
+    \begin{tabular}{lrrll}
+      \toprule
+      \textbf{Fuente} & \textbf{Documentos} & \textbf{\%} & \textbf{Idioma orig.} & \textbf{Nivel de etiqueta} \\
+      \midrule
+      Coello-Guilarte (Twitter) & 1\,047\,194 & 79{,}88\,\% & Español (nativo) & Usuario completo (0 / 2) \\
+      Kaggle SDD (Reddit) & 232\,067 & 17{,}70\,\% & Inglés (trad.) & Comunidad / autoinforme \\
+      Reddit Mental Health Posts & 24\,031 & 1{,}83\,\% & Inglés (trad.) & Subreddit temático \\
+      Depression Reddit & 7\,731 & 0{,}59\,\% & Inglés (trad.) & Subreddit temático \\
+      \midrule
+      \textbf{Total consolidado} & \textbf{1\,311\,023} & \textbf{100\,\%} & -- & \textbf{260\,357 usuarios} \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  \vskip-0.15cm
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugrblock{Anonimización y privacidad}{
+      \begin{itemize}
+        \item Supresión de URLs, menciones (@usuario), correos y teléfonos.
+        \item Identificadores hasheados con SHA-256 (prefijo de 12 hex).
+      \end{itemize}
+    }
+    \column{0.49\textwidth}
+    \ugrblock{Calidad y multimodalidad}{
+      \begin{itemize}
+        \item Textos vacíos residuales inferiores al 0{,}02\,\%.
+        \item Registro dual: microtexto de Twitter (14 tokens) vs.\ publicaciones extensas de Reddit (112 tokens).
+      \end{itemize}
+    }
+  \end{columns}
+
+  \note{
+    Consolidamos un corpus inédito de más de 1,3 millones de textos anonimizados. La fuente nativa en español reúne 317 usuarios clínicos de Twitter, a los que sumamos tres colecciones de Reddit traducidas con redes neuronales para evaluar la transferencia de dominio. Toda la información personal fue eliminada de forma irreversible.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 8: Partición a Nivel de Usuario
+% ---------------------------------------------------------------------
+\begin{frame}{Partición estricta a nivel de usuario (prevención de fuga)}
+  \framesubtitle{Estratificación 70/10/20 agrupada por autor (semilla fija 42)}
+
+  \vskip-0.1cm
+  \tikzdiagram{\input{diagramas/particion}}
+
+  \vskip-0.15cm
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugralert{El riesgo de fuga (\emph{Data Leakage})}{
+      Si se divide al azar por documento, textos del mismo autor caen en entrenamiento y prueba: el clasificador aprende a reconocer al autor en vez de la señal afectiva.
+    }
+    \column{0.49\textwidth}
+    \ugrblockok{Blindaje metodológico}{
+      Todos los textos de un usuario permanecen en un único conjunto. El \textbf{test nativo común} cuenta con \textbf{64 usuarios nunca vistos} en entrenamiento (250\,847 tweets reales).
+    }
+  \end{columns}
+
+  \note{
+    Uno de los pilares del trabajo es evitar el data leakage: agrupar la partición por autor. De esta forma, los 64 autores del conjunto de prueba nativo son completamente desconocidos para los modelos, garantizando una evaluación predictiva genuina sobre nuevos sujetos.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 9: Pipeline de Traducción y Preprocesamiento
+% ---------------------------------------------------------------------
+\begin{frame}{Pipeline de traducción y extracción de rasgos}
+  \framesubtitle{Traducción neuronal y enriquecimiento psicolingüístico}
+
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugrblock{Traducción automática neuronal}{
+      \begin{itemize}
+        \item Modelo Transformer \textbf{MarianMT} (\texttt{opus-mt-en-es}).
+        \item 263\,829 publicaciones traducidas con caché JSONL.
+        \item Control de consistencia sintáctica y semántica.
+      \end{itemize}
+    }
+    \vskip0.05cm
+    \ugrblock{Balanceo de clases (solo entrenamiento)}{
+      \begin{itemize}
+        \item \textbf{Submuestreo 50/50:} 424\,436 textos en mono (usado en BETO para eficiencia en GPU).
+        \item \textbf{Ponderación de clases:} 700\,717 textos en mono ($w_c \propto 1 / n_c$).
+      \end{itemize}
+    }
+
+    \column{0.49\textwidth}
+    \ugrblock{19 Rasgos psicolingüísticos y temporales}{
+      Inspirados en la literatura psiquiátrica (LIWC) adaptados al español:
+      \begin{itemize}
+        \item \textbf{Foco en sí mismo:} Pronombres y verbos en 1ª persona del singular (\emph{yo, me, mi, conmigo}).
+        \item \textbf{Pensamiento absolutista:} Términos cognitivos rígidos (\emph{siempre, nunca, jamás, nada, todo}).
+        \item \textbf{Léxico afectivo:} Emociones NRC en español y polaridad léxica VADER.
+        \item \textbf{Patrones temporales:} Hora de publicación y signos de insomnio o vigilia nocturna.
+      \end{itemize}
+    }
+  \end{columns}
+
+  \note{
+    Para traducir Reddit utilizamos MarianMT en un pipeline local con caché para asegurar reproducibilidad. Paralelamente, implementamos un módulo para extraer 19 rasgos psicolingüísticos clásicos basados en Pennebaker: autorreferencia excesiva, absolutismo y polaridad afectiva, excluyendo cualquier rasgo derivado de la cantidad de mensajes para evitar fuga.
+  }
+\end{frame}

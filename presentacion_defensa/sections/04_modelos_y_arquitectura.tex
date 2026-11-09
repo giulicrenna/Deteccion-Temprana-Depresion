@@ -1,0 +1,86 @@
+% =====================================================================
+% SECCIÓN 4: MODELADO Y ARQUITECTURA
+% =====================================================================
+
+% ---------------------------------------------------------------------
+% Diapositiva 10: Jerarquía de Modelos Supervisados
+% ---------------------------------------------------------------------
+\section{Modelado}
+
+\begin{frame}{Jerarquía de modelos supervisados}
+  \framesubtitle{Tres niveles de complejidad representacional para un contraste exhaustivo}
+
+  \begin{columns}[T]
+    \column{0.32\textwidth}
+    \ugrblock{1. Líneas base léxicas}{
+      \begin{itemize}
+        \item \textbf{Representación:} TF-IDF con unigramas y bigramas ($V = 15\,000$ términos sublineales).
+        \item \textbf{Regresión Logística (L2):} Regularización $C=1{,}0$, interpretabilidad directa de coeficientes.
+        \item \textbf{SVM lineal:} Maximización de margen con norma $L_2$.
+      \end{itemize}
+    }
+
+    \column{0.33\textwidth}
+    \ugrblock{2. Modelo combinado}{
+      \begin{itemize}
+        \item \textbf{Enriquecimiento:} TF-IDF (15k) concatenado con \textbf{19 rasgos psicolingüísticos} estandarizados.
+        \item \textbf{Clasificador:} Regresión Logística calibrada.
+        \item \textbf{Objetivo:} Evaluar si el conocimiento experto tipo LIWC supera a las palabras puras.
+      \end{itemize}
+    }
+
+    \column{0.33\textwidth}
+    \ugrblockok{3. Modelo contextual (BETO)}{
+      \begin{itemize}
+        \item \textbf{Arquitectura:} Transformer bidireccional preentrenado en español (\texttt{dccuchile}).
+        \item \textbf{Parámetros:} 110M ajustados mediante \emph{fine-tuning} supervisado.
+        \item \textbf{Contexto:} Modela orden, negaciones y polisemia.
+      \end{itemize}
+    }
+  \end{columns}
+
+  \vskip0.05cm
+  \ugrblock{Diseño experimental 2 $\times$ 2 de entrenamiento y evaluación}{
+    Cada familia de modelos se entrenó en dos modalidades: \textbf{Mono} (solo Coello-Guilarte nativo) y \textbf{Multi} (unión de Coello-Guilarte + 3 fuentes de Reddit traducidas), evaluándose sobre el mismo conjunto de prueba común.
+  }
+
+  \note{
+    Planteamos una progresión metodológica rigurosa: líneas base léxicas puras (TF-IDF con Regresión Logística y SVM); un modelo combinado que incorpora los 19 rasgos psicolingüísticos; y el modelo contextual de vanguardia BETO. Cada modelo se entrena en modalidad mono y multi para comparar el impacto del aumento de datos.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 11: Arquitectura de BETO y Configuración Experimental
+% ---------------------------------------------------------------------
+\begin{frame}{Arquitectura de BETO y configuración experimental}
+  \framesubtitle{Ajuste fino supervisado con restricciones computacionales reales}
+
+  \begin{columns}[T]
+    \column{0.52\textwidth}
+    \vskip-0.1cm
+    \begin{center}
+      \resizebox{0.95\columnwidth}{!}{\input{diagramas/beto}}
+      \vskip-0.1cm
+      {\tiny\color{ugrGris}Diagrama: Tokenización WordPiece $\to$ BETO ($d=768$) $\to$ Capa lineal $\to$ Softmax.\par}
+    \end{center}
+
+    \column{0.46\textwidth}
+    \ugrblock{Configuración de hiperparámetros}{
+      \begin{itemize}
+        \item \textbf{Optimizador:} AdamW ($\text{weight decay} = 0{,}01$).
+        \item \textbf{Tasa de aprendizaje:} $\eta = 2 \times 10^{-5}$ con \emph{warmup} lineal del 10\,\%.
+        \item \textbf{Longitud de secuencia:} 128 tokens WordPiece.
+        \item \textbf{Tamaño de lote:} 16 muestras con gradiente acumulado.
+        \item \textbf{Épocas:} 3 épocas con parada temprana sobre validación.
+      \end{itemize}
+    }
+    \vskip0.05cm
+    \ugrblock{Hardware y restricciones}{
+      Ajuste fino en GPU local \textbf{NVIDIA GeForce RTX 3060 Ti (8\,GB VRAM)} con precisión mixta (FP16).
+    }
+  \end{columns}
+
+  \note{
+    BETO procesa la secuencia tokenizada con WordPiece; el vector contextual de la salida CLS en la capa 12 alimenta una capa lineal hacia dos neuronas con softmax. El ajuste fino se completó en hardware local mediante precisión mixta FP16, logrando convergencia estable en 3 épocas.
+  }
+\end{frame}

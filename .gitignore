@@ -16,6 +16,12 @@ dist/
 .eggs/
 pip-wheel-metadata/
 
+presentacion_defensa/notas_expositor.md
+
+rev_acad.md
+revision_academica_v2.md
+revision_academica
+
 # --- Virtualenvs ---
 .venv/
 venv/

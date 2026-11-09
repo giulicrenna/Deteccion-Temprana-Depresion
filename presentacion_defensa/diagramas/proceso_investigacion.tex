@@ -1,0 +1,56 @@
+% Proceso de investigación según CRISP-DM (seis fases, recorrido en serpentina)
+% Fila superior: 1 -> 2 -> 3. Fila inferior: 4 -> 5 -> 6 (de derecha a izquierda).
+% Requiere los estilos proceso, resultado y flecha del documento anfitrión.
+\begin{tikzpicture}[font=\footnotesize]
+    \hyphenpenalty=10000\relax
+
+    \tikzset{
+        fase/.style={proceso=4.9cm, minimum height=2.9cm, align=left, anchor=center},
+        iter/.style={-{Stealth[length=2.4mm, width=1.8mm]}, line width=0.8pt, color=ugrNaranja, dashed},
+        ida/.style={{Stealth[length=2.4mm, width=1.8mm]}-{Stealth[length=2.4mm, width=1.8mm]}, line width=0.8pt, color=ugrGris},
+    }
+
+    \node[fase] (f1) at (-6.0, 0) {%
+        {\small\bfseries\color{ugrAzul} 1. Comprensión del problema}\\[2pt]
+        Pregunta, $H_1$/$H_0$ y objetivos\\
+        Criterio de éxito: IC 95\,\% de $\Delta F_1$ y $\Delta$AUC $>0$\\
+        Restricciones: tarea binaria, GPU de 8\,GB, corpus abiertos};
+
+    \node[fase] (f2) at (0, 0) {%
+        {\small\bfseries\color{ugrAzul} 2. Comprensión de los datos}\\[2pt]
+        Cuatro fuentes: Twitter nativo y tres de Reddit traducido\\
+        Análisis exploratorio, calidad y desbalance\\
+        Marcadores dialectales};
+
+    \node[fase] (f3) at (6.0, 0) {%
+        {\small\bfseries\color{ugrAzul} 3. Preparación de los datos}\\[2pt]
+        Anonimización y traducción (MarianMT)\\
+        Corpus unificado (1\,311\,023 textos)\\
+        Partición 70/10/20 por usuario, rasgos y balanceo};
+
+    \node[fase, draw=ugrAzul, fill=ugrAzul!8] (f4) at (6.0, -4.6) {%
+        {\small\bfseries\color{ugrAzul} 4. Modelado}\\[2pt]
+        TF-IDF con Regresión Logística y SVM\\
+        Modelo combinado (19 rasgos)\\
+        BETO; esquemas mono y multi};
+
+    \node[fase, draw=ugrVerde, fill=ugrVerde!9] (f5) at (0, -4.6) {%
+        {\small\bfseries\color{ugrAzul} 5. Evaluación}\\[2pt]
+        $F_1$-macro, AUC, $\kappa$ y \emph{bootstrap} de 2\,000 réplicas\\
+        Control dialectal y nivel de usuario\\
+        Contraste de $H_0$};
+
+    \node[fase] (f6) at (-6.0, -4.6) {%
+        {\small\bfseries\color{ugrAzul} 6. Despliegue y cierre}\\[2pt]
+        Código, manifiestos y predicciones reproducibles\\
+        Uso no clínico y consideraciones éticas\\
+        Informe y presentación};
+
+    \draw[ida]   (f1) -- (f2);
+    \draw[ida]   (f2) -- (f3);
+    \draw[ida]   (f3) -- (f4);
+    \draw[flecha] (f4) -- (f5);
+    \draw[flecha] (f5) -- (f6);
+    \draw[iter]  (f5.north west) -- node[midway, right=3pt, font=\scriptsize, text=ugrNaranja, align=left, inner sep=1pt] {nuevo\\ciclo} (f1.south east);
+
+\end{tikzpicture}

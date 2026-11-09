@@ -1,0 +1,131 @@
+% =====================================================================
+% SECCIÓN 6: TRANSFERENCIA, SESGO DIALECTAL Y NIVEL USUARIO
+% =====================================================================
+
+% ---------------------------------------------------------------------
+% Diapositiva 16: Transferencia Translingüística
+% ---------------------------------------------------------------------
+\section{Transferencia y auditoría de sesgos}
+
+\begin{frame}{Efecto de la transferencia translingüística (mono vs.\ multi)}
+  \framesubtitle{Impacto de incorporar publicaciones traducidas del inglés}
+
+  \begin{table}
+    \centering\scriptsize
+    \setlength{\tabcolsep}{5pt}
+    \caption{Rendimiento desagregado por dominio de prueba (Nativo Twitter vs.\ Traducido Reddit).}
+    \begin{tabular}{lcccc}
+      \toprule
+      & \multicolumn{2}{c}{\textbf{Test Nativo (Twitter, 250k textos)}} & \multicolumn{2}{c}{\textbf{Test Traducido (Reddit, 46k textos)}} \\
+      \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+      \textbf{Modelo evaluado} & \textbf{F1-macro} & \textbf{AUC-ROC} & \textbf{F1-macro} & \textbf{AUC-ROC} \\
+      \midrule
+      LR mono (solo nativo) & 0{,}653 & 0{,}753 & 0{,}418 & 0{,}802 \\
+      LR multi (nativo + traducido) & 0{,}648 & 0{,}719 & 0{,}834 & 0{,}962 \\
+      \midrule
+      BETO mono (solo nativo) & \textbf{0{,}717} & \textbf{0{,}808} & 0{,}415 & 0{,}801 \\
+      BETO multi (nativo + traducido) & 0{,}701 & 0{,}796 & \textbf{0{,}934} & \textbf{0{,}986} \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  \vskip-0.15cm
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugralert{Transferencia negativa hacia el nativo}{
+      Agregar Reddit traducido \textbf{degrada levemente} el rendimiento en tweets nativos (BETO: 0{,}717 $\to$ 0{,}701). La traducción introduce sesgos de registro y longitud.
+    }
+    \column{0.49\textwidth}
+    \ugrblockok{Imprescindible en el dominio traducido}{
+      Para clasificar textos de Reddit, los datos traducidos son esenciales: BETO mono colapsa ($F_1 = 0{,}415$), mientras BETO multi alcanza $F_1 = 0{,}934$.
+    }
+  \end{columns}
+
+  \note{
+    Comparamos empíricamente el entrenamiento mono y multi: en el dominio nativo de Twitter, agregar datos traducidos no mejora y causa una ligera degradación de 1.6 puntos de F1. Sin embargo, para clasificar en el dominio traducido de Reddit, el entrenamiento multi es imprescindible: BETO mono cae a 0.415, mientras que BETO multi alcanza 0.934. Esto resalta el peligro metodológico de presentar una sola métrica agregada.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 17: Auditoría de Sesgo Dialectal
+% ---------------------------------------------------------------------
+\begin{frame}{Auditoría de sesgo dialectal: aprendizaje por atajos}
+  \framesubtitle{Verificación de atajos diatópicos y regionales en los corpus abiertos}
+
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugralert{Atajos diatópicos en los coeficientes}{
+      Al inspeccionar los términos extremos de la Regresión Logística, se halló un sesgo geográfico masivo:
+      \begin{itemize}
+        \item \textbf{Control (México):} \emph{wey, mexicanos, puebla, xochimilco, cdmx}.
+        \item \textbf{Depresión (Cono Sur/Col.):} \emph{vos, joder, che, uribe, colombia}.
+      \end{itemize}
+      Los autores de control eran mayoritariamente mexicanos, mientras los positivos eran de otras regiones.
+    }
+
+    \column{0.49\textwidth}
+    \ugrblock{Experimento de enmascaramiento}{
+      Sustitución de marcadores por tokens neutros en el test nativo:
+      \vskip0.05cm
+      \begin{table}
+        \centering\tiny
+        \setlength{\tabcolsep}{2.5pt}
+        \begin{tabular}{llcc}
+          \toprule
+          \textbf{Modelo} & \textbf{Condición} & $\boldsymbol{\Delta F_1}$\textbf{-macro} & $\boldsymbol{\Delta}$\textbf{AUC} \\
+          \midrule
+          LR mono & Enmascarado dialectal & $-0{,}015$ & $-0{,}025$ \\
+          LR mono & Control aleatorio & $\approx 0$ & $\approx 0$ \\
+          \midrule
+          BETO mono & Enmascarado dialectal & $-0{,}014$ & $-0{,}021$ \\
+          BETO mono & Control aleatorio & $\approx 0$ & $\approx 0$ \\
+          \bottomrule
+        \end{tabular}
+      \end{table}
+      \vskip0.05cm
+      \textbf{Conclusión:} Todos los modelos sufren por el atajo ($\approx -2{,}5$\,pts AUC), pero \textbf{no explica la ventaja de BETO} (caen por igual).
+    }
+  \end{columns}
+
+  \note{
+    Uno de los descubrimientos más valiosos del proyecto fue desenmascarar el aprendizaje por atajos diatópicos. Al inspeccionar los coeficientes del modelo lineal, las palabras más predictivas eran modismos geográficos regionales. Diseñamos un experimento de enmascaramiento: ocultar los marcadores dialectales causó una caída de 2.5 puntos de AUC en todos los modelos, mientras que enmascarar palabras al azar no tuvo efecto. Como BETO y LR sufren en igual medida, el sesgo dialectal no explica la ventaja relativa de BETO.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 18: Agregación a Nivel de Usuario
+% ---------------------------------------------------------------------
+\begin{frame}{Agregación a nivel de usuario: del texto al perfil}
+  \framesubtitle{Evaluación agregada: promedio de probabilidades por autor (64 usuarios de prueba)}
+
+  \begin{table}
+    \centering\scriptsize
+    \setlength{\tabcolsep}{6pt}
+    \caption{Rendimiento predictivo agregando el puntaje medio por usuario en el test nativo.}
+    \begin{tabular}{lcccc}
+      \toprule
+      \textbf{Modelo evaluado} & \textbf{F1-macro} & \textbf{Sensibilidad} & \textbf{Especificidad} & \textbf{AUC-ROC} \\
+      \midrule
+      LR mono (ponderado) & 0{,}925 & 0{,}895 & 0{,}956 & \textbf{0{,}991} \tiny{[0{,}972; 1{,}000]} \\
+      SVM lineal mono & \textbf{0{,}943} & 0{,}895 & \textbf{0{,}978} & 0{,}989 \tiny{[0{,}967; 1{,}000]} \\
+      BETO mono (contextual) & 0{,}888 & 0{,}842 & 0{,}933 & 0{,}982 \tiny{[0{,}954; 0{,}999]} \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  \vskip-0.15cm
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugrblockok{Discriminación casi perfecta por perfil}{
+      Al promediar cientos de textos por usuario (media de 3\,919 publicaciones), el AUC salta a \textbf{$\ge$ 0{,}98 en todos los modelos}.
+    }
+    \column{0.49\textwidth}
+    \ugralert{La ventaja de BETO se diluye}{
+      El agregado estadístico a gran escala actúa como un filtro que compensa el ruido individual; a nivel de perfil completo, las líneas base igualan a BETO.
+    }
+  \end{columns}
+
+  \note{
+    Al agregar las predicciones por usuario promediando sus tweets, el AUC se dispara a 0.98 o más en todos los modelos. Sin embargo, surge un hallazgo fundamental: la superioridad de BETO se diluye a nivel de perfil completo, ya que el promediado masivo sobre miles de textos filtra los errores individuales de las líneas base lineales. BETO es diferencial cuando los textos son escasos o aislados.
+  }
+\end{frame}

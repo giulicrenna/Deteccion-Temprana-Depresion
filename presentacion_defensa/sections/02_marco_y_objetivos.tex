@@ -1,0 +1,87 @@
+% =====================================================================
+% SECCIÓN 2: MARCO METODOLÓGICO, OBJETIVOS E HIPÓTESIS
+% =====================================================================
+
+% ---------------------------------------------------------------------
+% Diapositiva 4: Objetivos
+% ---------------------------------------------------------------------
+\begin{frame}{Objetivos de la investigación}
+  \framesubtitle{Estructura articulada para responder a la pregunta central}
+
+  \ugrblock{Objetivo general}{
+    Desarrollar y evaluar empíricamente un sistema de clasificación binaria supervisado sobre texto en español que distinga publicaciones con indicios de depresión frente a controles, determinando si las representaciones contextuales (BETO) superan a las líneas base léxicas bajo particiones libres de fuga.
+  }
+
+  \vskip0.05cm
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugrblock{Objetivos específicos (1 y 2)}{
+      \begin{enumerate}
+        \item \textbf{Consolidar y caracterizar} un corpus masivo en español combinando Twitter nativo y Reddit traducido con redes neuronales.
+        \item \textbf{Implementar una jerarquía de modelos:} líneas base léxicas (TF-IDF + LR/SVM), modelo con 19 rasgos psicolingüísticos y ajuste fino de BETO.
+      \end{enumerate}
+    }
+    \column{0.49\textwidth}
+    \ugrblock{Objetivos específicos (3, 4 y 5)}{
+      \begin{enumerate}
+        \setcounter{enumi}{2}
+        \item \textbf{Evaluar cuantitativamente} con métricas multidimensionales ($F_1$-macro, AUC, $\kappa$) sobre particiones por usuario.
+        \item \textbf{Evaluar la transferencia:} comparar esquemas \emph{mono} vs.\ \emph{multi} desagregados por dominio.
+        \item \textbf{Auditar sesgos e interpretabilidad:} diseñar un control experimental de enmascaramiento frente a atajos diatópicos.
+      \end{enumerate}
+    }
+  \end{columns}
+
+  \note{
+    Definimos cinco objetivos específicos ordenados de forma lógica: preparación de datos, modelado incremental, evaluación rigurosa libre de fuga, análisis de transferencia y auditoría de sesgos diatópicos. Esta estructura separa nítidamente la fase de desarrollo de la de evaluación y comparación cuantitativa.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 5: Hipótesis de Investigación y Protocolo Formal
+% ---------------------------------------------------------------------
+\begin{frame}{Hipótesis formal y protocolo de contraste}
+  \framesubtitle{Criterio estadístico riguroso de decisión formal}
+
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugrblockok{Hipótesis general ($H_1$)}{
+      El modelo de lenguaje contextual preentrenado en español (BETO) \textbf{supera significativamente} el rendimiento predictivo de las líneas base lineales léxicas en la clasificación a nivel de publicación.
+    }
+    \column{0.49\textwidth}
+    \ugrblock{Hipótesis nula ($H_0$)}{
+      El modelo contextual en español \textbf{no presenta diferencias significativas} en su rendimiento predictivo respecto de las líneas base lineales léxicas sobre el conjunto nativo de prueba.
+    }
+  \end{columns}
+
+  \vskip0.1cm
+  \ugrblock{Criterio de decisión formal (Bootstrap por conglomerados de usuarios)}{
+    Se define el contraste formal con $B = 2\,000$ réplicas remuestreando los 64 autores independientes del test nativo ($\alpha = 0{,}05$):
+    \begin{equation*}
+      \text{Rechazar } H_0 \text{ a favor de } H_1 \iff \Delta F_{1\text{-macro}}^{\text{low}} > 0 \;\land\; \Delta\text{AUC-ROC}^{\text{low}} > 0
+    \end{equation*}
+    donde $\Delta = \text{Métrica}(\text{BETO}_{\text{mono}}) - \text{Métrica}(\text{Mejor Línea Base})$. Los extremos inferiores del IC 95\,\% pareado deben excluir estrictamente el valor nulo ($0$).
+  }
+
+  \note{
+    Establecemos una condición formal de refutación de H0: no alcanza con una diferencia puntual favorable; exigimos que los intervalos de confianza del 95% para la diferencia pareada de F1-macro y AUC-ROC sean estrictamente positivos en el remuestreo de bootstrap por conglomerados de usuarios.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 6: Metodología CRISP-DM
+% ---------------------------------------------------------------------
+\begin{frame}{Metodología de trabajo: Enfoque CRISP-DM}
+  \framesubtitle{Proceso estándar de minería de datos articulado en seis fases iterativas}
+
+  \vskip-0.2cm
+  \begin{center}
+    \resizebox{0.88\textwidth}{!}{\input{diagramas/proceso_investigacion}}
+  \end{center}
+  \vskip-0.35cm
+  {\scriptsize\centering\color{ugrGris}El flujo iterativo conecta la evaluación con la comprensión de datos y el modelado; el repositorio garantiza reproducibilidad con \texttt{make}.\par}
+
+  \note{
+    Adoptamos el estándar de Ciencia de Datos CRISP-DM en seis fases interconectadas. Cuando la evaluación evidenció atajos dialectales, retrocedimos a la comprensión de datos para aislar el sesgo y diseñar un protocolo de enmascaramiento controlado. Todo el pipeline es reproducible mediante comandos simples en el Makefile del repositorio.
+  }
+\end{frame}

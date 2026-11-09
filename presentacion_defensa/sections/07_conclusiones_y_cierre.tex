@@ -1,0 +1,158 @@
+% =====================================================================
+% SECCIÓN 7: DISCUSIÓN, CONCLUSIONES Y TRABAJO FUTURO
+% =====================================================================
+
+% ---------------------------------------------------------------------
+% Diapositiva 19: Discusión y Aportes
+% ---------------------------------------------------------------------
+\section{Conclusiones y trabajo futuro}
+
+\begin{frame}{Discusión integral y aportes de la investigación}
+  \framesubtitle{Síntesis de los cuatro hallazgos empíricos y metodológicos principales}
+
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugrblockok{1. Superioridad contextual demostrada}{
+      BETO supera a los modelos léxicos a nivel de documento ($\Delta F_1 = +0{,}062$, $\Delta\text{AUC} = +0{,}052$, $p < 0{,}0005$). Los rasgos manuales no superan a los n-gramas.
+    }
+    \vskip0.05cm
+    \ugrblock{2. Límites de la traducción automática}{
+      La traducción no beneficia al dominio nativo (transferencia levemente negativa), pero es indispensable para clasificar comunidades traducidas.
+    }
+
+    \column{0.49\textwidth}
+    \ugralert{3. Detección del atajo diatópico}{
+      Se desenmascaró que los corpus abiertos de redes en español arrastran fuertes sesgos geográficos. El control experimental confirmó que todos los modelos se ven afectados por igual.
+    }
+    \vskip0.05cm
+    \ugrblock{4. La unidad de análisis importa}{
+      En publicaciones individuales, BETO es ampliamente superior. En perfiles completos con miles de publicaciones, el agregado estadístico equipara el rendimiento.
+    }
+  \end{columns}
+
+  \note{
+    Sintetizamos los cuatro aportes cardinales: demostración de la superioridad de BETO en textos breves; límites empíricos del aumento por traducción; necesidad de auditar atajos diatópicos en español; y el impacto de la unidad de análisis entre posts aislados y perfiles acumulados.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 20: Limitaciones del Estudio
+% ---------------------------------------------------------------------
+\begin{frame}{Limitaciones de la investigación y consideraciones éticas}
+  \framesubtitle{Transparencia metodológica sobre el alcance real del sistema}
+
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugralert{Limitaciones metodológicas y técnicas}{
+      \begin{itemize}
+        \item \textbf{Sin validación clínica individual:} Etiquetas derivadas de redes sociales, no de entrevistas diagnósticas estructuradas (SCID-5 / MINI).
+        \item \textbf{Sesgo de autoselección:} Los usuarios activos en redes no representan a la población clínica general.
+        \item \textbf{Restricciones de hardware:} GPU local de 8\,GB VRAM limitó el ajuste a 128 tokens y 3 épocas, posponiendo validación 5-fold en BETO.
+      \end{itemize}
+    }
+
+    \column{0.49\textwidth}
+    \ugrblock{Compromiso ético y privacidad}{
+      \begin{itemize}
+        \item \textbf{Herramienta no diagnóstica:} Concebida como apoyo a la vigilancia epidemiológica y tamizaje poblacional, nunca como sustituto del criterio profesional.
+        \item \textbf{Privacidad por diseño:} Anonimización irreversible y prohibición explícita de cualquier intento de reidentificación.
+        \item \textbf{Prevención de discriminación:} Auditorías diatópicas para evitar estigmatizar dialectos específicos.
+      \end{itemize}
+    }
+  \end{columns}
+
+  \note{
+    Asumimos con rigor las limitaciones del trabajo: las etiquetas de redes no equivalen a un diagnóstico clínico formal, y las restricciones de GPU acotaron los modelos probados. Subrayamos que un clasificador de aprendizaje automático con sesgos diatópicos solo puede operar como apoyo preliminar y nunca debe tomar decisiones autónomas sobre personas.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 21: Trabajo Futuro
+% ---------------------------------------------------------------------
+\begin{frame}{Líneas de trabajo futuro}
+  \framesubtitle{Oportunidades de continuidad y extensión de la investigación}
+
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugrblock{1. Transferencia adaptativa de dominio}{
+      \begin{itemize}
+        \item Preentrenamiento continuo no supervisado sobre el corpus traducido masivo, seguido de fine-tuning exclusivo sobre nativo.
+        \item Evaluación de modelos recientes (RoBERTa-BNE, MarIA, Llama 3 adaptado al español).
+      \end{itemize}
+    }
+    \vskip0.05cm
+    \ugrblock{2. Mitigación activa del sesgo dialectal}{
+      \begin{itemize}
+        \item Entrenamiento con regularización adversaria frente al país de origen del usuario.
+        \item Normalización léxica en el preprocesamiento para neutralizar modismos regionales.
+      \end{itemize}
+    }
+
+    \column{0.49\textwidth}
+    \ugrblock{3. Detección temprana secuencial (eRisk)}{
+      \begin{itemize}
+        \item Modelado temporal secuencial para determinar cuántas publicaciones son requeridas antes de emitir una alerta temprana confiable.
+      \end{itemize}
+    }
+    \vskip0.05cm
+    \ugrblock{4. Explicabilidad profunda en Transformers}{
+      \begin{itemize}
+        \item Análisis de atribución con Integrated Gradients, SHAP y mapas de atención en BETO para inspeccionar representaciones no lineales.
+      \end{itemize}
+    }
+  \end{columns}
+
+  \note{
+    Planteamos cuatro líneas de continuidad prioritarias: esquemas de preentrenamiento continuo adaptativo; desescalado de sesgos dialectales mediante redes adversarias; modelado secuencial temporal según el estándar de eRisk; y métodos avanzados de explicabilidad de representaciones internas en Transformers.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 22: Conclusiones Finales
+% ---------------------------------------------------------------------
+\begin{frame}{Conclusiones finales}
+  \framesubtitle{Cierre de la defensa de tesina de grado}
+
+  \ugrblockok{Respuesta a la pregunta central de investigación}{
+    \textbf{Es viable y ventajoso} emplear modelos contextuales preentrenados en español (BETO) para detectar indicios de depresión en publicaciones individuales, superando en más de 6 puntos de $F_1$-macro a los métodos clásicos con significancia estadística comprobada ($p < 0{,}0005$).
+  }
+
+  \vskip0.1cm
+  \begin{itemize}
+    \item \textbf{Aporte al estado del arte en español:} Se consolidó un benchmark riguroso, reproducible y abierto con más de 1{,}3 millones de documentos evaluados bajo particiones limpias por usuario.
+    \item \textbf{Aporte metodológico crítico:} Se demostró que la traducción automática no beneficia automáticamente al dominio nativo y que los atajos dialectales constituyen un riesgo latente que debe auditarse en todo estudio de salud mental y PLN.
+    \item \textbf{Replicabilidad garantizada:} Código, manifiestos y predicciones de los modelos disponibles públicamente en el repositorio para su verificación inmediata.
+  \end{itemize}
+
+  \note{
+    En conclusión: BETO demuestra una ventaja representacional indiscutible en publicaciones individuales, pero la mayor contribución de esta tesina radica en su honestidad metodológica: demostrar que sin particiones por usuario y sin auditorías dialectales, los números del aprendizaje automático en redes sociales pueden ser completamente ilusorios.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 23: Cierre y Agradecimientos
+% ---------------------------------------------------------------------
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[ugrAzul] (current page.north west) rectangle (current page.south east);
+
+    \node[anchor=center] at (current page.center) {
+      \begin{minipage}{0.85\textwidth}
+        \centering
+        \includegraphics[height=1.1cm]{logo_ugr.png}\par\medskip
+        {\fontsize{22}{26}\selectfont\bfseries\color{white} ¡Muchas gracias por su atención!}\par\medskip
+        {\fontsize{12}{15}\selectfont\color{ugrCeleste!40} Preguntas, comentarios y discusión}\par\medskip
+        {\color{white}\rule{0.65\textwidth}{0.8pt}}\par\medskip
+        {\footnotesize\color{white}
+          \textbf{Giuliano Crenna} \quad · \quad \textbf{Bruno Emmanuel Pace}\\[3pt]
+          Licenciatura en Ciencia de Datos · Universidad del Gran Rosario (2026)\\[6pt]
+          \color{ugrCeleste!30}\texttt{https://github.com/giulicrenna/Deteccion-Temprana-Depresion}
+        }
+      \end{minipage}
+    };
+  \end{tikzpicture}
+
+  \note{
+    Agradecemos a los evaluadores Jorge Fernández Acuña, Briant Gauna y Alejandro Hernández, a los docentes de la carrera y a la Universidad del Gran Rosario por su constante orientación. Quedamos a total disposición del tribunal para responder a sus preguntas y comentarios. Muchas gracias.
+  }
+\end{frame}
