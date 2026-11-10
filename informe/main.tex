@@ -142,7 +142,6 @@
 }
 \newcommand{\codigo}[1]{{\ttfamily\scriptsize\color{ugrGris}#1}}
 
-\newcommand{\Hs}[1]{$H_{s#1}$}
 
 \begin{document}
 
@@ -222,7 +221,7 @@ Depression is one of the leading causes of disability worldwide, and many affect
 
 This Data Science undergraduate final project (\emph{tesina}), conducted following the CRISP-DM methodology, develops and evaluates a supervised binary classification system (control vs.\ depressive symptomatology cues) for Spanish text. We built a corpus of 1,311,023 anonymised texts that combines the native Spanish Twitter corpus by Coello-Guilarte (1,047,194 tweets from 317 users) with 263,829 Reddit posts machine-translated from English with MarianMT. All splits were made at the user level (70/10/20) to prevent leakage between training and evaluation.
 
-We compared lexical baselines (TF-IDF with Logistic Regression and linear SVM), a model with explicit psycholinguistic features and a fine-tuned BETO model, trained either on the native corpus (mono) or on the unified corpus (multi), and evaluated all of them on the same test set broken down by source. On native Spanish text, mono BETO reached a macro-F1 of 0.717 and a ROC-AUC of 0.808, against 0.655 and 0.755 for Logistic Regression; the paired difference has a 95\% user-level bootstrap confidence interval that excludes zero, and the advantage of the contextual model holds in every setting at the post level. In contrast, adding translated data did not improve detection on native text (multi BETO: 0.701 and 0.796; multi Logistic Regression: 0.648 and 0.719), although it was essential to classify text from the translated domain: on Reddit posts multi BETO reached a macro-F1 of 0.934, whereas models trained only on tweets labelled almost every post as depressive. The most predictive terms of the lexical model are dialectal and geographic markers, and a controlled experiment confirmed that every model, BETO included, relies on them: masking them lowers AUC by 2 to 2.5 points, while masking the same number of random words has no noticeable effect. When predictions are aggregated per user, all models separate the 64 test users almost perfectly and the advantage of BETO is no longer observed.
+We compared lexical baselines (TF-IDF with Logistic Regression and linear SVM), a model with explicit linguistic features and a fine-tuned BETO model, trained either on the native corpus (mono) or on the unified corpus (multi), and evaluated all of them on the same test set broken down by source. On native Spanish text, mono BETO reached a macro-F1 of 0.717 and a ROC-AUC of 0.808, against 0.655 and 0.755 for Logistic Regression; the paired difference has a 95\% user-level bootstrap confidence interval that excludes zero, and the advantage of the contextual model holds in every setting at the post level. In contrast, adding translated data did not improve detection on native text (multi BETO: 0.701 and 0.796; multi Logistic Regression: 0.648 and 0.719), although it was essential to classify text from the translated domain: on Reddit posts multi BETO reached a macro-F1 of 0.934, whereas models trained only on tweets labelled almost every post as depressive. The most predictive terms of the lexical model are dialectal and geographic markers, and a controlled experiment confirmed that every model, BETO included, relies on them: masking them lowers AUC by 2 to 2.5 points, while masking the same number of random words has no noticeable effect. When predictions are aggregated per user, all models separate the 64 test users almost perfectly and the advantage of BETO is no longer observed.
 
 We conclude that the Spanish contextual model brings a consistent improvement at the post level, that augmentation through machine translation widens domain coverage but does not improve detection in the native domain, that multi-source corpora require source-aware splits and per-source metrics, and that the tool, in its current state, can only be framed as non-diagnostic computational screening support.
 
@@ -269,6 +268,7 @@ Es imprescindible delimitar la unidad de análisis y el alcance de la tarea:
 \begin{itemize}[leftmargin=2em]
     \item \textbf{Unidad de análisis:} Aunque el constructo subyacente corresponde al \emph{usuario}, las colecciones de redes sociales asignan etiquetas globales al perfil que se heredan a cada una de sus publicaciones individuales. La formulación empírica principal de este trabajo opera a nivel de \emph{publicación/documento} con etiqueta heredada; complementariamente, se evalúa una agregación a nivel de perfil para analizar el impacto del constructo.
     \item \textbf{Delimitación no clínica:} El sistema aquí propuesto no constituye un asistente psicológico, una herramienta de diagnóstico clínico ni un dispositivo de intervención terapéutica. Se trata estrictamente de un modelo computacional supervisado de clasificación textual orientado al análisis exploratorio y al cribado poblacional de indicios en datos no estructurados.
+    \item \textbf{Alcance de «temprana»:} En este trabajo el término se refiere a la identificación de indicios textuales de depresión en publicaciones individuales, antes de y sin diagnóstico clínico; no corresponde a la detección anticipada en el sentido del protocolo secuencial de eRisk~\cite{losada2017erisk}. No se evalúan ventanas temporales, decisiones secuenciales ni métricas de latencia, y la agregación por usuario (Sección~\ref{sec:res_usuario}) se calcula sobre el conjunto de publicaciones del perfil en prueba, sin considerar su orden cronológico. La detección temprana en sentido estricto se plantea como trabajo futuro (Sección~\ref{sec:trabajo_futuro}).
 \end{itemize}
 
 \subsection{Hipótesis de investigación y criterios de contrastación}
@@ -277,11 +277,21 @@ Es imprescindible delimitar la unidad de análisis y el alcance de la tarea:
 En correspondencia con las directivas metodológicas del trabajo, se formula una única hipótesis general con un único objeto y un único verbo contrastable, acompañada de su correspondiente hipótesis nula:
 
 \begin{destacado}{Hipótesis general ($H_1$)}
-\emph{Un modelo de lenguaje contextual en español \textbf{supera} el rendimiento predictivo de los modelos lineales léxicos.}
+\emph{El modelo de lenguaje contextual en español presenta un rendimiento predictivo \textbf{significativamente superior} al de los modelos lineales léxicos.}
+
+Formalmente, si $M_C$ representa el rendimiento del modelo contextual y $M_L$ el de los modelos lineales:
+\[
+H_1 : M_C > M_L
+\]
 \end{destacado}
 
 \begin{destacado}{Hipótesis nula ($H_0$)}
-\emph{Un modelo de lenguaje contextual en español \textbf{no presenta diferencias significativas} en su rendimiento predictivo respecto de los modelos lineales léxicos.}
+\emph{El modelo de lenguaje contextual en español \textbf{no presenta un rendimiento predictivo significativamente superior} al de los modelos lineales léxicos.}
+
+Formalmente, si $M_C$ representa el rendimiento del modelo contextual y $M_L$ el de los modelos lineales:
+\[
+H_0 : M_C \leq M_L
+\]
 \end{destacado}
 
 \paragraph{Significado y contrastabilidad.}
@@ -442,7 +452,7 @@ Leis et al.\ (2019) & es & Acceso por solicitud; no obtenido. \\
 DAIC-WOZ & en & Requiere acuerdo de uso; entrevistas, no redes sociales. \\
 PrevenIA \emph{spanish-suicide-intent} & es & Descargado, no incorporado: el constructo es intención suicida. \\
 Suicide and Depression Detection (Kaggle) & en & Público; \textbf{incorporado tras traducción}. \\
-Reddit Mental Health Posts & en & Público; \textbf{incorporado tras traducción}. \\
+Reddit Mental Health Posts & en & Público, sin licencia declarada; \textbf{incorporado tras traducción}. \\
 Depression: Reddit Dataset (Cleaned) & en & Público (CC BY 4.0); \textbf{incorporado tras traducción}. \\
 SWMH & en & Acceso con registro; no incorporado en la versión final. \\
 \bottomrule
@@ -454,7 +464,7 @@ SWMH & en & Acceso con registro; no incorporado en la versión final. \\
 \begin{enumerate}[leftmargin=2em]
     \item \textbf{Coello-Guilarte}~\cite{coello2019}: 1\,047\,194 tweets en español de 317 usuarios, con etiquetas de usuario control (0) o depresivo (2). La etiqueta se asigna al usuario y se hereda a todos sus tweets.
     \item \textbf{Suicide and Depression Detection} (Kaggle)~\cite{komati2021sdd}: 232\,067 publicaciones de Reddit. Las publicaciones de \texttt{r/depression} y \texttt{r/SuicideWatch} se mapearon a la clase 2 (116\,036) y las de \texttt{r/teenagers} a la clase 0 (116\,031). El conjunto no incluye identificadores de autor.
-    \item \textbf{Reddit Mental Health Posts}~\cite{solomonk_rmhp}: 24\,031 publicaciones de \texttt{r/depression}, todas de clase 2, con identificador de autor.
+    \item \textbf{Reddit Mental Health Posts}~\cite{solomonk_rmhp}: 24\,031 publicaciones de \texttt{r/depression}, todas de clase 2, con identificador de autor. La ficha del conjunto en Hugging Face no declara licencia ni condiciones de uso (consultada el 10 de noviembre de 2026) y los textos provienen de Reddit. Como la ausencia de licencia no equivale a una autorización de reutilización, el conjunto se empleó únicamente con fines de investigación académica, con el identificador de autor reemplazado por un \emph{hash} (Sección~\ref{sec:anonimizacion}), y no se redistribuye (Anexo~\ref{anx:disponibilidad}).
     \item \textbf{Depression: Reddit Dataset (Cleaned)}~\cite{mrjunos_drc}: 7\,731 publicaciones (3\,831 de clase 2 y 3\,900 de clase 0), en minúsculas y sin puntuación.
 \end{enumerate}
 En todas las fuentes de Reddit la etiqueta proviene de la pertenencia a una comunidad, no de un diagnóstico, por lo que debe considerarse una etiqueta débil.
@@ -528,13 +538,13 @@ Depression Reddit         &     7\,731  &  0{,}59 & inglés    &   3\,900 &   3\
     \centering
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{eda_02_distribucion_clases.png}
+        \includegraphics[width=\textwidth]{eda_02_distribucion_clases_es.png}
         \caption{Documentos por clase.}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{eda_02_heatmap_fuente_label.png}
+        \includegraphics[width=\textwidth]{eda_02_heatmap_fuente_label_es.png}
         \caption{Fuente por clase.}
     \end{subfigure}
     \caption{Distribución de clases en el corpus nativo Coello-Guilarte.}
@@ -554,7 +564,7 @@ Depression Reddit         &     7\,731  &  0{,}59 & inglés    &   3\,900 &   3\
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{eda_02_longitudes_por_clase.png}
-        \caption{Longitud por clase.}
+        \caption{Longitud por clase. La leyenda conserva el término en inglés de la salida original.}
     \end{subfigure}
     \caption{Longitud de los documentos en tokens.}
     \label{fig:eda_longitudes}
@@ -594,7 +604,7 @@ Polaridad media (VADER)  & $-0{,}029$ & $-0{,}052$ & -- \\
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\textwidth]{eda_03_marcadores_por_clase.png}
+    \includegraphics[width=0.75\textwidth]{eda_03_marcadores_por_clase_es.png}
     \caption{Marcadores lingüísticos normalizados por clase.}
     \label{fig:marcadores}
 \end{figure}
@@ -616,9 +626,12 @@ Dialectismos            & 2{,}7\,\% & 6{,}4\,\% \\
 Topónimos y gentilicios & 3{,}5\,\% & 4{,}9\,\% \\
 Figuras políticas       & 0{,}1\,\% & 1{,}2\,\% \\
 \midrule
-Usuarios                & 45 & 19 \\
+\textit{N.º de usuarios en prueba} & 45 & 19 \\
 \bottomrule
 \end{tabular}
+
+\vspace{0.15cm}
+{\footnotesize Los porcentajes corresponden a la proporción de tweets de cada clase; la última fila indica el número de usuarios (no un porcentaje).}
 \end{table}
 
 \subsection{Partición a nivel de usuario}
@@ -719,7 +732,7 @@ El documento conserva el orden clásico de una tesina (introducción, marco teó
 \end{tabularx}
 \end{table}
 
-\paragraph{Adaptación de la fase de despliegue.} Dado que el sistema no es una herramienta clínica ni se plantea su puesta en producción (Sección~\ref{sec:intro_problema}), la fase de despliegue de CRISP-DM se interpretó como cierre y transferencia: publicación del código, de los manifiestos de partición y de las predicciones, de modo que un tercero pueda reproducir todos los resultados sin reentrenar, y documentación de los límites de uso.
+\paragraph{Adaptación de la fase de despliegue.} Dado que el sistema no es una herramienta clínica ni se plantea su puesta en producción (Sección~\ref{sec:intro_problema}), la fase de despliegue de CRISP-DM se interpretó como cierre y transferencia: publicación del código y de los manifiestos de partición, conservación local de las predicciones de prueba y de los pesos de los modelos (que se derivan de corpus de terceros y no se redistribuyen, Sección~\ref{sec:limitaciones}), de modo que el autor pueda recalcular todos los resultados sin reentrenar y un tercero pueda reproducirlos reconstruyendo el pipeline desde las fuentes originales (Sección~\ref{sec:replicabilidad}), y documentación de los límites de uso.
 
 \paragraph{Iteraciones registradas.} El proceso no fue lineal. La indisponibilidad de los corpus de acceso restringido, detectada en la revisión de corpus públicos, obligó a reformular el problema como una tarea binaria y a incorporar fuentes traducidas (fases 1 y 2). El costo de cómputo del ajuste fino condicionó el diseño de la prueba, que pasó de una validación cruzada de cinco pliegues a una partición única por usuario con \emph{bootstrap} (fases 3 y 4), y la interpretabilidad profunda de BETO se reemplazó por una prueba de enmascarado léxico (fase 5). Por último, el hallazgo de que todos los modelos dependen de marcadores dialectales deja abierto un nuevo ciclo: reentrenar sobre texto enmascarado (Sección~\ref{sec:trabajo_futuro}).
 
@@ -767,7 +780,7 @@ Para la aproximación contextual se ajustó el modelo \texttt{dccuchile/\allowbr
 
 El ajuste fino se ejecutó en una estación de trabajo local equipada con una GPU NVIDIA GeForce RTX 3060 Ti con 8\,GB de memoria VRAM (arquitectura Ampere, 4\,864 núcleos CUDA). La capacidad de memoria de este entorno de experimentación condicionó de forma directa las siguientes decisiones metodológicas:
 \begin{itemize}[leftmargin=2em]
-    \item \textbf{Longitud de secuencia máxima acotada a 128 tokens:} Aunque la arquitectura BERT admite secuencias de hasta 512 tokens, la memoria cuadrática requerida por las matrices de autoatención ($O(n^2)$) y el estado del optimizador AdamW (que almacena dos momentos de 32 bits por cada parámetro activo) saturaban los 8\,GB de VRAM para longitudes mayores. Como se constató en el análisis exploratorio (Sección~\ref{sec:eda}), el 98{,}5\,\% de los tweets de la fuente nativa tiene una longitud inferior a 60 tokens, por lo que el umbral de 128 preserva la totalidad del contenido relevante en Twitter sin desperdiciar memoria en \emph{padding}.
+    \item \textbf{Longitud de secuencia máxima acotada a 128 tokens:} Aunque la arquitectura BERT admite secuencias de hasta 512 tokens, la memoria cuadrática requerida por las matrices de autoatención ($O(n^2)$) y el estado del optimizador AdamW (que almacena dos momentos de 32 bits por cada parámetro activo) saturaban los 8\,GB de VRAM para longitudes mayores. Como se constató en el análisis exploratorio (Sección~\ref{sec:eda}), el 98{,}5\,\% de los tweets de la fuente nativa tiene una longitud inferior a 60 tokens, por lo que el umbral de 128 preserva la totalidad del contenido relevante en Twitter sin desperdiciar memoria en \emph{padding}. No ocurre lo mismo con las publicaciones de Reddit traducidas, sensiblemente más largas que los tweets (Sección~\ref{sec:eda}): las que superan los 128 tokens se truncan, de modo que BETO accede como máximo a 128 tokens de cada una, mientras que TF-IDF utiliza el texto completo. En esas fuentes, el rendimiento de BETO podría estar subestimado.
     \item \textbf{Tamaño de lote (\emph{batch size}):} Se fijó en 16 secuencias para el entrenamiento y 32 para la evaluación, el máximo admisible sin riesgo de desbordamiento de memoria (\emph{CUDA Out of Memory}).
     \item \textbf{Precisión mixta automática (FP16):} Fue mandatorio activar precisión flotante de 16 bits para reducir a la mitad el consumo de memoria en activaciones y gradientes, permitiendo estabilizar el entrenamiento de los 110M de parámetros.
     \item \textbf{Tiempos de cómputo y protocolo de partición:} El ajuste fino mono demandó 8\,050 segundos ($\approx 2{,}2$ horas) para tres épocas completas (424\,436 textos balanceados), y el multi insumió más de 3{,}5 horas. Esta carga computacional hizo inviable realizar una validación cruzada de 5 pliegues (que habría exigido casi 30 horas continuas de GPU dedicada sobre un equipo de escritorio). Como contrapartida rigurosa, se adoptó una partición ciego estratificada 70/10/20 y se cuantificó la incertidumbre estadística mediante \emph{bootstrap} de 2\,000 réplicas sobre el conjunto de prueba (Sección~\ref{sec:incertidumbre}).
@@ -824,6 +837,8 @@ Para acercar la evaluación a la unidad de interés, las predicciones por docume
 \label{sec:met_dialecto}
 Para cuantificar cuánto dependen los modelos de los marcadores diatópicos, cada modelo ya entrenado se volvió a evaluar sobre el test nativo con esos marcadores enmascarados. Cada coincidencia de palabra completa del lexicón se reemplazó por \texttt{[UNK]}, un símbolo neutro para ambos tipos de modelo: TF-IDF lo descarta porque no forma parte de su vocabulario y BETO lo interpreta como su token desconocido. Se evaluaron cuatro condiciones: todas las categorías juntas y cada categoría por separado.
 
+El lexicón diatópico se derivó de los coeficientes de la Regresión Logística, calculados sobre el conjunto de entrenamiento (Sección~\ref{sec:control_dialectal}), y no de una fuente externa independiente. Al construirse solo con datos de entrenamiento no hay fuga hacia la prueba, pero la derivación introduce una circularidad parcial: el lexicón es, por construcción, más afín a ese modelo, por lo que la caída medida en la Regresión Logística podría ser mayor que la de un modelo que no intervino en su construcción. Por esa razón la caída de BETO, que no participó en esa construcción, es la evidencia más informativa de la prueba.
+
 Quitar palabras de un texto puede degradar el rendimiento por la simple pérdida de información. Para separar ese efecto se incluyó un \emph{control aleatorio}: a cada tweet se le enmascara la misma cantidad de palabras que marcadores contenía, pero elegidas al azar entre las que no son marcadores. Si la caída se debe al contenido regional de los marcadores, el enmascarado dirigido debe degradar el rendimiento y el aleatorio no.
 
 Esta prueba mide la dependencia de los modelos \emph{actuales} respecto de esos términos; no equivale a entrenar un modelo sin ellos, que podría compensar con otras señales correlacionadas con la región. El reentrenamiento sobre texto enmascarado queda como trabajo futuro.
@@ -841,13 +856,13 @@ Se adoptó la siguiente definición operacional: un modelo es interpretable en l
 Se definió la replicabilidad como la posibilidad de que un tercero reproduzca cada paso del pipeline y obtenga los mismos resultados. El código está disponible públicamente en \url{https://github.com/giulicrenna/Deteccion-Temprana-Depresion}. La replicabilidad se operacionalizó mediante:
 \begin{enumerate}[leftmargin=2em]
     \item semillas fijas (42) en Python, NumPy, scikit-learn y PyTorch (\texttt{src/utils/seeds.py});
-    \item dependencias declaradas en los archivos de requisitos de \texttt{pip} y en el entorno de \texttt{conda} (\path{environment.yml});
+    \item dependencias declaradas en los archivos de requisitos de \texttt{pip} y en el entorno de \texttt{conda} (\path{environment.yml}), con las versiones de PyTorch 2.7.1 (CUDA 12.8) y \texttt{transformers} 4.44.2 indicadas en la Tabla~\ref{tab:hiper_beto};
     \item hiperparámetros externalizados en archivos YAML (\texttt{configs/});
     \item un \texttt{Makefile} con un objetivo por etapa (Anexo~\ref{anx:reproduccion});
     \item manifiestos JSON con conteos por partición y \emph{hashes} SHA-256 de los archivos descargados;
     \item un registro único de métricas (\texttt{reports/tables/all\_models\_metrics.csv}) con fecha y configuración de cada experimento;
     \item pruebas automáticas con \texttt{pytest} sobre los módulos de modelos y evaluación;
-    \item predicciones de prueba unificadas por documento (\texttt{reports/predictions/}) a partir de las cuales un único comando (\texttt{python -m src.evaluation.run\_validation}) recalcula todas las métricas, intervalos y comparaciones del Capítulo~\ref{sec:resultados} sin reentrenar.
+    \item predicciones de prueba unificadas por documento (\texttt{reports/predictions/}) a partir de las cuales un único comando (\texttt{python -m src.evaluation.run\_validation}) recalcula todas las métricas, intervalos y comparaciones del Capítulo~\ref{sec:resultados} sin reentrenar. Esas predicciones se conservan localmente y no se redistribuyen (Sección~\ref{sec:limitaciones}); un tercero las regenera ejecutando el pipeline completo (Anexo~\ref{anx:reproduccion}).
 \end{enumerate}
 
 \newpage
@@ -962,7 +977,7 @@ La Figura~\ref{fig:curvas_beto} muestra la evolución del entrenamiento mono. La
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{beto_training_curves.png}
-    \caption{Curvas de entrenamiento de BETO mono. Izquierda: pérdida de entrenamiento por paso y de validación por época. Derecha: métricas de validación por época; el último punto de cada serie corresponde a la evaluación en prueba del modelo seleccionado.}
+    \caption{Curvas de entrenamiento de BETO mono. Izquierda: pérdida de entrenamiento por paso y de validación por época. Derecha: métricas de validación por época; el último punto de cada serie corresponde a la evaluación en prueba del modelo seleccionado. Los títulos y las leyendas conservan los términos en inglés de la salida original.}
     \label{fig:curvas_beto}
 \end{figure}
 
@@ -980,7 +995,7 @@ Añadir los 19 rasgos lingüísticos y temporales a TF-IDF \emph{redujo} el F1-m
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{combined_confusion_matrix.png}
+    \includegraphics[width=0.9\textwidth]{combined_confusion_matrix_es.png}
     \caption{Matrices de confusión del modelo TF-IDF con rasgos lingüísticos (mono).}
     \label{fig:cm_combined}
 \end{figure}
@@ -1038,20 +1053,20 @@ Sobre el mismo test nativo, agregar datos traducidos no mejora a ningún modelo 
 
 Los resultados conducen a cuatro observaciones:
 \begin{enumerate}[leftmargin=2em]
-    \item \textbf{Los datos traducidos no mejoran la detección sobre texto nativo.} Sobre el test nativo, incorporar las traducciones reduce levemente el rendimiento de ambos modelos: la Regresión Logística pierde 0{,}4 puntos de F1-macro y 3{,}3 de AUC, y BETO pierde 1{,}6 y 1{,}2 puntos, respectivamente. En BETO la exhaustividad de la clase depresiva baja de 68{,}9\,\% a 67{,}7\,\% y la especificidad de 78{,}1\,\% a 76{,}4\,\%. Las diferencias son pequeñas, pero consistentes: en BETO empeoran las cinco métricas, y en la Regresión Logística empeoran todas salvo la exactitud, que sube porque el modelo multi clasifica más textos como control (la exhaustividad depresiva cae de 66{,}6\,\% a 51{,}1\,\%). Las diferencias pareadas (Tabla~\ref{tab:diferencias}) muestran que la degradación de BETO es pequeña pero estadísticamente distinguible de cero en F1-macro, AUC y $\kappa$, y que en la Regresión Logística la caída de AUC ($-0{,}033$) es clara mientras que la de F1-macro no lo es.
+    \item \textbf{Los datos traducidos no mejoran la detección sobre texto nativo.} Sobre el test nativo, incorporar las traducciones reduce levemente el rendimiento de ambos modelos: la Regresión Logística pierde 0{,}4 puntos de F1-macro y 3{,}3 de AUC, y BETO pierde 1{,}6 y 1{,}2 puntos, respectivamente. En BETO la exhaustividad de la clase depresiva baja de 68{,}9\,\% a 67{,}7\,\% y la especificidad de 78{,}1\,\% a 76{,}4\,\%. Las diferencias son pequeñas, pero consistentes: en BETO empeoran las cinco métricas, y en la Regresión Logística empeoran todas salvo la exactitud, que sube porque el modelo multi clasifica más textos como control (la exhaustividad depresiva cae de 66{,}4\,\% a 51{,}1\,\%). Las diferencias pareadas (Tabla~\ref{tab:diferencias}) muestran que la degradación de BETO es pequeña pero estadísticamente distinguible de cero en F1-macro, AUC y $\kappa$, y que en la Regresión Logística la caída de AUC ($-0{,}033$) es clara mientras que la de F1-macro no lo es.
     \item \textbf{Los datos traducidos son imprescindibles para el dominio traducido.} Los modelos entrenados solo con tweets clasifican como depresivas más del 90\,\% de las publicaciones de control de Kaggle (especificidad de 0{,}08) y obtienen un F1-macro de apenas 0{,}42. Con datos traducidos en el entrenamiento, BETO multi alcanza un F1-macro de 0{,}934 y un AUC de 0{,}986 en esa fuente, y de 0{,}871 y 0{,}960 en Depression Reddit.
     \item \textbf{Indicios de un atajo de formato.} Que los modelos mono marquen como depresiva casi cualquier publicación de Reddit es coherente con lo observado en el análisis exploratorio: los textos de la clase depresiva son más largos, y una publicación de Reddit es mucho más extensa y autorreferencial que un tweet promedio. El AUC de los modelos mono en Kaggle (0{,}80) indica que conservan parte de la capacidad de ordenar los textos por riesgo, pero su umbral de decisión no se transfiere al nuevo dominio.
     \item \textbf{La métrica global depende de la mezcla de fuentes.} BETO multi obtiene el mejor F1-macro sobre el test completo (0{,}754 frente a 0{,}710 de BETO mono; diferencia pareada $+0{,}044$ con IC 95\,\% [0{,}023; 0{,}077]), pero esa ventaja proviene íntegramente de las fuentes traducidas, porque sobre la porción nativa la diferencia es negativa. Una métrica agregada sobre un conjunto de prueba multifuente no permite, por sí sola, concluir que un modelo es mejor para la población de interés.
 \end{enumerate}
 
-En consecuencia, \Hs{1} no se sostiene para el texto nativo: el aumento de datos mediante traducción, tal como se implementó, amplía los dominios en los que el modelo funciona, pero no mejora la detección sobre tweets en español. Dos factores pueden explicarlo. Por un lado, los textos traducidos difieren de los tweets en plataforma, longitud y registro, de modo que lo que el modelo aprende de ellos se transfiere poco al dominio nativo. Por otro, la selección del mejor punto de control de BETO multi se hizo sobre un conjunto de validación mixto (78\,\% nativo), que no optimiza exclusivamente el rendimiento nativo.
+En consecuencia, la pregunta derivada sobre el aumento de datos mediante traducción (Tabla~\ref{tab:hipotesis}) recibe una respuesta negativa para el texto nativo: el aumento de datos mediante traducción, tal como se implementó, amplía los dominios en los que el modelo funciona, pero no mejora la detección sobre tweets en español. Dos factores pueden explicarlo. Por un lado, los textos traducidos difieren de los tweets en plataforma, longitud y registro, de modo que lo que el modelo aprende de ellos se transfiere poco al dominio nativo. Por otro, la selección del mejor punto de control de BETO multi se hizo sobre un conjunto de validación mixto (78\,\% nativo), que no optimiza exclusivamente el rendimiento nativo.
 
 \subsection{Interpretabilidad: ¿qué aprende el modelo léxico?}
 Se analizaron los 15 términos con mayor coeficiente hacia cada clase en la Regresión Logística mono. Los asociados a la clase depresiva son, mayoritariamente, marcadores dialectales o geográficos: formas propias del español peninsular (\emph{os}, \emph{tenéis}, \emph{joder}, \emph{gilipollas}), del rioplatense (\emph{vos}, \emph{ahre}), referencias a política y países de Sudamérica (\emph{piñera}, \emph{uribe}, \emph{colombia}, \emph{venezuela}) y términos de comunidades en línea (\emph{hilo}, \emph{army}). Los asociados a la clase control son marcadores del español mexicano (\emph{wey}, \emph{mexicanos}, \emph{puebla}, \emph{colima}, \emph{chihuahua}, \emph{veracruz}, \emph{tigres}, \emph{gobernador}) y de la vida escolar (\emph{tarea}, \emph{semestre}).
 
 Ninguno de los treinta términos extremos corresponde a los marcadores lingüísticos descritos en la literatura. El patrón indica que, en este corpus, la etiqueta está fuertemente asociada a la procedencia geográfica del usuario: los controles son mayoritariamente usuarios mexicanos y los usuarios depresivos provienen con mayor frecuencia de otros países hispanohablantes. El modelo léxico aprovecha esa correlación regional. Como la partición es por usuario, el sesgo se transfiere al conjunto de prueba (que tiene la misma composición geográfica), de modo que las métricas no lo penalizan; pero un modelo así fallaría al aplicarse, por ejemplo, a una población rioplatense, donde todo usuario usaría \emph{vos}.
 
-\paragraph{Contraste con el lexicón lingüístico.} Que los marcadores lingüísticos no figuren entre los términos extremos no implica que el modelo los ignore. Para contrastar \Hs{3} de forma sistemática se ubicó cada término del lexicón dentro de la distribución completa de coeficientes (Tabla~\ref{tab:hs4}). Las emociones negativas son la única categoría con un sesgo claro hacia la clase depresiva: 21 de sus 22 términos presentes en el vocabulario tienen coeficiente positivo, entre ellos \emph{morirme}, \emph{suicidio}, \emph{vacío}, \emph{deprimido} y \emph{tristeza}, y seis aparecen entre los 500 unigramas más asociados a la clase depresiva (Fisher, $p=0{,}003$). Las emociones positivas se inclinan, como se esperaba, hacia la clase control. En cambio, la primera persona del singular y el lenguaje absolutista no se distinguen del resto del vocabulario ($p>0{,}09$), en coherencia con el análisis exploratorio (Tabla~\ref{tab:marcadores}). En el modelo con submuestreo el patrón es el mismo, aunque la concentración de emociones negativas en el extremo superior es menos marcada (Fisher, $p=0{,}08$; Mann-Whitney, $p<0{,}001$).
+\paragraph{Contraste con el lexicón lingüístico.} Que los marcadores lingüísticos no figuren entre los términos extremos no implica que el modelo los ignore. Para responder de forma sistemática la pregunta derivada sobre la consistencia afectiva de los modelos interpretables (Tabla~\ref{tab:hipotesis}) se ubicó cada término del lexicón dentro de la distribución completa de coeficientes (Tabla~\ref{tab:hs4}). Las emociones negativas son la única categoría con un sesgo claro hacia la clase depresiva: 21 de sus 22 términos presentes en el vocabulario tienen coeficiente positivo, entre ellos \emph{morirme}, \emph{suicidio}, \emph{vacío}, \emph{deprimido} y \emph{tristeza}, y seis aparecen entre los 500 unigramas más asociados a la clase depresiva (Fisher, $p=0{,}003$). Las emociones positivas se inclinan, como se esperaba, hacia la clase control. En cambio, la primera persona del singular y el lenguaje absolutista no se distinguen del resto del vocabulario ($p>0{,}09$), en coherencia con el análisis exploratorio (Tabla~\ref{tab:marcadores}). En el modelo con submuestreo el patrón es el mismo, aunque la concentración de emociones negativas en el extremo superior es menos marcada (Fisher, $p=0{,}08$; Mann-Whitney, $p<0{,}001$).
 
 \begin{table}[H]
 \centering
@@ -1194,13 +1209,13 @@ Un corpus balanceado por región (rioplatense, andina, centroamericana, caribeñ
 \label{sec:limitaciones}
 \paragraph{Validez de constructo.} Las etiquetas no provienen de diagnósticos clínicos sino de la clasificación de usuarios en el corpus original y de la pertenencia a comunidades de Reddit. Publicar en \texttt{r/depression} no equivale a padecer depresión, y publicar en \texttt{r/teenagers} no excluye padecerla. En Kaggle SDD, además, la clase positiva incluye \texttt{r/SuicideWatch}, que corresponde a un constructo distinto (ideación suicida).
 
-\paragraph{Validez interna.} La correlación entre etiqueta y procedencia geográfica en Coello-Guilarte es un factor de confusión que afecta a todos los modelos; el control experimental la cuantificó para los marcadores explícitos, pero no puede eliminar las señales regionales indirectas (temas, registro). En las fuentes traducidas, la clase está asociada a la comunidad de origen (\texttt{r/teenagers} frente a \texttt{r/depression}), por lo que el alto rendimiento sobre esas fuentes puede reflejar en parte la distinción temática entre comunidades más que la depresión. Por último, Kaggle SDD no tiene autor, de modo que se trató cada publicación como un usuario; si un mismo autor publicó varias veces, sus textos pueden haber quedado en particiones distintas, lo que podría sobrestimar levemente el rendimiento en esa fuente.
+\paragraph{Validez interna.} La correlación entre etiqueta y procedencia geográfica en Coello-Guilarte es un factor de confusión que afecta a todos los modelos; el control experimental la cuantificó para los marcadores explícitos, pero no puede eliminar las señales regionales indirectas (temas, registro). En las fuentes traducidas, la clase está asociada a la comunidad de origen (\texttt{r/teenagers} frente a \texttt{r/depression}), por lo que el alto rendimiento sobre esas fuentes puede reflejar en parte la distinción temática entre comunidades más que la depresión. Además, Kaggle SDD no tiene autor, de modo que se trató cada publicación como un usuario; si un mismo autor publicó varias veces, sus textos pueden haber quedado en particiones distintas, lo que podría sobrestimar levemente el rendimiento en esa fuente. Por último, BETO procesa como máximo 128 tokens por documento (Sección~\ref{sec:beto_hardware}): en las publicaciones de Reddit traducidas, más largas que los tweets, trunca el texto, mientras que TF-IDF lo utiliza completo, de modo que la comparación entre ambas familias en ese dominio no se hace con la misma información disponible.
 
 \paragraph{Validez externa.} Los modelos se entrenaron con tweets de un período y una población determinados y con publicaciones de Reddit traducidas. No hay evidencia de que generalicen a otras plataformas (WhatsApp, Instagram, Telegram), a otras variedades del español ni a textos de otro período~\cite{harrigian2020generalize}. Los resultados de la Sección~\ref{sec:ablacion} muestran, de hecho, que un modelo entrenado en un dominio puede fallar de forma sistemática en otro.
 
 \paragraph{Validez estadística.} Cada modelo se entrenó una sola vez con una semilla fija y se evaluó sobre una única partición. Los intervalos por \emph{bootstrap} de usuarios cuantifican la incertidumbre debida a la muestra de 64 usuarios de prueba, pero no la variabilidad debida a la semilla de entrenamiento ni a la asignación de usuarios entre particiones, que requeriría reentrenar. Las diferencias pequeñas, como la de BETO mono frente a multi en el test nativo ($-0{,}016$ de F1-macro), son distinguibles de cero dentro de esta partición, pero no puede descartarse que cambien de signo con otra semilla o partición. A nivel de usuario, con 19 casos positivos, la potencia es insuficiente para comparar modelos.
 
-\paragraph{Reproducibilidad.} Los pesos de los modelos, las predicciones de prueba y los manifiestos se conservan localmente; los corpus de origen se distribuyen bajo licencias de investigación y no se redistribuyen.
+\paragraph{Reproducibilidad.} El código y los manifiestos de partición se publican en el repositorio (Anexo~\ref{anx:disponibilidad}). Los pesos de los modelos y las predicciones de prueba se derivan de corpus de terceros, que se distribuyen bajo licencias de investigación o sin licencia declarada, por lo que se conservan localmente y no se redistribuyen, al igual que los corpus de origen. Un tercero puede reproducir los resultados ejecutando el pipeline completo (Anexo~\ref{anx:reproduccion}) tras descargar los corpus desde sus fuentes.
 
 \subsection{Consideraciones éticas}
 \label{sec:etica}
@@ -1211,6 +1226,10 @@ Se siguieron las recomendaciones de la literatura sobre investigación en salud 
     \item transparencia sobre las limitaciones y sesgos detectados;
     \item declaración explícita de que el sistema \emph{no} diagnostica y \emph{no} reemplaza la evaluación profesional.
 \end{itemize}
+\paragraph{Aval del comité de ética.} El estudio utiliza exclusivamente corpus preexistentes de acceso público (Sección~\ref{sec:fuentes}), no implicó contacto ni intervención sobre las personas que produjeron los textos ni la recolección de datos nuevos, y los identificadores se reemplazaron por \emph{hashes} antes de cualquier análisis (Sección~\ref{sec:anonimizacion}); por ello no se solicitó consentimiento informado. La determinación de si un estudio de esta naturaleza requiere aval o puede eximirse corresponde al comité de ética de la institución y este informe no la sustituye.
+
+\paragraph{Riesgo de equidad por variedad dialectal.} El análisis de coeficientes indica que en el corpus nativo la etiqueta está asociada a la procedencia geográfica de los usuarios (los controles son mayoritariamente mexicanos y los usuarios depresivos provienen con mayor frecuencia de otros países hispanohablantes) y el control experimental muestra que todos los modelos, BETO incluido, utilizan marcadores regionales (Sección~\ref{sec:control_dialectal}). Aplicado sin ajustes a una población con otra composición dialectal, el sistema podría tratar de forma sistemáticamente distinta a los hablantes de ciertas variedades (por ejemplo, la rioplatense o la peninsular): su procedencia, y no su estado de ánimo, aumentaría la probabilidad de ser rotulados como posibles casos, con el consiguiente costo de estigmatización. Este trabajo no pudo medir ese efecto, porque Coello-Guilarte no registra el país de los usuarios (Sección~\ref{sec:eda}) y, por lo tanto, no se dispone de métricas ni de tasas de error desagregadas por variedad. Ninguna aplicación debería desplegarse sin una evaluación desagregada por variedad y sin un corpus balanceado por región.
+
 Cualquier aplicación práctica requeriría validación con profesionales de la salud mental, consentimiento informado de los usuarios, mecanismos de exclusión voluntaria, auditoría de sesgos por región, género y edad, y un protocolo de derivación a servicios de ayuda. El monitoreo automático de personas sin su consentimiento no es un uso aceptable de esta tecnología.
 
 \newpage
@@ -1222,12 +1241,12 @@ Cualquier aplicación práctica requeriría validación con profesionales de la 
 
 \subsection{Conclusiones}
 \begin{enumerate}[leftmargin=2em]
-    \item \textbf{Superación empírica de BETO sobre líneas base léxicas a nivel de publicación (Objetivos 2 y 3, e Hipótesis General):} Sobre el conjunto de prueba nativo común en español, el ajuste fino de BETO superó a las líneas base TF-IDF con Regresión Logística y SVM lineal en todas las métricas evaluadas, con incrementos de 6{,}2 puntos en $F_1$-macro y 5{,}2 puntos en AUC-ROC. Dado que los intervalos de confianza del 95\,\% por \emph{bootstrap} de usuarios excluyen estrictamente el cero, \textbf{se rechaza formalmente la hipótesis nula ($H_0$) y se acepta la hipótesis general ($H_1$)} en la unidad de análisis de publicaciones individuales. Sin embargo, al agregar las predicciones por perfil de usuario, todos los clasificadores alcanzaron AUC $\geq 0{,}98$, diluyendo la ventaja de BETO debido a factores de confusión acumulados en la colección de prueba.
+    \item \textbf{Superación empírica de BETO sobre líneas base léxicas a nivel de publicación (Objetivos 2 y 3, e Hipótesis General):} Sobre el conjunto de prueba nativo común en español, el ajuste fino de BETO superó a las líneas base TF-IDF con Regresión Logística y SVM lineal en todas las métricas evaluadas, con incrementos de 6{,}2 puntos en $F_1$-macro y 5{,}2 puntos en AUC-ROC. Dado que los intervalos de confianza del 95\,\% por \emph{bootstrap} de usuarios excluyen estrictamente el cero, \textbf{se rechaza formalmente la hipótesis nula ($H_0$) y se acepta la hipótesis general ($H_1$)} en la unidad de análisis de publicaciones individuales. Sin embargo, al agregar las predicciones por perfil de usuario, todos los clasificadores alcanzaron AUC $\geq 0{,}98$ y la ventaja de BETO dejó de observarse. Este estudio no permite atribuir esa dilución a una causa determinada: pueden contribuir las señales regionales indirectas que se acumulan con miles de tweets por persona, el efecto techo de un AUC próximo a 1 o la baja potencia de una prueba con 64 usuarios (19 depresivos), y los datos disponibles no permiten distinguir entre estas explicaciones.
     \item \textbf{Impacto del aumento de datos mediante traducción (Objetivo 4):} Incorporar 263\,829 publicaciones de Reddit traducidas con MarianMT no mejoró la detección sobre tweets nativos en español (BETO multi obtuvo 0{,}701 vs.\ 0{,}717 de F1-macro en mono), introduciendo una degradación marginal de 1{,}6 puntos. No obstante, el entrenamiento multi resultó imprescindible para operar sobre el dominio traducido, donde los modelos entrenados exclusivamente con tweets fracasaron por discrepancias estilísticas y de extensión (F1-macro de 0{,}93 frente a 0{,}42 en Reddit).
     \item \textbf{Metodología de partición y evaluación en corpus multifuente (Objetivos 1 y 3):} La investigación demostró que evaluar corpus combinados sin desagregación por fuente puede inducir a conclusiones erróneas. El aislamiento estricto por autor (70/10/20) y la evaluación desacoplada entre el test nativo común y los tests traducidos fueron requisitos indispensables para garantizar la validez interna y evitar sobrestimaciones derivadas de fuentes sin identificadores de usuario.
     \item \textbf{Auditoría de sesgos diatópicos (Objetivo 5):} El análisis de interpretabilidad reveló que los términos más discriminativos de los modelos lineales corresponden a marcadores dialectales y geográficos (\emph{wey}, \emph{vos}, \emph{joder}, topónimos) en lugar de marcadores de contenido. El experimento de control con enmascarado léxico confirmó que todos los modelos, incluido BETO, sufren una pérdida de 2 a 2{,}5 puntos de AUC ante la ausencia de estos términos. El atajo no explica la ventaja relativa de BETO (que se mantiene constante), pero evidencia que los modelos de lenguaje en redes sociales son susceptibles a sesgos de procedencia geográfica si el corpus no está balanceado dialectalmente.
     \item \textbf{Aporte y consistencia de marcadores lingüísticos (Objetivos 2 y 5):} La combinación explícita de 19 rasgos tipo LIWC, polaridad y patrones temporales no mejoró a la representación TF-IDF pura (F1-macro de 0{,}644 vs.\ 0{,}653), demostrando que la señal semántica ya es capturada por los n-gramas. En los modelos interpretables se constató consistencia con la literatura en la densidad de emociones negativas ($p = 0{,}003$), mientras que el pronombre de primera persona y el léxico absolutista no mostraron enriquecimiento predictivo frente al resto del vocabulario.
-    \item \textbf{Interpretabilidad, reproducibilidad y delimitación no clínica (Objetivo General):} La interpretabilidad se alcanzó a nivel analítico para los modelos lineales y como auditoría de sensibilidad para BETO. El pipeline completo de Ciencia de Datos (descarga, anonimización, traducción, partición, modelado y evaluación) quedó automatizado de forma reproducible con semillas fijas y manifiestos versionados. Se concluye que el sistema desarrollado constituye una herramienta computacional válida para investigación y cribado poblacional de indicios textuales, sin que pueda atribuírsele capacidad de diagnóstico clínico individual ni ser empleado como asistente terapéutico.
+    \item \textbf{Interpretabilidad, reproducibilidad y delimitación no clínica (Objetivo General):} La interpretabilidad se alcanzó a nivel analítico para los modelos lineales y como auditoría de sensibilidad para BETO. El pipeline completo de Ciencia de Datos (descarga, anonimización, traducción, partición, modelado y evaluación) quedó automatizado de forma reproducible con semillas fijas y manifiestos versionados. Se concluye que el sistema desarrollado constituye un prototipo de investigación y no una herramienta validada para el cribado: su rendimiento por publicación es moderado (F1-macro de 0{,}717 en el mejor caso), depende de marcadores dialectales, se evaluó sobre 64 usuarios de prueba con etiquetas no clínicas y carece de validación clínica y externa. No puede atribuírsele capacidad de diagnóstico individual ni ser empleado como asistente terapéutico, y cualquier uso de cribado exigiría, como mínimo, las validaciones descritas en la Sección~\ref{sec:etica}.
 \end{enumerate}
 
 \subsection{Trabajo futuro}
@@ -1276,7 +1295,7 @@ make beto-multi            # ajuste fino de BETO (multi, GPU)
 make eval-beto-multi       # evaluacion de BETO multi en val y test
 make test                  # pruebas automaticas
 # Validacion sin reentrenar (Capitulo 5)
-python -m src.evaluation.run_validation          # IC, diferencias, Hs3, usuario
+python -m src.evaluation.run_validation          # IC, diferencias, lexicon, usuario
 python -m src.evaluation.dialect_control --beto  # control dialectal (GPU)
 \end{lstlisting}
 
@@ -1328,12 +1347,13 @@ Depression Reddit &   5\,410 &    774 &  1\,547 \\
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{baseline_downsampled_confusion_matrix.png}
+    \includegraphics[width=0.9\textwidth]{baseline_downsampled_confusion_matrix_es.png}
     \caption{Matrices de confusión de las Regresiones Logísticas mono (submuestreo y ponderación).}
     \label{fig:cm_baseline}
 \end{figure}
 
 \subsection{Disponibilidad de código y datos}
-El código se distribuye bajo licencia MIT en el repositorio \url{https://github.com/giulicrenna/Deteccion-Temprana-Depresion}. Los corpus de origen no se redistribuyen y deben descargarse desde sus fuentes, respetando sus licencias: Coello-Guilarte (uso de investigación con cita), Kaggle SDD (CC BY-SA 4.0), Reddit Mental Health Posts (sin licencia declarada) y Depression Reddit Cleaned (CC BY 4.0).
+\label{anx:disponibilidad}
+El código se distribuye bajo licencia MIT en el repositorio \url{https://github.com/giulicrenna/Deteccion-Temprana-Depresion}. Los pesos de los modelos y las predicciones de prueba no se redistribuyen (Sección~\ref{sec:limitaciones}). Los corpus de origen tampoco se redistribuyen y deben descargarse desde sus fuentes, respetando sus licencias: Coello-Guilarte (uso de investigación con cita), Kaggle SDD (CC BY-SA 4.0), Reddit Mental Health Posts (sin licencia declarada) y Depression Reddit Cleaned (CC BY 4.0).
 
 \end{document}
