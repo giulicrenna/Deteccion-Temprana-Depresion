@@ -1,56 +1,112 @@
-% Proceso de investigación según CRISP-DM (seis fases, recorrido en serpentina)
-% Fila superior: 1 -> 2 -> 3. Fila inferior: 4 -> 5 -> 6 (de derecha a izquierda).
-% Requiere los estilos proceso, resultado y flecha del documento anfitrión.
-\begin{tikzpicture}[font=\footnotesize]
-    \hyphenpenalty=10000\relax
-
-    \tikzset{
-        fase/.style={proceso=4.9cm, minimum height=2.9cm, align=left, anchor=center},
-        iter/.style={-{Stealth[length=2.4mm, width=1.8mm]}, line width=0.8pt, color=ugrNaranja, dashed},
-        ida/.style={{Stealth[length=2.4mm, width=1.8mm]}-{Stealth[length=2.4mm, width=1.8mm]}, line width=0.8pt, color=ugrGris},
+% Diagrama del proceso de investigación estructurado en dos filas continuas
+% Fila 1: Etapas 1-4 (OE1: Analizar)
+% Fila 2: Etapas 5-7 (OE2: Comparar, OE3: Evaluar, OE4: Evaluar)
+\begin{tikzpicture}[
+    font=\footnotesize,
+    etapaFila1/.style={
+        rectangle,
+        rounded corners=4pt,
+        draw=ugrAzul,
+        fill=white,
+        line width=0.8pt,
+        text width=3.30cm,
+        minimum height=2.65cm,
+        align=center,
+        inner sep=4pt
+    },
+    etapaFila2/.style={
+        rectangle,
+        rounded corners=4pt,
+        draw=ugrAzul,
+        fill=white,
+        line width=0.8pt,
+        text width=4.55cm,
+        minimum height=2.65cm,
+        align=center,
+        inner sep=4pt
+    },
+    flechaEtapa/.style={
+        -{Stealth[length=2.5mm, width=1.8mm]},
+        line width=1.0pt,
+        color=ugrAzul!85
     }
+]
 
-    \node[fase] (f1) at (-6.0, 0) {%
-        {\small\bfseries\color{ugrAzul} 1. Comprensión del problema}\\[2pt]
-        Pregunta, $H_1$/$H_0$ y objetivos\\
-        Criterio de éxito: IC 95\,\% de $\Delta F_1$ y $\Delta$AUC $>0$\\
-        Restricciones: tarea binaria, GPU de 8\,GB, corpus abiertos};
+    % ================= FILA 1: OE1 (ETAPAS 1 A 4) =================
+    % 1. Adquisición (OE1)
+    \node[etapaFila1] (e1) at (0, 0) {%
+        {\scriptsize\bfseries\color{ugrAzul} 1. Adquisición}\\[2pt]
+        {\tiny\bfseries\color{ugrVerde} [OE1: Analizar]}\\[3pt]
+        {\scriptsize Descarga de Twitter Coello y colecciones Reddit}\\[3pt]
+        \includegraphics[height=0.45cm]{logos/huggingface.png}\\[2pt]
+        {\tiny\texttt{huggingface\_hub} $\cdot$ \texttt{requests}}
+    };
 
-    \node[fase] (f2) at (0, 0) {%
-        {\small\bfseries\color{ugrAzul} 2. Comprensión de los datos}\\[2pt]
-        Cuatro fuentes: Twitter nativo y tres de Reddit traducido\\
-        Análisis exploratorio, calidad y desbalance\\
-        Marcadores dialectales};
+    % 2. Traducción (OE1)
+    \node[etapaFila1] (e2) at (3.85, 0) {%
+        {\scriptsize\bfseries\color{ugrAzul} 2. Traducción}\\[2pt]
+        {\tiny\bfseries\color{ugrVerde} [OE1: Analizar]}\\[3pt]
+        {\scriptsize MarianMT EN$\to$ES local con decodificación voraz}\\[3pt]
+        \includegraphics[height=0.45cm]{logos/pytorch.png}\\[2pt]
+        {\tiny MarianMT (\texttt{opus-mt-en-es})}
+    };
 
-    \node[fase] (f3) at (6.0, 0) {%
-        {\small\bfseries\color{ugrAzul} 3. Preparación de los datos}\\[2pt]
-        Anonimización y traducción (MarianMT)\\
-        Corpus unificado (1\,311\,023 textos)\\
-        Partición 70/10/20 por usuario, rasgos y balanceo};
+    % 3. EDA (OE1)
+    \node[etapaFila1] (e3) at (7.70, 0) {%
+        {\scriptsize\bfseries\color{ugrAzul} 3. EDA}\\[2pt]
+        {\tiny\bfseries\color{ugrVerde} [OE1: Analizar]}\\[3pt]
+        {\scriptsize Clases, longitudes, vocabulario y marcadores}\\[3pt]
+        \includegraphics[height=0.45cm]{logos/pandas.png}\\[2pt]
+        {\tiny \texttt{pandas} $\cdot$ \texttt{matplotlib}}
+    };
 
-    \node[fase, draw=ugrAzul, fill=ugrAzul!8] (f4) at (6.0, -4.6) {%
-        {\small\bfseries\color{ugrAzul} 4. Modelado}\\[2pt]
-        TF-IDF con Regresión Logística y SVM\\
-        Modelo combinado (19 rasgos)\\
-        BETO; esquemas mono y multi};
+    % 4. Preprocesamiento (OE1)
+    \node[etapaFila1] (e4) at (11.55, 0) {%
+        {\scriptsize\bfseries\color{ugrAzul} 4. Preproceso}\\[2pt]
+        {\tiny\bfseries\color{ugrVerde} [OE1: Analizar]}\\[3pt]
+        {\scriptsize Anonimización determinista y partición 70/10/20}\\[3pt]
+        \includegraphics[height=0.45cm]{logos/spacy.png}\\[2pt]
+        {\tiny \texttt{spaCy} $\cdot$ \texttt{Python re}}
+    };
 
-    \node[fase, draw=ugrVerde, fill=ugrVerde!9] (f5) at (0, -4.6) {%
-        {\small\bfseries\color{ugrAzul} 5. Evaluación}\\[2pt]
-        $F_1$-macro, AUC, $\kappa$ y \emph{bootstrap} de 2\,000 réplicas\\
-        Control dialectal y nivel de usuario\\
-        Contraste de $H_0$};
+    % ================= FILA 2: OE2, OE3, OE4 (ETAPAS 5 A 7) =================
+    % 5. Baselines (OE2)
+    \node[etapaFila2, draw=ugrNaranja, fill=ugrNaranja!4] (e5) at (0.65, -3.45) {%
+        {\scriptsize\bfseries\color{ugrAzul} 5. Baselines Léxicos}\\[2pt]
+        {\tiny\bfseries\color{ugrNaranja!80!black} [OE2: Comparar]}\\[3pt]
+        {\scriptsize TF-IDF con Regresión Logística y SVM lineal}\\[3pt]
+        \includegraphics[height=0.45cm]{logos/scikitlearn.png}\\[2pt]
+        {\tiny \texttt{scikit-learn} $\cdot$ Submuestreo / balanceo}
+    };
 
-    \node[fase] (f6) at (-6.0, -4.6) {%
-        {\small\bfseries\color{ugrAzul} 6. Despliegue y cierre}\\[2pt]
-        Código, manifiestos y predicciones reproducibles\\
-        Uso no clínico y consideraciones éticas\\
-        Informe y presentación};
+    % 6. Ajuste Fino BETO (OE3)
+    \node[etapaFila2, draw=ugrAzul, fill=filaResaltada] (e6) at (5.80, -3.45) {%
+        {\scriptsize\bfseries\color{ugrAzul} 6. BETO Contextual}\\[2pt]
+        {\tiny\bfseries\color{ugrAzul} [OE3: Evaluar]}\\[3pt]
+        {\scriptsize Fine-tuning Transformer (BETO, 110M params, FP16)}\\[3pt]
+        \includegraphics[height=0.45cm]{logos/pytorch.png}\\[2pt]
+        {\tiny \texttt{PyTorch} $\cdot$ \texttt{transformers} (AdamW)}
+    };
 
-    \draw[ida]   (f1) -- (f2);
-    \draw[ida]   (f2) -- (f3);
-    \draw[ida]   (f3) -- (f4);
-    \draw[flecha] (f4) -- (f5);
-    \draw[flecha] (f5) -- (f6);
-    \draw[iter]  (f5.north west) -- node[midway, right=3pt, font=\scriptsize, text=ugrNaranja, align=left, inner sep=1pt] {nuevo\\ciclo} (f1.south east);
+    % 7. Evaluación (OE4)
+    \node[etapaFila2, draw=ugrVerde, fill=ugrVerde!6] (e7) at (10.95, -3.45) {%
+        {\scriptsize\bfseries\color{ugrAzul} 7. Evaluación y Auditoría}\\[2pt]
+        {\tiny\bfseries\color{ugrVerde} [OE4: Evaluar]}\\[3pt]
+        {\scriptsize $F_1$-macro, AUC, bootstrap pareado y robustez}\\[3pt]
+        \includegraphics[height=0.45cm]{logos/scipy.png}\\[2pt]
+        {\tiny \texttt{scipy} $\cdot$ \texttt{scikit-learn}}
+    };
+
+    % Flechas horizontales Fila 1
+    \draw[flechaEtapa] (e1) -- (e2);
+    \draw[flechaEtapa] (e2) -- (e3);
+    \draw[flechaEtapa] (e3) -- (e4);
+
+    % Conexión entre Fila 1 y Fila 2: desde etapa 4 hacia etapa 5
+    \draw[flechaEtapa] (e4.south) -- ++(0, -0.35) -| (e5.north);
+
+    % Flechas horizontales Fila 2
+    \draw[flechaEtapa] (e5) -- (e6);
+    \draw[flechaEtapa] (e6) -- (e7);
 
 \end{tikzpicture}

@@ -90,11 +90,13 @@ logs/
 # Archivos generados en la raíz o en informe/
 *.aux
 *.bbl
+*.bcf
 *.blg
 *.fdb_latexmk
 *.fls
 *.log
 *.out
+*.run.xml
 *.toc
 *.lof
 *.lot
@@ -105,11 +107,13 @@ logs/
 
 informe/*.aux
 informe/*.bbl
+informe/*.bcf
 informe/*.blg
 informe/*.fdb_latexmk
 informe/*.fls
 informe/*.log
 informe/*.out
+informe/*.run.xml
 informe/*.toc
 informe/*.lof
 informe/*.lot
@@ -121,11 +125,13 @@ informe/*.pdf
 # Si hay subdirectorios dentro de informe/ con más .tex (ej: propuesta_de_tesis)
 informe/**/*.aux
 informe/**/*.bbl
+informe/**/*.bcf
 informe/**/*.blg
 informe/**/*.fdb_latexmk
 informe/**/*.fls
 informe/**/*.log
 informe/**/*.out
+informe/**/*.run.xml
 informe/**/*.toc
 informe/**/*.lof
 informe/**/*.lot
@@ -134,7 +140,8 @@ informe/**/*.synctex(busy)
 informe/**/*.dvi
 informe/**/*.pdf
 
-# Excepciones: mantener fuentes e imágenes
+# Excepciones: mantener fuentes, imágenes y el PDF final del informe
+!informe/main.pdf
 !informe/*.tex
 !informe/*.bib
 !informe/*.png
@@ -151,3 +158,4 @@ informe/**/*.pdf
 !informe/**/*.svg
 *.7z
 texput.log
+informe/CHANGELOG_devolucion.md
