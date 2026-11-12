@@ -3,7 +3,7 @@
 % =====================================================================
 
 % ---------------------------------------------------------------------
-% Diapositiva 12: Protocolo y Métricas
+% Diapositiva 13: Protocolo y Métricas
 % ---------------------------------------------------------------------
 \section{Evaluación}
 
@@ -35,7 +35,7 @@
 \end{frame}
 
 % ---------------------------------------------------------------------
-% Diapositiva 13: Resultados en el Test Nativo Común
+% Diapositiva 14: Resultados en el Test Nativo Común
 % ---------------------------------------------------------------------
 \begin{frame}{Resultados principales sobre el test nativo común}
   \framesubtitle{Evaluación sobre 250\,847 tweets de 64 usuarios independientes}
@@ -48,9 +48,9 @@
       \toprule
       \textbf{Modelo evaluado} & \textbf{F1-macro} & \textbf{F1 depresión} & \textbf{AUC-ROC} & \textbf{Kappa ($\boldsymbol{\kappa}$)} \\
       \midrule
-      LR TF-IDF (submuestreo) & 0{,}653 \tiny{[0{,}605; 0{,}691]} & 0{,}544 & 0{,}753 \tiny{[0{,}715; 0{,}788]} & 0{,}317 \\
       LR TF-IDF (ponderado) & 0{,}655 \tiny{[0{,}606; 0{,}693]} & 0{,}546 & 0{,}755 \tiny{[0{,}718; 0{,}790]} & 0{,}321 \\
       SVM lineal TF-IDF & 0{,}653 \tiny{[0{,}605; 0{,}692]} & 0{,}544 & 0{,}754 \tiny{[0{,}716; 0{,}787]} & 0{,}318 \\
+      LR TF-IDF (submuestreo) & 0{,}653 \tiny{[0{,}605; 0{,}691]} & 0{,}544 & 0{,}753 \tiny{[0{,}715; 0{,}788]} & 0{,}317 \\
       LR Combinado (19 rasgos) & 0{,}644 \tiny{[0{,}593; 0{,}684]} & 0{,}540 & 0{,}750 \tiny{[0{,}710; 0{,}785]} & 0{,}303 \\
       \rowcolor{filaResaltada}
       \textbf{BETO mono (contextual)} & \textbf{0{,}717} \tiny{[0{,}665; 0{,}759]} & \textbf{0{,}613} & \textbf{0{,}808} \tiny{[0{,}755; 0{,}849]} & \textbf{0{,}437} \\
@@ -76,7 +76,7 @@
 \end{frame}
 
 % ---------------------------------------------------------------------
-% Diapositiva 14: Discriminación y Curvas ROC
+% Diapositiva 15: Discriminación y Curvas ROC
 % ---------------------------------------------------------------------
 \begin{frame}{Capacidad de discriminación y matriz de confusión}
   \framesubtitle{Análisis de curvas ROC y estructura de clasificación de BETO}
@@ -93,22 +93,22 @@
     \begin{center}
       \includegraphics[width=\textwidth,height=0.48\textheight,keepaspectratio]{beto_confusion_matrix.png}
       \vskip-0.1cm
-      {\tiny\color{ugrGris}Figura 3: Matriz de confusión normalizada de BETO mono (sensibilidad 69\,\%, especificidad 78\,\%).\par}
+      {\tiny\color{ugrGris}Figura 3: Matriz de confusión normalizada de BETO mono (sensibilidad 68{,}9\,\%, especificidad 78{,}1\,\%).\par}
     \end{center}
   \end{columns}
 
   \vskip-0.1cm
   \begin{center}
-    {\scriptsize\color{ugrAzul}\textbf{Compromiso clínico:} A nivel de publicación individual, la especificidad del 78\,\% minimiza falsas alarmas, mientras la agregación por perfil compensa falsos negativos.\par}
+    {\scriptsize\color{ugrAzul}\textbf{Compromiso clínico:} A nivel de publicación individual, la especificidad del 78{,}1\,\% minimiza falsas alarmas, mientras la agregación por perfil compensa falsos negativos.\par}
   \end{center}
 
   \note{
-    La curva ROC de BETO domina de punta a punta a todas las líneas base. En la matriz de confusión observamos un equilibrio sólido: 78% de especificidad y 69% de sensibilidad sobre publicaciones aisladas. En cribado poblacional, este balance es óptimo para evitar saturar el sistema con falsos positivos.
+    La curva ROC de BETO domina de punta a punta a todas las líneas base. En la matriz de confusión observamos un equilibrio sólido: 78.1% de especificidad y 68.9% de exhaustividad sobre publicaciones aisladas. En cribado poblacional, este balance es óptimo para evitar saturar el sistema con falsos positivos.
   }
 \end{frame}
 
 % ---------------------------------------------------------------------
-% Diapositiva 15: Contrastación Formal de Hipótesis
+% Diapositiva 16: Contrastación Formal de Hipótesis
 % ---------------------------------------------------------------------
 \begin{frame}{Contrastación formal de la hipótesis ($H_1$ vs.\ $H_0$)}
   \framesubtitle{Diferencias pareadas directas e inferencia estadística conclusiva}
@@ -131,7 +131,7 @@
   \ugrblockok{Decisión formal}{
     \begin{itemize}
       \item En el \textbf{100\,\% de las $2\,000$ réplicas} de remuestreo pareado por conglomerados de usuarios, BETO superó tanto a la Regresión Logística como a la SVM lineal.
-      \item Los extremos inferiores del IC 95\,\% excluyen holgadamente el valor nulo ($\Delta F_1 > +0{,}038 > 0$).
+      \item Los extremos inferiores del IC 95\,\% excluyen holgadamente el valor nulo ($\Delta F_{1,\text{low}} = +0{,}038 > 0$ y $\Delta\text{AUC}_{\text{low}} = +0{,}024 > 0$).
       \item \textbf{Veredicto formal:} \textbf{Se rechaza $H_0$ y se acepta $H_1$} a nivel de publicación: BETO aporta una mejora predictiva estadísticamente demostrada y consistente.
     \end{itemize}
   }

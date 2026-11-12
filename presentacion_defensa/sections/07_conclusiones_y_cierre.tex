@@ -13,25 +13,25 @@
   \begin{columns}[T]
     \column{0.49\textwidth}
     \ugrblockok{1. Superioridad contextual demostrada}{
-      BETO supera a los modelos léxicos a nivel de documento ($\Delta F_1 = +0{,}062$, $\Delta\text{AUC} = +0{,}052$, $p < 0{,}0005$). Los rasgos manuales no superan a los n-gramas.
+      BETO supera a los modelos léxicos a nivel de documento ($\Delta F_1 = +0{,}062$, $\Delta\text{AUC} = +0{,}052$, $p < 0{,}0005$). Los 19 rasgos manuales no superan a los n-gramas puros.
     }
     \vskip0.05cm
     \ugrblock{2. Límites de la traducción automática}{
-      La traducción no beneficia al dominio nativo (transferencia levemente negativa), pero es indispensable para clasificar comunidades traducidas.
+      La traducción neuronal expande la cobertura hacia comunidades de foros ($F_1 = 0{,}934$), pero no transfiere mejoras al dominio nativo de microtexto ($0{,}701$ vs.\ $0{,}717$).
     }
 
     \column{0.49\textwidth}
-    \ugralert{3. Detección del atajo diatópico}{
-      Se desenmascaró que los corpus abiertos de redes en español arrastran fuertes sesgos geográficos. El control experimental confirmó que todos los modelos se ven afectados por igual.
+    \ugrblock{3. Eficiencia en el balanceo}{
+      El submuestreo balanceado 50/50 alcanza un desempeño equivalente a la ponderación de pérdida utilizando un 40\,\% menos de datos, optimizando recursos computacionales.
     }
     \vskip0.05cm
-    \ugrblock{4. La unidad de análisis importa}{
-      En publicaciones individuales, BETO es ampliamente superior. En perfiles completos con miles de publicaciones, el agregado estadístico equipara el rendimiento.
+    \ugralert{4. La unidad de análisis importa}{
+      En publicaciones individuales aisladas, BETO es ampliamente superior. En perfiles completos con miles de publicaciones, el agregado estadístico equipara el rendimiento (AUC $\ge 0{,}98$).
     }
   \end{columns}
 
   \note{
-    Sintetizamos los cuatro aportes cardinales: demostración de la superioridad de BETO en textos breves; límites empíricos del aumento por traducción; necesidad de auditar atajos diatópicos en español; y el impacto de la unidad de análisis entre posts aislados y perfiles acumulados.
+    Sintetizamos los cuatro aportes cardinales: demostración de la superioridad de BETO en textos breves; límites empíricos del aumento por traducción; eficiencia del balanceo de clases; y el impacto decisivo de la unidad de análisis entre publicaciones aisladas y perfiles acumulados por usuario.
   }
 \end{frame}
 
@@ -47,22 +47,22 @@
       \begin{itemize}
         \item \textbf{Sin validación clínica individual:} Etiquetas derivadas de redes sociales, no de entrevistas diagnósticas estructuradas (SCID-5 / MINI).
         \item \textbf{Sesgo de autoselección:} Los usuarios activos en redes no representan a la población clínica general.
-        \item \textbf{Restricciones de hardware:} GPU local de 8\,GB VRAM limitó el ajuste a 128 tokens y 3 épocas, posponiendo validación 5-fold en BETO.
+        \item \textbf{Restricciones de hardware:} GPU local de 8\,GB VRAM limitó el ajuste a 128 tokens y 3 épocas, posponiendo validación cruzada 5-fold en BETO.
       \end{itemize}
     }
 
     \column{0.49\textwidth}
     \ugrblock{Compromiso ético y privacidad}{
       \begin{itemize}
-        \item \textbf{Herramienta no diagnóstica:} Concebida como apoyo a la vigilancia epidemiológica y tamizaje poblacional, nunca como sustituto del criterio profesional.
-        \item \textbf{Privacidad por diseño:} Anonimización irreversible y prohibición explícita de cualquier intento de reidentificación.
-        \item \textbf{Prevención de discriminación:} Auditorías diatópicas para evitar estigmatizar dialectos específicos.
+        \item \textbf{Herramienta no diagnóstica:} Concebida como apoyo al cribado poblacional y vigilancia analítica, nunca como sustituto del criterio médico profesional.
+        \item \textbf{Privacidad por diseño:} Anonimización estricta e irreversible mediante hash criptográfico (SHA-256) sin reidentificación de sujetos.
+        \item \textbf{Uso responsable:} Delimitación clara del alcance para prevenir decisiones autónomas automatizadas sobre individuos.
       \end{itemize}
     }
   \end{columns}
 
   \note{
-    Asumimos con rigor las limitaciones del trabajo: las etiquetas de redes no equivalen a un diagnóstico clínico formal, y las restricciones de GPU acotaron los modelos probados. Subrayamos que un clasificador de aprendizaje automático con sesgos diatópicos solo puede operar como apoyo preliminar y nunca debe tomar decisiones autónomas sobre personas.
+    Asumimos con rigor las limitaciones del trabajo: las etiquetas de redes no equivalen a un diagnóstico clínico formal, y las restricciones de GPU acotaron los modelos probados. Subrayamos que un clasificador de aprendizaje automático solo puede operar como herramienta de apoyo preliminar y nunca debe sustituir el juicio clínico profesional.
   }
 \end{frame}
 
@@ -74,36 +74,24 @@
 
   \begin{columns}[T]
     \column{0.49\textwidth}
-    \ugrblock{1. Transferencia adaptativa de dominio}{
+    \ugrblock{1. Modelado y validación clínica}{
       \begin{itemize}
-        \item Preentrenamiento continuo no supervisado sobre el corpus traducido masivo, seguido de fine-tuning exclusivo sobre nativo.
-        \item Evaluación de modelos recientes (RoBERTa-BNE, MarIA, Llama 3 adaptado al español).
-      \end{itemize}
-    }
-    \vskip0.05cm
-    \ugrblock{2. Mitigación activa del sesgo dialectal}{
-      \begin{itemize}
-        \item Entrenamiento con regularización adversaria frente al país de origen del usuario.
-        \item Normalización léxica en el preprocesamiento para neutralizar modismos regionales.
+        \item \textbf{Adaptación continua de dominio:} Preentrenamiento no supervisado sobre corpus de salud mental previos al fine-tuning.
+        \item \textbf{Validación clínica certificada:} Evaluación sobre cohortes con instrumentos estandarizados (PHQ-9 o DAIC-WOZ).
       \end{itemize}
     }
 
     \column{0.49\textwidth}
-    \ugrblock{3. Detección temprana secuencial (eRisk)}{
+    \ugrblock{2. Temporalidad y explicabilidad}{
       \begin{itemize}
-        \item Modelado temporal secuencial para determinar cuántas publicaciones son requeridas antes de emitir una alerta temprana confiable.
-      \end{itemize}
-    }
-    \vskip0.05cm
-    \ugrblock{4. Explicabilidad profunda en Transformers}{
-      \begin{itemize}
-        \item Análisis de atribución con Integrated Gradients, SHAP y mapas de atención en BETO para inspeccionar representaciones no lineales.
+        \item \textbf{Detección temprana secuencial:} Modelado longitudinal (protocolo eRisk) para medir latencia mínima de alertas.
+        \item \textbf{Interpretabilidad profunda:} Métodos de atribución (SHAP, Integrated Gradients) y análisis de atención en BETO.
       \end{itemize}
     }
   \end{columns}
 
   \note{
-    Planteamos cuatro líneas de continuidad prioritarias: esquemas de preentrenamiento continuo adaptativo; desescalado de sesgos dialectales mediante redes adversarias; modelado secuencial temporal según el estándar de eRisk; y métodos avanzados de explicabilidad de representaciones internas en Transformers.
+    Planteamos cuatro líneas de continuidad prioritarias: esquemas de preentrenamiento continuo adaptativo; validación con cohortes clínicas certificadas; modelado secuencial temporal según el estándar de eRisk; y métodos avanzados de explicabilidad en modelos Transformer.
   }
 \end{frame}
 
@@ -120,12 +108,12 @@
   \vskip0.1cm
   \begin{itemize}
     \item \textbf{Aporte al estado del arte en español:} Se consolidó un benchmark riguroso, reproducible y abierto con más de 1{,}3 millones de documentos evaluados bajo particiones limpias por usuario.
-    \item \textbf{Aporte metodológico crítico:} Se demostró que la traducción automática no beneficia automáticamente al dominio nativo y que los atajos dialectales constituyen un riesgo latente que debe auditarse en todo estudio de salud mental y PLN.
-    \item \textbf{Replicabilidad garantizada:} Código, manifiestos y predicciones de los modelos disponibles públicamente en el repositorio para su verificación inmediata.
+    \item \textbf{Aporte metodológico crítico:} Se demostró que la traducción automática expande dominios pero no transfiere mejoras al dominio nativo, y que la unidad de análisis es crítica: la ventaja contextual de BETO en textos breves individuales se equipara con modelos lineales al evaluar perfiles de usuario agregados (AUC $\ge 0{,}98$).
+    \item \textbf{Replicabilidad garantizada:} Repositorio con código modular, pipelines de preprocesamiento, configuraciones y predicciones disponibles para su verificación.
   \end{itemize}
 
   \note{
-    En conclusión: BETO demuestra una ventaja representacional indiscutible en publicaciones individuales, pero la mayor contribución de esta tesina radica en su honestidad metodológica: demostrar que sin particiones por usuario y sin auditorías dialectales, los números del aprendizaje automático en redes sociales pueden ser completamente ilusorios.
+    En conclusión: BETO demuestra una ventaja representacional indiscutible en publicaciones individuales. Sin embargo, la mayor contribución de esta tesina radica en su rigor metodológico: demostrar el impacto de la partición por usuario y cómo la unidad de análisis modifica las conclusiones entre publicaciones individuales y perfiles acumulados.
   }
 \end{frame}
 

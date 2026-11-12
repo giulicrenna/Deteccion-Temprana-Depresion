@@ -8,40 +8,43 @@
 \section{Modelado}
 
 \begin{frame}{Jerarquía de modelos supervisados}
-  \framesubtitle{Tres niveles de complejidad representacional para un contraste exhaustivo}
+  \framesubtitle{Tres niveles de complejidad representacional y diseño experimental $2 \times 2$}
 
   \begin{columns}[T]
     \column{0.32\textwidth}
     \ugrblock{1. Líneas base léxicas}{
+      {\scriptsize
       \begin{itemize}
-        \item \textbf{Representación:} TF-IDF con unigramas y bigramas ($V = 15\,000$ términos sublineales).
-        \item \textbf{Regresión Logística (L2):} Regularización $C=1{,}0$, interpretabilidad directa de coeficientes.
-        \item \textbf{SVM lineal:} Maximización de margen con norma $L_2$.
-      \end{itemize}
+        \item \textbf{TF-IDF:} Unigramas y bigramas ($V = 15\,000$).
+        \item \textbf{Regresión Logística:} Regularización $L_2$ ($C=1{,}0$).
+        \item \textbf{SVM lineal:} Margen con norma $L_2$.
+      \end{itemize}}
     }
 
     \column{0.33\textwidth}
     \ugrblock{2. Modelo combinado}{
+      {\scriptsize
       \begin{itemize}
-        \item \textbf{Enriquecimiento:} TF-IDF (15k) concatenado con \textbf{19 rasgos psicolingüísticos} estandarizados.
-        \item \textbf{Clasificador:} Regresión Logística calibrada.
-        \item \textbf{Objetivo:} Evaluar si el conocimiento experto tipo LIWC supera a las palabras puras.
-      \end{itemize}
+        \item \textbf{Enriquecimiento:} TF-IDF + 19 rasgos psicolingüísticos.
+        \item \textbf{Clasificador:} LR calibrada.
+        \item \textbf{Objetivo:} Evaluar si rasgos expertos superan n-gramas.
+      \end{itemize}}
     }
 
     \column{0.33\textwidth}
-    \ugrblockok{3. Modelo contextual (BETO)}{
+    \ugrblockok{3. Modelo contextual}{
+      {\scriptsize
       \begin{itemize}
-        \item \textbf{Arquitectura:} Transformer bidireccional preentrenado en español (\texttt{dccuchile}).
-        \item \textbf{Parámetros:} 110M ajustados mediante \emph{fine-tuning} supervisado.
-        \item \textbf{Contexto:} Modela orden, negaciones y polisemia.
-      \end{itemize}
+        \item \textbf{BETO:} Transformer preentrenado (\texttt{dccuchile}).
+        \item \textbf{Capacidad:} 110M params (\emph{fine-tuning}).
+        \item \textbf{Atención:} Orden, polisemia y negaciones sintácticas.
+      \end{itemize}}
     }
   \end{columns}
 
-  \vskip0.05cm
-  \ugrblock{Diseño experimental 2 $\times$ 2 de entrenamiento y evaluación}{
-    Cada familia de modelos se entrenó en dos modalidades: \textbf{Mono} (solo Coello-Guilarte nativo) y \textbf{Multi} (unión de Coello-Guilarte + 3 fuentes de Reddit traducidas), evaluándose sobre el mismo conjunto de prueba común.
+  \vskip-0.10cm
+  \ugrblock{Diseño experimental $2 \times 2$ (Mono vs.\ Multi)}{
+    {\scriptsize Cada familia se entrenó en dos modalidades: \textbf{Mono} (solo Twitter nativo) y \textbf{Multi} (Twitter + Reddit traducido), evaluadas sobre el conjunto nativo de prueba común.}
   }
 
   \note{
@@ -56,31 +59,95 @@
   \framesubtitle{Ajuste fino supervisado con restricciones computacionales reales}
 
   \begin{columns}[T]
-    \column{0.50\textwidth}
-    \vskip0.05cm
+    \column{0.48\textwidth}
     \begin{center}
-      \resizebox{0.90\columnwidth}{!}{\input{diagramas/beto}}
+      \resizebox{0.88\columnwidth}{!}{\input{diagramas/beto}}
       \vskip0.05cm
-      {\scriptsize\color{ugrGris}Diagrama: Tokenización WordPiece $\to$ BETO ($d=768$) $\to$ Capa lineal $\to$ Softmax.\par}
+      {\tiny\color{ugrGris}Diagrama: WordPiece $\to$ BETO ($d=768$) $\to$ Capa lineal $\to$ Softmax.\par}
     \end{center}
 
-    \column{0.48\textwidth}
-    \ugrblock{Configuración de hiperparámetros}{
+    \column{0.50\textwidth}
+    \ugrblock{Configuración de hiperparámetros y hardware}{
+      {\scriptsize
       \begin{itemize}
-        \item \textbf{Optimizador:} AdamW ($\text{weight decay} = 0{,}01$).
-        \item \textbf{Tasa de aprendizaje:} $\eta = 2 \times 10^{-5}$ con \emph{warmup} lineal del 10\,\%.
-        \item \textbf{Longitud de secuencia:} 128 tokens WordPiece.
-        \item \textbf{Tamaño de lote:} 16 muestras con gradiente acumulado.
-        \item \textbf{Épocas:} 3 épocas con parada temprana sobre validación.
-      \end{itemize}
-    }
-    \vskip0.05cm
-    \ugrblock{Hardware y restricciones}{
-      Ajuste fino en GPU local \textbf{NVIDIA GeForce RTX 3060 Ti (8\,GB VRAM)} con precisión mixta (FP16).
+        \item \textbf{Optimizador:} AdamW ($\text{weight decay} = 0{,}01$, $\eta = 2 \times 10^{-5}$).
+        \item \textbf{Secuencia y lote:} Longitud máx.\ 128 tokens, lote de 16.
+        \item \textbf{Entrenamiento:} 3 épocas con \emph{early stopping} (óptimo en época 2).
+        \item \textbf{Hardware:} GPU NVIDIA RTX 3060 Ti (8\,GB VRAM) en FP16.
+      \end{itemize}}
     }
   \end{columns}
 
   \note{
-    BETO procesa la secuencia tokenizada con WordPiece; el vector contextual de la salida CLS en la capa 12 alimenta una capa lineal hacia dos neuronas con softmax. El ajuste fino se completó en hardware local mediante precisión mixta FP16, logrando convergencia estable en 3 épocas.
+    BETO procesa la secuencia tokenizada con WordPiece; el vector contextual de la salida CLS en la capa 12 alimenta una capa lineal hacia dos neuronas con softmax. El ajuste fino se completó en hardware local mediante precisión mixta FP16, alcanzando el óptimo en la época 2.
+  }
+\end{frame}
+
+% ---------------------------------------------------------------------
+% Diapositiva 12: Ejemplo de Clasificación End-to-End
+% ---------------------------------------------------------------------
+\begin{frame}{Ejemplo de Clasificación End-to-End}
+  \framesubtitle{Flujo secuencial de inferencia sobre una publicación individual}
+
+  \vskip-0.1cm
+  \begin{center}
+  \resizebox{0.96\textwidth}{!}{
+  \begin{tikzpicture}[
+    paso/.style={rectangle, rounded corners=4pt, draw=ugrAzul, fill=ugrFondoClaro, line width=0.8pt, inner sep=6pt, align=center, text width=3.0cm, font=\small},
+    pasoOk/.style={rectangle, rounded corners=4pt, draw=ugrVerde, fill=ugrVerde!10, line width=0.8pt, inner sep=6pt, align=center, text width=3.0cm, font=\small},
+    flechaFlujo/.style={-{Stealth[length=2.5mm, width=1.8mm]}, line width=1.2pt, color=ugrCeleste}
+  ]
+    % Nodos
+    \node[paso] (n1) at (0, 0) {
+      \textbf{\color{ugrAzul}1. Texto de entrada}\\[3pt]
+      {\scriptsize Publicación individual}\\[4pt]
+      \emph{\tiny ``Nunca me sentí tan vacío, no le encuentro sentido a nada...''}
+    };
+
+    \node[paso] (n2) at (3.8, 0) {
+      \textbf{\color{ugrAzul}2. Tokenización}\\[3pt]
+      {\scriptsize WordPiece ($V = 31\text{k}$)}\\[4pt]
+      \texttt{\tiny [CLS] nunca me sentí tan vacío , no le encuentro ... [SEP]}\\[3pt]
+      {\tiny Longitud $L = 128$}
+    };
+
+    \node[paso] (n3) at (7.6, 0) {
+      \textbf{\color{ugrAzul}3. Modelo BETO}\\[3pt]
+      {\scriptsize Transformer Bidireccional}\\[4pt]
+      {\tiny 12 capas $\cdot$ 110M params}\\[2pt]
+      {\tiny Vector contextual}\\[2pt]
+      \textbf{\tiny $\mathbf{h}_{\text{[CLS]}} \in \mathbb{R}^{768}$}
+    };
+
+    \node[pasoOk] (n4) at (11.4, 0) {
+      \textbf{\color{ugrVerde}4. Predicción}\\[3pt]
+      {\scriptsize Capa lineal + Softmax}\\[4pt]
+      {\tiny $P(\text{Depresión}) = \mathbf{0{,}89}$}\\[2pt]
+      {\tiny $P(\text{Control}) = 0{,}11$}\\[3pt]
+      \textbf{\footnotesize\color{ugrRojo}Indicios de depresión}
+    };
+
+    % Flechas
+    \draw[flechaFlujo] (n1) -- (n2);
+    \draw[flechaFlujo] (n2) -- (n3);
+    \draw[flechaFlujo] (n3) -- (n4);
+  \end{tikzpicture}
+  }
+  \end{center}
+
+  \vskip0.05cm
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \ugrblock{Captura contextual vs.\ bolsa de palabras}{
+      BETO preserva el orden secuencial y resuelve la negación (\emph{``no le encuentro sentido''}), que los modelos léxicos dispersan en términos inconexos.
+    }
+    \column{0.49\textwidth}
+    \ugrblockok{Salida probabilística calibrada}{
+      La distribución de salida provee una probabilidad posterior interpretable, permitiendo ajustar umbrales de decisión según la sensibilidad clínica requerida.
+    }
+  \end{columns}
+
+  \note{
+    Ilustramos el pipeline de clasificación end-to-end: desde el microtexto crudo hasta la probabilidad final. El texto pasa por la tokenización WordPiece con tokens especiales CLS y SEP; las 12 capas de auto-atención de BETO generan el embedding contextual de 768 dimensiones, y la capa lineal clasifica la publicación con una probabilidad de indicios de depresión del 89\%.
   }
 \end{frame}

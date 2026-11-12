@@ -6,34 +6,34 @@
 % Diapositiva 4: Objetivos
 % ---------------------------------------------------------------------
 \begin{frame}{Objetivos de la investigación}
-  \framesubtitle{Estructura articulada para responder a la pregunta central}
+  \framesubtitle{Estructura articulada según la taxonomía de Bloom}
 
-  \ugrblock{Objetivo general}{
-    Desarrollar y evaluar empíricamente un sistema de clasificación binaria supervisado sobre texto en español que distinga publicaciones con indicios de depresión frente a controles, determinando si las representaciones contextuales (BETO) superan a las líneas base léxicas bajo particiones libres de fuga.
+  \ugrblock{Objetivo general (Bloom 6 -- Crear)}{
+    {\footnotesize Desarrollar un modelo de aprendizaje automático supervisado que, a partir de texto escrito en español, clasifique publicaciones de usuarios con indicios de sintomatología depresiva mediante un modelo de lenguaje contextual.}
   }
 
-  \vskip0.05cm
   \begin{columns}[T]
     \column{0.49\textwidth}
-    \ugrblock{Objetivos específicos (1 y 2)}{
-      \begin{enumerate}
-        \item \textbf{Consolidar y caracterizar} un corpus masivo en español combinando Twitter nativo y Reddit traducido con redes neuronales.
-        \item \textbf{Implementar una jerarquía de modelos:} líneas base léxicas (TF-IDF + LR/SVM), modelo con 19 rasgos psicolingüísticos y ajuste fino de BETO.
-      \end{enumerate}
+    \ugrblock{OE1 y OE2: Datos y líneas base}{
+      {\scriptsize
+      \begin{itemize}
+        \item \textbf{OE1 -- Consolidar:} Integrar y estructurar un dataset masivo en español a partir de redes sociales.
+        \item \textbf{OE2 -- Entrenar:} Entrenar clasificadores supervisados basados en representaciones léxicas TF-IDF.
+      \end{itemize}}
     }
     \column{0.49\textwidth}
-    \ugrblock{Objetivos específicos (3, 4 y 5)}{
-      \begin{enumerate}
-        \setcounter{enumi}{2}
-        \item \textbf{Evaluar cuantitativamente} con métricas multidimensionales ($F_1$-macro, AUC, $\kappa$) sobre particiones por usuario.
-        \item \textbf{Evaluar la transferencia:} comparar esquemas \emph{mono} vs.\ \emph{multi} desagregados por dominio.
-        \item \textbf{Auditar sesgos e interpretabilidad:} diseñar un control experimental de enmascaramiento frente a atajos diatópicos.
-      \end{enumerate}
+    \ugrblock{OE3 -- OE5: Contexto y evaluación}{
+      {\scriptsize
+      \begin{itemize}
+        \item \textbf{OE3 -- Fine-tuning:} Ajuste fino supervisado de BETO.
+        \item \textbf{OE4 -- Comparar:} Contraste empírico multidimensional.
+        \item \textbf{OE5 -- Seleccionar:} Selección según significación ($p < 0{,}0005$), unidad de análisis y costo.
+      \end{itemize}}
     }
   \end{columns}
 
   \note{
-    Definimos cinco objetivos específicos ordenados de forma lógica: preparación de datos, modelado incremental, evaluación rigurosa libre de fuga, análisis de transferencia y auditoría de sesgos diatópicos. Esta estructura separa nítidamente la fase de desarrollo de la de evaluación y comparación cuantitativa.
+    Se definieron cinco objetivos específicos alineados con la taxonomía de Bloom: consolidar el corpus masivo integrado (OE1), entrenar líneas base léxicas (OE2), realizar el fine-tuning de BETO (OE3), comparar exhaustivamente los modelos (OE4) y seleccionar la arquitectura óptima según métricas y significación estadística (OE5).
   }
 \end{frame}
 
@@ -45,26 +45,26 @@
 
   \begin{columns}[T]
     \column{0.49\textwidth}
-    \ugrblockok{Hipótesis general ($H_1$)}{
-      El modelo de lenguaje contextual preentrenado en español (BETO) \textbf{supera significativamente} el rendimiento predictivo de las líneas base lineales léxicas en la clasificación a nivel de publicación.
+    \ugrblockok{Hipótesis de investigación ($H_1$)}{
+      {\scriptsize Es posible desarrollar un modelo de aprendizaje automático supervisado que, a partir de texto escrito en español, clasifique publicaciones de usuarios con indicios de sintomatología depresiva mediante un modelo de lenguaje contextual.}
     }
     \column{0.49\textwidth}
     \ugrblock{Hipótesis nula ($H_0$)}{
-      El modelo contextual en español \textbf{no presenta diferencias significativas} en su rendimiento predictivo respecto de las líneas base lineales léxicas sobre el conjunto nativo de prueba.
+      {\scriptsize No es posible desarrollar un modelo de aprendizaje automático supervisado que, a partir de texto escrito en español, clasifique publicaciones de usuarios con indicios de sintomatología depresiva mediante un modelo de lenguaje contextual.}
     }
   \end{columns}
 
-  \vskip0.1cm
+  \vskip-0.05cm
   \ugrblock{Criterio de decisión formal (Bootstrap por conglomerados de usuarios)}{
-    Se define el contraste formal con $B = 2\,000$ réplicas remuestreando los 64 autores independientes del test nativo ($\alpha = 0{,}05$):
+    {\scriptsize Se define el contraste formal con $B = 2\,000$ réplicas remuestreando los 64 autores independientes del test nativo ($\alpha = 0{,}05$):
     \begin{equation*}
       \text{Rechazar } H_0 \text{ a favor de } H_1 \iff \Delta F_{1\text{-macro}}^{\text{low}} > 0 \;\land\; \Delta\text{AUC-ROC}^{\text{low}} > 0
     \end{equation*}
-    donde $\Delta = \text{Métrica}(\text{BETO}_{\text{mono}}) - \text{Métrica}(\text{Mejor Línea Base})$. Los extremos inferiores del IC 95\,\% pareado deben excluir estrictamente el valor nulo ($0$).
+    donde $\Delta = \text{Métrica}(\text{BETO}_{\text{mono}}) - \text{Métrica}(\text{Mejor Línea Base})$. Los extremos inferiores del IC 95\,\% pareado deben excluir estrictamente el valor nulo ($0$).}
   }
 
   \note{
-    Establecemos una condición formal de refutación de H0: no alcanza con una diferencia puntual favorable; exigimos que los intervalos de confianza del 95% para la diferencia pareada de F1-macro y AUC-ROC sean estrictamente positivos en el remuestreo de bootstrap por conglomerados de usuarios.
+    La hipótesis se presenta verbatim conforme al informe final. La condición formal de rechazo de H0 exige que los extremos inferiores de los intervalos de confianza del 95\% para la diferencia pareada de F1-macro y AUC-ROC sean estrictamente positivos en el remuestreo de bootstrap por conglomerados de usuarios.
   }
 \end{frame}
 
@@ -82,6 +82,6 @@
   {\scriptsize\centering\color{ugrGris}El flujo iterativo conecta la evaluación con la comprensión de datos y el modelado; el repositorio garantiza reproducibilidad con \texttt{make}.\par}
 
   \note{
-    Adoptamos el estándar de Ciencia de Datos CRISP-DM en seis fases interconectadas. Cuando la evaluación evidenció atajos dialectales, retrocedimos a la comprensión de datos para aislar el sesgo y diseñar un protocolo de enmascaramiento controlado. Todo el pipeline es reproducible mediante comandos simples en el Makefile del repositorio.
+    Adoptamos el estándar de Ciencia de Datos CRISP-DM en seis fases interconectadas. El ciclo conecta permanentemente la evaluación analítica con el preprocesamiento y el modelado. Todo el pipeline es reproducible mediante comandos en el Makefile del repositorio.
   }
 \end{frame}
