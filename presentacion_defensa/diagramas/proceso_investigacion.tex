@@ -5,7 +5,7 @@
     \hyphenpenalty=10000\relax
 
     \tikzset{
-        fase/.style={proceso=4.9cm, minimum height=2.9cm, align=left, anchor=center},
+        fase/.style={proceso=4.9cm, minimum height=3.0cm, align=left, anchor=center},
         iter/.style={-{Stealth[length=2.4mm, width=1.8mm]}, line width=0.8pt, color=ugrNaranja, dashed},
         ida/.style={{Stealth[length=2.4mm, width=1.8mm]}-{Stealth[length=2.4mm, width=1.8mm]}, line width=0.8pt, color=ugrGris},
     }
@@ -20,7 +20,7 @@
         {\small\bfseries\color{ugrAzul} 2. Comprensión de los datos}\\[2pt]
         Cuatro fuentes: Twitter nativo y tres de Reddit traducido\\
         Análisis exploratorio, calidad y desbalance\\
-        Marcadores dialectales};
+        Distribución de clases y longitudes};
 
     \node[fase] (f3) at (6.0, 0) {%
         {\small\bfseries\color{ugrAzul} 3. Preparación de los datos}\\[2pt]
@@ -37,7 +37,7 @@
     \node[fase, draw=ugrVerde, fill=ugrVerde!9] (f5) at (0, -4.6) {%
         {\small\bfseries\color{ugrAzul} 5. Evaluación}\\[2pt]
         $F_1$-macro, AUC, $\kappa$ y \emph{bootstrap} de 2\,000 réplicas\\
-        Control dialectal y nivel de usuario\\
+        Nivel de usuario y contraste formal\\
         Contraste de $H_0$};
 
     \node[fase] (f6) at (-6.0, -4.6) {%

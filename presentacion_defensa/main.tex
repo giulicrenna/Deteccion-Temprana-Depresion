@@ -53,7 +53,7 @@
 % Configuración estética de Beamer
 % ---------------------------------------------------------------------
 \usetheme{default}
-\setbeamersize{text margin left=0.6cm,text margin right=0.6cm}
+\setbeamersize{text margin left=0.8cm,text margin right=0.8cm}
 \usefonttheme{professionalfonts}
 \setbeamertemplate{navigation symbols}{}
 
@@ -76,7 +76,7 @@
   \end{beamercolorbox}
   \vskip1pt
   \textcolor{ugrCeleste!35}{\rule{\textwidth}{0.8pt}}
-  \vskip0.05cm
+  \vskip0.10cm
 }
 \makeatother
 
@@ -84,14 +84,12 @@
 \setbeamertemplate{footline}{
   \leavevmode
   \hbox{%
-    \begin{beamercolorbox}[wd=\paperwidth,ht=0.40cm,dp=0.15cm,leftskip=0.5cm,rightskip=0.5cm]{footline}%
-      \raisebox{-0.06cm}{\includegraphics[height=0.34cm]{logo_ugr.png}}%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=0.38cm,dp=0.12cm,leftskip=0.5cm,rightskip=0.5cm]{footline}%
+      \raisebox{-0.04cm}{\includegraphics[height=0.30cm]{logo_ugr.png}}%
       \hspace{0.25cm}%
-      {\fontsize{7}{8.5}\selectfont\color{ugrGris}
-        \ifnum\value{section}>0 CRISP-DM $\cdot$ Fase \insertsectionnumber: \fi\insertsectionhead
-      }%
+      {\footnotesize\color{ugrGris}\insertsectionhead}%
       \hfill%
-      {\fontsize{7}{8.5}\selectfont\bfseries\color{ugrAzul}
+      {\footnotesize\bfseries\color{ugrAzul}%
         \insertframenumber\,/\,\inserttotalframenumber
       }%
     \end{beamercolorbox}%
@@ -102,9 +100,9 @@
 % Listas compactas
 \setbeamertemplate{itemize item}{\textcolor{ugrAzul}{\scriptsize$\blacksquare$}}
 \setbeamertemplate{itemize subitem}{\textcolor{ugrCeleste}{\scriptsize$\blacktriangleright$}}
-\setbeamertemplate{itemize/enumerate body begin}{\setlength{\itemsep}{0.12em}\setlength{\parskip}{0pt}}
-\setbeamerfont{itemize/enumerate body}{size=\scriptsize}
-\setbeamerfont{itemize/enumerate subbody}{size=\tiny}
+\setbeamertemplate{itemize/enumerate body begin}{\setlength{\itemsep}{0.18em}\setlength{\parskip}{0pt}}
+\setbeamerfont{itemize/enumerate body}{size=\small}
+\setbeamerfont{itemize/enumerate subbody}{size=\footnotesize}
 
 % ---------------------------------------------------------------------
 % Cajas de contenido tcolorbox compactas
@@ -112,30 +110,30 @@
 \newcommand{\ugrblock}[2]{%
   \begin{tcolorbox}[
     enhanced, colback=ugrFondoClaro, colframe=ugrAzul, boxrule=0.7pt, arc=2.5pt,
-    title={\textbf{#1}}, fonttitle=\scriptsize\bfseries, coltitle=white, colbacktitle=ugrAzul,
-    left=5pt, right=5pt, top=2.5pt, bottom=2.5pt, before skip=0.15em, after skip=0.15em
+    title={\textbf{#1}}, fonttitle=\footnotesize\bfseries, coltitle=white, colbacktitle=ugrAzul,
+    left=6pt, right=6pt, top=4pt, bottom=4pt, before skip=0.15em, after skip=0.15em
   ]
-    {\scriptsize #2}
+    {\small #2}
   \end{tcolorbox}%
 }
 
 \newcommand{\ugrblockok}[2]{%
   \begin{tcolorbox}[
     enhanced, colback=ugrVerde!8, colframe=ugrVerde, boxrule=0.7pt, arc=2.5pt,
-    title={\textbf{#1}}, fonttitle=\scriptsize\bfseries, coltitle=white, colbacktitle=ugrVerde,
-    left=5pt, right=5pt, top=2.5pt, bottom=2.5pt, before skip=0.15em, after skip=0.15em
+    title={\textbf{#1}}, fonttitle=\footnotesize\bfseries, coltitle=white, colbacktitle=ugrVerde,
+    left=6pt, right=6pt, top=4pt, bottom=4pt, before skip=0.15em, after skip=0.15em
   ]
-    {\scriptsize #2}
+    {\small #2}
   \end{tcolorbox}%
 }
 
 \newcommand{\ugralert}[2]{%
   \begin{tcolorbox}[
     enhanced, colback=ugrNaranja!8, colframe=ugrNaranja, boxrule=0.7pt, arc=2.5pt,
-    title={\textbf{#1}}, fonttitle=\scriptsize\bfseries, coltitle=white, colbacktitle=ugrNaranja,
-    left=5pt, right=5pt, top=2.5pt, bottom=2.5pt, before skip=0.15em, after skip=0.15em
+    title={\textbf{#1}}, fonttitle=\footnotesize\bfseries, coltitle=white, colbacktitle=ugrNaranja,
+    left=6pt, right=6pt, top=4pt, bottom=4pt, before skip=0.15em, after skip=0.15em
   ]
-    {\scriptsize #2}
+    {\small #2}
   \end{tcolorbox}%
 }
 
@@ -153,7 +151,7 @@
 
 \newcommand{\tikzdiagram}[1]{%
   \begin{center}
-    \resizebox{0.94\textwidth}{!}{#1}
+    \resizebox{0.90\textwidth}{!}{#1}
   \end{center}%
 }
 

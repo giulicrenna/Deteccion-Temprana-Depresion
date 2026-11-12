@@ -1,6 +1,6 @@
 % Diagrama del proceso de investigación estructurado en dos filas continuas
-% Fila 1: Etapas 1-4 (OE1: Analizar)
-% Fila 2: Etapas 5-7 (OE2: Comparar, OE3: Evaluar, OE4: Evaluar)
+% Fila 1: Etapas 1-4 (OE1: Consolidar y preparar datos)
+% Fila 2: Etapas 5-7 (OE2: Entrenar, OE3: Fine-tuning, OE4--OE5: Comparar y Seleccionar)
 \begin{tikzpicture}[
     font=\footnotesize,
     etapaFila1/.style={
@@ -36,7 +36,7 @@
     % 1. Adquisición (OE1)
     \node[etapaFila1] (e1) at (0, 0) {%
         {\scriptsize\bfseries\color{ugrAzul} 1. Adquisición}\\[2pt]
-        {\tiny\bfseries\color{ugrVerde} [OE1: Analizar]}\\[3pt]
+        {\tiny\bfseries\color{ugrVerde} [OE1: Consolidar]}\\[3pt]
         {\scriptsize Descarga de Twitter Coello y colecciones Reddit}\\[3pt]
         \includegraphics[height=0.45cm]{logos/huggingface.png}\\[2pt]
         {\tiny\texttt{huggingface\_hub} $\cdot$ \texttt{requests}}
@@ -45,7 +45,7 @@
     % 2. Traducción (OE1)
     \node[etapaFila1] (e2) at (3.85, 0) {%
         {\scriptsize\bfseries\color{ugrAzul} 2. Traducción}\\[2pt]
-        {\tiny\bfseries\color{ugrVerde} [OE1: Analizar]}\\[3pt]
+        {\tiny\bfseries\color{ugrVerde} [OE1: Consolidar]}\\[3pt]
         {\scriptsize MarianMT EN$\to$ES local con decodificación voraz}\\[3pt]
         \includegraphics[height=0.45cm]{logos/pytorch.png}\\[2pt]
         {\tiny MarianMT (\texttt{opus-mt-en-es})}
@@ -54,7 +54,7 @@
     % 3. EDA (OE1)
     \node[etapaFila1] (e3) at (7.70, 0) {%
         {\scriptsize\bfseries\color{ugrAzul} 3. EDA}\\[2pt]
-        {\tiny\bfseries\color{ugrVerde} [OE1: Analizar]}\\[3pt]
+        {\tiny\bfseries\color{ugrVerde} [OE1: Consolidar]}\\[3pt]
         {\scriptsize Clases, longitudes, vocabulario y marcadores}\\[3pt]
         \includegraphics[height=0.45cm]{logos/pandas.png}\\[2pt]
         {\tiny \texttt{pandas} $\cdot$ \texttt{matplotlib}}
@@ -63,17 +63,17 @@
     % 4. Preprocesamiento (OE1)
     \node[etapaFila1] (e4) at (11.55, 0) {%
         {\scriptsize\bfseries\color{ugrAzul} 4. Preproceso}\\[2pt]
-        {\tiny\bfseries\color{ugrVerde} [OE1: Analizar]}\\[3pt]
+        {\tiny\bfseries\color{ugrVerde} [OE1: Consolidar]}\\[3pt]
         {\scriptsize Anonimización determinista y partición 70/10/20}\\[3pt]
         \includegraphics[height=0.45cm]{logos/spacy.png}\\[2pt]
         {\tiny \texttt{spaCy} $\cdot$ \texttt{Python re}}
     };
 
-    % ================= FILA 2: OE2, OE3, OE4 (ETAPAS 5 A 7) =================
-    % 5. Baselines (OE2)
+    % ================= FILA 2: OE2, OE3, OE4, OE5 (ETAPAS 5 A 7) =================
+    % 5. Modelos Léxicos (OE2)
     \node[etapaFila2, draw=ugrNaranja, fill=ugrNaranja!4] (e5) at (0.65, -3.45) {%
-        {\scriptsize\bfseries\color{ugrAzul} 5. Baselines Léxicos}\\[2pt]
-        {\tiny\bfseries\color{ugrNaranja!80!black} [OE2: Comparar]}\\[3pt]
+        {\scriptsize\bfseries\color{ugrAzul} 5. Modelos Léxicos}\\[2pt]
+        {\tiny\bfseries\color{ugrNaranja!80!black} [OE2: Entrenar]}\\[3pt]
         {\scriptsize TF-IDF con Regresión Logística y SVM lineal}\\[3pt]
         \includegraphics[height=0.45cm]{logos/scikitlearn.png}\\[2pt]
         {\tiny \texttt{scikit-learn} $\cdot$ Submuestreo / balanceo}
@@ -82,16 +82,16 @@
     % 6. Ajuste Fino BETO (OE3)
     \node[etapaFila2, draw=ugrAzul, fill=filaResaltada] (e6) at (5.80, -3.45) {%
         {\scriptsize\bfseries\color{ugrAzul} 6. BETO Contextual}\\[2pt]
-        {\tiny\bfseries\color{ugrAzul} [OE3: Evaluar]}\\[3pt]
+        {\tiny\bfseries\color{ugrAzul} [OE3: Fine-tuning]}\\[3pt]
         {\scriptsize Fine-tuning Transformer (BETO, 110M params, FP16)}\\[3pt]
         \includegraphics[height=0.45cm]{logos/pytorch.png}\\[2pt]
         {\tiny \texttt{PyTorch} $\cdot$ \texttt{transformers} (AdamW)}
     };
 
-    % 7. Evaluación (OE4)
+    % 7. Evaluación y Selección (OE4--OE5)
     \node[etapaFila2, draw=ugrVerde, fill=ugrVerde!6] (e7) at (10.95, -3.45) {%
-        {\scriptsize\bfseries\color{ugrAzul} 7. Evaluación y Auditoría}\\[2pt]
-        {\tiny\bfseries\color{ugrVerde} [OE4: Evaluar]}\\[3pt]
+        {\scriptsize\bfseries\color{ugrAzul} 7. Evaluación y Selección}\\[2pt]
+        {\tiny\bfseries\color{ugrVerde} [OE4--OE5: Comparar y Seleccionar]}\\[3pt]
         {\scriptsize $F_1$-macro, AUC, bootstrap pareado y robustez}\\[3pt]
         \includegraphics[height=0.45cm]{logos/scipy.png}\\[2pt]
         {\tiny \texttt{scipy} $\cdot$ \texttt{scikit-learn}}

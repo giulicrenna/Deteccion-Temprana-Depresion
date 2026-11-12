@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detección Temprana de Indicios de Depresión en Español mediante PLN · Presentación Científica</title>
+  
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      /* Dark Theme (Default) */
+      --bg-canvas: #0a0e17;
+      --bg-slide: #0f172a;
+      --bg-card: rgba(30, 41, 59, 0.7);
+      --bg-card-hover: rgba(51, 65, 85, 0.8);
+      --border-subtle: rgba(148, 163, 184, 0.15);
+      --border-accent: rgba(56, 189, 248, 0.4);
+      
+      --text-title: #f8fafc;
+      --text-body: #cbd5e1;
+      --text-muted: #94a3b8;
+      
+      --ugr-navy: #0B3D91;
+      --ugr-blue: #1d4ed8;
+      --ugr-cyan: #38bdf8;
+      --ugr-teal: #06b6d4;
+      --ugr-green: #10b981;
+      --ugr-amber: #f59e0b;
+      --ugr-rose: #f43f5e;
+      
+      --shadow-elevation: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.15);
+      --transition-speed: 0.3s;
+    }
+
+    /* Light Mode */
+    [data-theme="light"] {
+      --bg-canvas: #e2e8f0;
+      --bg-slide: #ffffff;
+      --bg-card: rgba(241, 245, 249, 0.85);
+      --bg-card-hover: rgba(226, 232, 240, 0.95);
+      --border-subtle: rgba(100, 116, 139, 0.2);
+      --border-accent: rgba(11, 61, 145, 0.4);
+      
+      --text-title: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      
+      --shadow-elevation: 0 15px 35px -10px rgba(15, 23, 42, 0.08);
+      --shadow-glow: 0 0 20px rgba(11, 61, 145, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      font-family: var(--font-main);
+      color: var(--text-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Presentation Viewport: 16:9 Aspect Ratio */
+    .viewport {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      max-width: 177.78vh; /* 16:9 */
+      max-height: 56.25vw;
+      overflow: hidden;
+      display: flex;
+      background: var(--bg-slide);
+      box-shadow: var(--shadow-elevation);
+      transition: background-color 0.3s ease;
+    }
+
+    @media (max-aspect-ratio: 16/9) {
+      .viewport {
+        width: 100vw;
+        height: 56.25vw;
+      }
+    }
+
+    @media (min-aspect-ratio: 16/9) {
+      .viewport {
+        height: 100vh;
+        width: 177.78vh;
+      }
+    }
+
+    .deck {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Individual Slide */
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 3rem 4rem 3.6rem;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(30px) scale(0.985);
+      transition: opacity var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1),
+                  transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0) scale(1);
+      z-index: 2;
+    }
+
+    .slide.prev {
+      opacity: 0;
+      transform: translateX(-30px) scale(0.985);
+    }
+
+    /* Slide Header */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.2rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.75rem;
+      position: relative;
+    }
+
+    .slide-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 120px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--ugr-cyan), transparent);
+    }
+
+    .slide-category {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ugr-cyan);
+      margin-bottom: 0.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .slide-category span.badge {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid var(--border-accent);
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      font-size: 0.68rem;
+    }
+
+    .slide-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-title);
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+    }
+
+    .slide-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+      font-weight: 400;
+    }
+
+    .header-logo {
+      height: 36px;
+      object-fit: contain;
+    }
+
+    /* Slide Content Layouts */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      overflow-y: auto;
+      padding-right: 0.3rem;
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.4rem;
+      height: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+      height: 100%;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      height: 100%;
+    }
+
+    .grid-55-45 {
+      display: grid;
+      grid-template-columns: 1.22fr 1fr;
+      gap: 1.4rem;
+      height: 100%;
+    }
+
+    .grid-45-55 {
+      display: grid;
+      grid-template-columns: 1fr 1.22fr;
+      gap: 1.4rem;
+      height: 100%;
+    }
+
+    /* Reusable Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.2rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      border-color: var(--border-accent);
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-title);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .card-highlight {
+      border-left: 4px solid var(--ugr-cyan);
+    }
+
+    .card-success {
+      border-left: 4px solid var(--ugr-green);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), var(--bg-card));
+    }
+
+    .card-warning {
+      border-left: 4px solid var(--ugr-amber);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), var(--bg-card));
+    }
+
+    /* Embedded Report Images */
+    .report-fig-container {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+    }
+
+    .report-fig-container:hover {
+      border-color: var(--border-accent);
+    }
+
+    .report-fig-img {
+      max-width: 100%;
+      max-height: 290px;
+      object-fit: contain;
+      border-radius: 6px;
+      cursor: zoom-in;
+      transition: transform 0.25s ease;
+    }
+
+    .report-fig-img:hover {
+      transform: scale(1.02);
+    }
+
+    .fig-caption {
+      margin-top: 0.5rem;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .fig-badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--ugr-cyan);
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+
+    /* High-Impact Stat Box */
+    .stat-box {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(11, 61, 145, 0.12));
+      border: 1px solid var(--border-accent);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-title);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+      font-family: var(--font-mono);
+    }
+
+    .stat-number.gradient {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-number.green {
+      background: linear-gradient(135deg, #34d399, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Lists */
+    .impact-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .impact-list li {
+      position: relative;
+      padding-left: 1.5rem;
+      font-size: 0.94rem;
+      line-height: 1.45;
+      color: var(--text-body);
+    }
+
+    .impact-list li strong {
+      color: var(--text-title);
+    }
+
+    .impact-list li::before {
+      content: '✦';
+      position: absolute;
+      left: 0;
+      top: 0.1rem;
+      color: var(--ugr-cyan);
+      font-size: 0.85rem;
+    }
+
+    .impact-list.success li::before {
+      content: '✓';
+      color: var(--ugr-green);
+      font-weight: 900;
+    }
+
+    .impact-list.warning li::before {
+      content: '⚠';
+      color: var(--ugr-amber);
+    }
+
+    /* Tables */
+    .metric-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      text-align: left;
+    }
+
+    .metric-table th {
+      padding: 0.6rem 0.75rem;
+      background: rgba(148, 163, 184, 0.08);
+      color: var(--ugr-cyan);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      border-bottom: 2px solid var(--border-accent);
+    }
+
+    .metric-table td {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-body);
+    }
+
+    .metric-table tr.highlight-row {
+      background: rgba(56, 189, 248, 0.1);
+      font-weight: 600;
+    }
+
+    .metric-table tr.highlight-row td {
+      color: var(--text-title);
+      border-bottom: 1px solid var(--border-accent);
+    }
+
+    .ci-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: 0.25rem;
+    }
+
+    /* Badges */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .pill-cyan { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .pill-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .pill-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .pill-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+
+    /* Interactive Synthetic Mockup UI (Slide 13) */
+    .mockup-window {
+      background: #090d16;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .mockup-topbar {
+      background: #111827;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .window-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .mockup-body {
+      flex: 1;
+      padding: 1.1rem;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 1.1rem;
+      font-size: 0.82rem;
+      background: #0b1120;
+    }
+
+    .mockup-sidebar {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .mockup-main {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      overflow-y: auto;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3rem;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.8rem;
+      z-index: 100;
+    }
+
+    .progress-bar-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--ugr-blue), var(--ugr-cyan));
+      transition: width 0.3s ease;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-body);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-nav:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--border-accent);
+      color: var(--text-title);
+    }
+
+    .slide-counter {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .slide-counter span.current {
+      color: var(--ugr-cyan);
+    }
+
+    /* Speaker Notes */
+    .speaker-notes-drawer {
+      position: absolute;
+      bottom: 3rem;
+      left: 0;
+      width: 100%;
+      max-height: 160px;
+      background: rgba(11, 17, 32, 0.95);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border-accent);
+      padding: 0.8rem 2.2rem;
+      overflow-y: auto;
+      font-size: 0.86rem;
+      color: #93c5fd;
+      line-height: 1.55;
+      z-index: 95;
+      display: none;
+    }
+
+    .speaker-notes-drawer.open {
+      display: block;
+    }
+
+    .speaker-notes-drawer h4 {
+      color: var(--ugr-cyan);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.3rem;
+    }
+
+    /* Overview Modal */
+    .overview-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 14, 23, 0.96);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      padding: 2.5rem;
+      display: none;
+      overflow-y: auto;
+    }
+
+    .overview-modal.open {
+      display: block;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .overview-thumb {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .overview-thumb:hover, .overview-thumb.current {
+      border-color: var(--ugr-cyan);
+      box-shadow: var(--shadow-glow);
+      transform: scale(1.02);
+    }
+
+    .overview-thumb-num {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      color: var(--ugr-cyan);
+      font-weight: 700;
+    }
+
+    .overview-thumb-title {
+      font-size: 0.8rem;
+      color: var(--text-title);
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .math-block {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border-subtle);
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: #7dd3fc;
+      text-align: center;
+      margin: 0.4rem 0;
+    }
+
+    @media print {
+      body { background: white !important; color: black !important; overflow: visible !important; }
+      .viewport { width: 100% !important; height: auto !important; box-shadow: none !important; }
+      .slide { position: relative !important; opacity: 1 !important; transform: none !important; page-break-after: always !important; height: 100vh !important; padding: 2rem !important; }
+      .controls-bar, .speaker-notes-drawer, .overview-modal { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="viewport" id="presentationViewport">
+    
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="deck" id="deck">
+
+      <!-- ========================================== -->
+      <!-- SLIDE 1: PORTADA                           -->
+      <!-- ========================================== -->
+      <section class="slide active" data-slide="1" data-notes="Bienvenida formal a los miembros del tribunal y colegas del congreso. Presentamos nuestra tesina de grado en Ciencia de Datos: 'Detección temprana de indicios de depresión en español mediante PLN'. Enfoque en rigor metodológico, optimización de hardware limitado e impacto social.">
+        <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.8rem;">
+              <span class="pill pill-cyan">TESINA DE GRADO · LIC. EN CIENCIA DE DATOS</span>
+              <span class="pill pill-purple">CONGRESO CIENTÍFICO 2026</span>
+            </div>
+            <img src="informe/logo_ugr.png" alt="Logo UGR" class="header-logo" onerror="this.style.display='none'">
+          </div>
+
+          <div style="margin: 1.5rem 0;">
+            <div style="font-size: 0.9rem; font-weight: 700; color: var(--ugr-cyan); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.6rem;">
+              Salud Mental Digital & Procesamiento de Lenguaje Natural
+            </div>
+            <h1 style="font-size: 2.8rem; font-weight: 800; color: var(--text-title); line-height: 1.12; letter-spacing: -0.03em; max-width: 95%;">
+              Detección Temprana de Indicios de Depresión en Español
+            </h1>
+            <p style="font-size: 1.25rem; color: var(--text-muted); margin-top: 0.8rem; max-width: 88%; font-weight: 300;">
+              Evaluación empírica de modelos contextuales, ingeniería en hardware accesible y robustez sociolingüística.
+            </p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; border-top: 1px solid var(--border-subtle); padding-top: 1.2rem;">
+            <div>
+              <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ugr-cyan); font-weight: 700; margin-bottom: 0.2rem;">Autores</div>
+              <div style="font-size: 1rem; font-weight: 600; color: var(--text-title);">Giuliano Crenna</div>
+              <div style="font-size: 1rem; font-weight: 600; color: var(--text-title);">Bruno Emmanuel Pace</div>
+            </div>
+            <div>
+              <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ugr-cyan); font-weight: 700; margin-bottom: 0.2rem;">Dirección y Asesoría</div>
+              <div style="font-size: 0.9rem; color: var(--text-body);">J. M. Fernández Acuña</div>
+              <div style="font-size: 0.9rem; color: var(--text-body);">B. A. Gauna · A. M. Hernández</div>
+            </div>
+            <div>
+              <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ugr-cyan); font-weight: 700; margin-bottom: 0.2rem;">Institución</div>
+              <div style="font-size: 1rem; font-weight: 600; color: var(--text-title);">Universidad del Gran Rosario</div>
+              <div style="font-size: 0.82rem; color: var(--text-muted);">Rosario, Santa Fe · Argentina</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 2: RESUMEN REGLAMENTARIO             -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="2" data-notes="Esta diapositiva sintetiza el Resumen Ejecutivo de la tesina redactado bajo el formato reglamentario oficial (IMRyD). Permite al tribunal y al auditorio capturar en un solo golpe de vista la totalidad de la investigación: problema, datos, metodología, resultados clave y delimitación ética.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">01</span> Ficha Técnica y Reglamento</div>
+            <h2 class="slide-title">Resumen Ejecutivo de la Tesina</h2>
+            <div class="slide-subtitle">Estructura canónica IMRyD conforme a los estándares reglamentarios de la UGR</div>
+          </div>
+          <span class="pill pill-cyan">RESUMEN OFICIAL</span>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-2">
+            <div class="card card-highlight">
+              <div class="card-title">
+                <span style="color:var(--ugr-cyan);">📋</span> Planteamiento y Metodología (CRISP-DM)
+              </div>
+              <ul class="impact-list" style="font-size: 0.88rem;">
+                <li><strong>Problema:</strong> Escasez crítica de herramientas de PLN validadas en español para detección temprana de malestar emocional antes del contacto clínico.</li>
+                <li><strong>Corpus Unificado:</strong> 1.311.023 textos de 260.357 usuarios (Twitter nativo + Reddit traducido).</li>
+                <li><strong>Protocolo Anti-Fuga:</strong> Partición 70/10/20 estrictamente separada por autor (64 usuarios ciegos en prueba nativa).</li>
+                <li><strong>Hardware Accesible:</strong> GPU local RTX 3060 Ti (8 GB VRAM) con secuencias de 128 tokens y FP16 mixto.</li>
+              </ul>
+            </div>
+
+            <div class="card card-success">
+              <div class="card-title" style="color:var(--ugr-green);">
+                <span>⚖</span> Hallazgos Principales y Alcance
+              </div>
+              <ul class="impact-list success" style="font-size: 0.88rem;">
+                <li><strong>Superioridad Contextual:</strong> BETO supera a Regresión Logística (F1: 0,717 vs 0,655; AUC: 0,808 vs 0,755; p &lt; 0,0005). <strong>H₀ rechazada formalmente</strong>.</li>
+                <li><strong>Aumento de Datos:</strong> Traducir Reddit no mejora el dominio nativo por discordancia de estilo discursivo.</li>
+                <li><strong>Auditoría Lingüística:</strong> Se controlaron marcadores dialectales mediante enmascaramiento léxico.</li>
+                <li><strong>Delimitación Ética:</strong> Herramienta de <strong>cribado computacional asistivo</strong>, no de diagnóstico médico automático.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.6rem 1rem; display: flex; align-items: center; gap: 0.8rem;">
+            <span class="pill pill-purple">PALABRAS CLAVE</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);">
+              Ciencia de Datos · Procesamiento del Lenguaje Natural · BETO · Clasificación de Textos · Detección Temprana · Depresión · Salud Mental Digital
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 3: INTRODUCCIÓN Y RELEVANCIA          -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="3" data-notes="Impacto en salud pública: 280 millones de personas sufren depresión en el mundo. La brecha de tratamiento en Latinoamérica supera el 70%. Las personas suelen volcar indicios afectivos en redes sociales meses antes de acudir a un profesional. La asimetría lingüística es el gran reto a resolver.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">02</span> Introducción y Contexto</div>
+            <h2 class="slide-title">La Crisis Silenciosa y la Brecha en Español</h2>
+            <div class="slide-subtitle">El potencial del Procesamiento de Lenguaje Natural ante un problema de salud pública global</div>
+          </div>
+          <span class="pill pill-amber">SALUD PÚBLICA</span>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-3" style="height: auto;">
+            <div class="stat-box">
+              <div class="stat-number gradient">280M+</div>
+              <div class="stat-label">Personas con Depresión (OMS)</div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.3rem;">Principal causa de discapacidad mundial.</p>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number green">&gt;70%</div>
+              <div class="stat-label">Brecha Asistencial</div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.3rem;">En países de ingresos medios y bajos.</p>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number gradient">&lt;15%</div>
+              <div class="stat-label">PLN en Salud en Español</div>
+              <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.3rem;">Gran mayoría concentrada en inglés.</p>
+            </div>
+          </div>
+
+          <div class="grid-2" style="flex: 1;">
+            <div class="card card-highlight">
+              <div class="card-title">
+                <span style="color: var(--ugr-cyan);">◈</span> Huella Lingüística y Oportunidad Digital
+              </div>
+              <ul class="impact-list">
+                <li><strong>Cambios tempranos en comunicación:</strong> Retracción del lenguaje social, predominio de pronombres en 1ª persona, polaridad afectiva negativa y vocabulario absolutista.</li>
+                <li><strong>Ventana preventiva:</strong> Detección no invasiva de señales de malestar en entornos digitales abiertos antes de la consulta clínica.</li>
+                <li><strong>Principio ético:</strong> Clasificador supervisado de indicios estadísticos; <strong>nunca diagnóstico clínico automático</strong>.</li>
+              </ul>
+            </div>
+
+            <div class="card card-warning">
+              <div class="card-title" style="color: var(--ugr-amber);">
+                <span>⚠</span> El Desafío Lingüístico del Español
+              </div>
+              <ul class="impact-list warning">
+                <li><strong>Escasez de recursos anotados:</strong> Corpus públicos en español son escasos, pequeños o bajo convenios de estricta confidencialidad.</li>
+                <li><strong>Variabilidad dialectal transnacional:</strong> Marcada diferencia regional entre México, Colombia, Argentina y España que confunde a modelos léxicos rígidos.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 4: HIPÓTESIS FORMAL                   -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="4" data-notes="Definición formal y matemática de la hipótesis H1 y la nula H0. Resaltar el criterio no paramétrico por remuestreo bootstrap con B=2000 réplicas sobre usuarios completos. Esto garantiza que la conclusión no sea un artefacto del muestreo.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">03</span> Marco Teórico y Estadístico</div>
+            <h2 class="slide-title">Formulación Formal de Hipótesis</h2>
+            <div class="slide-subtitle">Protocolo de contraste estadístico no paramétrico y criterio de decisión</div>
+          </div>
+          <span class="pill pill-cyan">REGLA OPERACIONAL</span>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-2">
+            <div class="card card-success">
+              <div class="card-title" style="color: var(--ugr-green);">
+                <span>✓</span> Hipótesis General de Investigación (H₁)
+              </div>
+              <p style="font-size: 1rem; line-height: 1.5; color: var(--text-title); font-style: italic; margin-bottom: 0.8rem;">
+                «Un modelo de lenguaje contextual en español <strong>supera</strong> el rendimiento predictivo de los modelos lineales léxicos en la clasificación binaria de publicaciones individuales.»
+              </p>
+              
+              <div style="border-top: 1px solid var(--border-subtle); padding-top: 0.6rem;">
+                <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.2rem;">Hipótesis Nula (H₀)</div>
+                <p style="font-size: 0.9rem; color: var(--text-body); font-style: italic;">
+                  «Un modelo contextual en español <strong>no presenta diferencias estadísticamente significativas</strong> respecto a las líneas base léxicas.»
+                </p>
+              </div>
+            </div>
+
+            <div class="card card-highlight">
+              <div class="card-title">
+                <span style="color: var(--ugr-cyan);">⚙</span> Criterio Formal de Rechazo (Bootstrap Pareado)
+              </div>
+              <p style="font-size: 0.88rem; line-height: 1.45; margin-bottom: 0.6rem;">
+                Para evitar falsos positivos por autocorrelación interna de publicaciones por autor:
+              </p>
+
+              <div class="math-block">
+                Rechazar H₀ &iff; &Delta;F₁<sub>low</sub> &gt; 0 &nbsp;&and;&nbsp; &Delta;AUC<sub>low</sub> &gt; 0
+              </div>
+
+              <ul class="impact-list" style="font-size: 0.86rem; margin-top: 0.4rem;">
+                <li><strong>Bootstrap por conglomerados de usuarios:</strong> B = 2.000 réplicas con remuestreo de autores (64 en test nativo).</li>
+                <li><strong>Nivel de significación:</strong> &alpha; = 0,05 (IC bilateral del 95%).</li>
+                <li><strong>Métricas primarias:</strong> F1-macro y AUC-ROC pareados simultáneamente.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card" style="background: rgba(15, 23, 42, 0.4); padding: 0.8rem 1.2rem;">
+            <div style="font-size: 0.84rem; color: var(--text-title);">
+              <strong>Preguntas complementarias:</strong> (1) ¿Aporta la traducción neuronal de datos en inglés? · (2) ¿Afectan los modismos territoriales a la clasificación? · (3) ¿Qué ocurre al agregar longitudinalmente por usuario?
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 5: CORPUS Y REPORTE DE CLASES         -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="5" data-notes="Mostramos la escala del corpus: 1.31 millones de textos. A la derecha justificamos con la figura real eda_02_distribucion_clases.png del reporte el desbalance de clases y cómo se compuso el dataset. Partición estricta por usuario 70/10/20 para evitar cualquier fuga de información.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">04</span> Preparación de Datos</div>
+            <h2 class="slide-title">Corpus a Gran Escala y Partición Anti-Fuga</h2>
+            <div class="slide-subtitle">1.311.023 documentos consolidados bajo un estricto aislamiento por autor</div>
+          </div>
+          <span class="pill pill-cyan">1.3M DOCUMENTOS</span>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-55-45">
+            <div class="card">
+              <div class="card-title">Composición y Protocolo Anti-Leakage</div>
+              <table class="metric-table">
+                <thead>
+                  <tr>
+                    <th>Fuente</th>
+                    <th>Documentos</th>
+                    <th>%</th>
+                    <th>Origen</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="highlight-row">
+                    <td>Coello-Guilarte (Twitter)</td>
+                    <td>1.047.194</td>
+                    <td>79,9%</td>
+                    <td>Español nativo</td>
+                  </tr>
+                  <tr>
+                    <td>Kaggle SDD (Reddit)</td>
+                    <td>232.067</td>
+                    <td>17,7%</td>
+                    <td>Inglés trad.</td>
+                  </tr>
+                  <tr>
+                    <td>Reddit Mental Health</td>
+                    <td>24.031</td>
+                    <td>1,8%</td>
+                    <td>Inglés trad.</td>
+                  </tr>
+                  <tr>
+                    <td>Depression Reddit</td>
+                    <td>7.731</td>
+                    <td>0,6%</td>
+                    <td>Inglés trad.</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="stat-box" style="margin-top: 0.9rem; padding: 0.8rem;">
+                <div style="font-size: 1.05rem; font-weight: 700; color: var(--text-title);">Partición 70 / 10 / 20 por Autor</div>
+                <div style="font-size: 0.78rem; color: var(--ugr-cyan);">64 autores completamente ciegos en test (250.847 textos)</div>
+              </div>
+            </div>
+
+            <!-- Justificación Visual con Imagen del Reporte -->
+            <div class="report-fig-container">
+              <img src="informe/figures/eda_02_distribucion_clases.png" alt="Distribución de Clases por Fuente" class="report-fig-img" onclick="openFigureModal(this.src, 'Distribución de Clases en el Corpus Consolidado (Informe Figura EDA-02)')" />
+              <div class="fig-caption">
+                <span class="fig-badge">EVIDENCIA REPORTADA</span> Distribución de clases: desbalance natural en Twitter vs foros.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 6: HARDWARE Y CURVAS DE ENTRENAMIENTO -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="6" data-notes="Demostración de que la investigación de vanguardia es viable en hardware accesible. Ajustamos BETO en una GPU RTX 3060 Ti con 8GB de VRAM. A la derecha justificamos con la figura real de las curvas de entrenamiento beto_training_curves.png, evidenciando convergencia y estabilidad con FP16 y batch size 16.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">05</span> Ingeniería Computacional</div>
+            <h2 class="slide-title">Desafío de Hardware Limitado: IA Sostenible</h2>
+            <div class="slide-subtitle">Ajuste fino de 110M de parámetros en una GPU de escritorio (8 GB VRAM)</div>
+          </div>
+          <span class="pill pill-green">DEMOCRATIZACIÓN DE IA</span>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-55-45">
+            <div class="card card-highlight">
+              <div class="card-title">
+                <span style="color: var(--ugr-cyan);">⚡</span> 4 Decisiones Estratégicas de Memoria
+              </div>
+              <ul class="impact-list" style="font-size: 0.88rem;">
+                <li><strong>Longitud acotada a 128 tokens:</strong> Atención O(n²). El 98,5% de tweets mide &lt;60 tokens. Reducir de 512 a 128 eliminó saturación de VRAM sin perder una sola palabra clínica.</li>
+                <li><strong>Precisión Mixta FP16 (AMP):</strong> Reducción al 50% de memoria en gradientes y activaciones.</li>
+                <li><strong>Batch size 16 en train / 32 en eval:</strong> Máximo llenado de VRAM sin riesgo de <em>CUDA OOM</em>.</li>
+                <li><strong>Bootstrap vs 5-Fold:</strong> Un 5-fold CV exigía casi 30 horas continuas de GPU local; el bootstrap de 2.000 réplicas ofreció idéntico rigor en 2,2 horas.</li>
+              </ul>
+            </div>
+
+            <!-- Justificación Visual con Imagen del Reporte -->
+            <div class="report-fig-container">
+              <img src="informe/figures/beto_training_curves.png" alt="Curvas de Entrenamiento de BETO" class="report-fig-img" onclick="openFigureModal(this.src, 'Curvas de Pérdida y Métricas de BETO en GPU RTX 3060 Ti (3 épocas, FP16)')" />
+              <div class="fig-caption">
+                <span class="fig-badge">EVIDENCIA REPORTADA</span> Convergencia estable en 8.050 s (~2,2 h) sin sobreajuste.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 7: JERARQUÍA DE MODELOS Y COMPARACIÓN -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="7" data-notes="Contrastamos tres niveles de modelos: lineales léxicos (TF-IDF + LR/SVM), modelo híbrido con 19 rasgos psicolingüísticos y el transformador contextual BETO. A la derecha justificamos con la figura comparacion_modelos_test.png del informe.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">06</span> Modelado Supervisado</div>
+            <h2 class="slide-title">Jerarquía de Modelos Contrastados</h2>
+            <div class="slide-subtitle">De las representaciones léxicas lineales al modelado contextual profundo</div>
+          </div>
+          <span class="pill pill-purple">ARQUITECTURAS</span>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-55-45">
+            <div class="card">
+              <div class="card-title">Tres Niveles Representacionales</div>
+              <ul class="impact-list" style="font-size: 0.88rem;">
+                <li><strong>Nivel 1 (Léxico):</strong> TF-IDF (15.000 n-gramas) + Regresión Logística L2 balanceada y SVM lineal. Interpretable pero ignora sintaxis y negación.</li>
+                <li><strong>Nivel 2 (Psicolingüístico):</strong> TF-IDF + 19 rasgos explícitos (densidad de 1ª persona, palabras absolutistas, emoción VADER, marcadores temporales). Aporte marginal (+0,002 F1).</li>
+                <li><strong>Nivel 3 (Contextual BETO):</strong> 12 capas Transformer, 12 cabezas de atención, Whole Word Masking en español. Resuelve negación compleja y polisemia.</li>
+              </ul>
+            </div>
+
+            <!-- Justificación Visual con Imagen del Reporte -->
+            <div class="report-fig-container">
+              <img src="informe/figures/comparacion_modelos_test.png" alt="Comparación de Modelos en Test" class="report-fig-img" onclick="openFigureModal(this.src, 'Comparación General de Rendimiento en Test Nativo (Informe)')" />
+              <div class="fig-caption">
+                <span class="fig-badge">EVIDENCIA REPORTADA</span> Comparativa visual de F1-macro y exactitud entre modelos.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 8: RESULTADOS Y CURVA ROC             -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="8" data-notes="Momento culminante: sobre los 64 usuarios independientes del test nativo, BETO supera categóricamente a las líneas base. F1-macro pasa de 0.655 a 0.717 (+6.2 puntos) y AUC de 0.755 a 0.808 (+5.2 puntos). La figura roc_test_nativo.png justifica la separación estricta entre curvas ROC. H0 es formalmente rechazada y H1 aceptada.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">07</span> Evaluación Empírica</div>
+            <h2 class="slide-title">Validación de la Hipótesis: Superioridad de BETO</h2>
+            <div class="slide-subtitle">Evaluación ciega sobre el test nativo independiente (250.847 textos · 64 usuarios)</div>
+          </div>
+          <span class="pill pill-green">H₀ RECHAZADA · H₁ ACEPTADA</span>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-55-45">
+            <div class="card card-success">
+              <div class="card-title" style="color: var(--ugr-green);">
+                <span>⚖</span> Tabla de Métricas con IC 95% (Bootstrap B = 2.000)
+              </div>
+              <table class="metric-table">
+                <thead>
+                  <tr>
+                    <th>Modelo</th>
+                    <th>F1-Macro</th>
+                    <th>AUC-ROC</th>
+                    <th>Kappa (&kappa;)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>LR TF-IDF (ponderada)</td>
+                    <td>0,655 <span class="ci-tag">[0,606; 0,693]</span></td>
+                    <td>0,755 <span class="ci-tag">[0,718; 0,790]</span></td>
+                    <td>0,321</td>
+                  </tr>
+                  <tr>
+                    <td>SVM Lineal TF-IDF</td>
+                    <td>0,653 <span class="ci-tag">[0,605; 0,692]</span></td>
+                    <td>0,754 <span class="ci-tag">[0,716; 0,787]</span></td>
+                    <td>0,318</td>
+                  </tr>
+                  <tr class="highlight-row">
+                    <td><strong>BETO Mono (Nativo)</strong></td>
+                    <td><strong>0,717</strong> <span class="ci-tag">[0,665; 0,759]</span></td>
+                    <td><strong>0,808</strong> <span class="ci-tag">[0,755; 0,849]</span></td>
+                    <td><strong>0,437</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div style="margin-top: 0.8rem; font-size: 0.84rem; line-height: 1.45;">
+                <strong>Diferencia pareada:</strong> &Delta;F1 = +0,062 [0,038; 0,081] · &Delta;AUC = +0,052 [0,024; 0,077].
+                Ambos intervalos excluyen estrictamente el cero (p &lt; 0,0005). <strong>Se acepta H₁</strong>.
+              </div>
+            </div>
+
+            <!-- Justificación Visual con Imagen del Reporte -->
+            <div class="report-fig-container">
+              <img src="informe/figures/roc_test_nativo.png" alt="Curvas ROC Test Nativo" class="report-fig-img" onclick="openFigureModal(this.src, 'Curvas ROC sobre el Test Nativo Común (BETO vs Líneas Base Léxicas)')" />
+              <div class="fig-caption">
+                <span class="fig-badge">EVIDENCIA REPORTADA</span> Curvas ROC sobre test nativo: BETO domina en todo el espectro.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 9: MATRIZ DE CONFUSIÓN Y ERROR        -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="9" data-notes="Análisis cualitativo del error: mostramos la matriz de confusión beto_confusion_matrix.png. En cribado preventivo, un falso negativo deja sin orientación a una persona vulnerable, mientras que un falso positivo tiene menor costo siempre que no sea estigmatizante. BETO alcanza un 68.9% de exhaustividad en la clase depresiva.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">08</span> Análisis de Error Clínico</div>
+            <h2 class="slide-title">Matriz de Confusión y Análisis de Sensibilidad</h2>
+            <div class="slide-subtitle">Evaluación del balance entre falsos positivos y falsos negativos en cribado preventivo</div>
+          </div>
+          <span class="pill pill-cyan">EVALUACIÓN ASISTENCIAL</span>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-55-45">
+            <div class="card card-highlight">
+              <div class="card-title">
+                <span style="color: var(--ugr-cyan);">🎯</span> Asimetría de Costos en Salud Mental
+              </div>
+              <ul class="impact-list" style="font-size: 0.88rem;">
+                <li><strong>Exhaustividad clínica (Recall):</strong> BETO detecta el 68,9% de las publicaciones de la clase con indicios, frente al 51,1% de modelos multi.</li>
+                <li><strong>Falsos Negativos (Riesgo Crítico):</strong> Omitir señales de depresión deja a un individuo sin orientación o recursos de ayuda (líneas de prevención).</li>
+                <li><strong>Falsos Positivos (Riesgo Ético):</strong> Rotular erróneamente conlleva riesgos de estigmatización; por ello el umbral debe calibrarse hacia el apoyo preventivo respetando la privacidad.</li>
+              </ul>
+            </div>
+
+            <!-- Justificación Visual con Imagen del Reporte -->
+            <div class="report-fig-container">
+              <img src="informe/figures/beto_confusion_matrix.png" alt="Matriz de Confusión BETO" class="report-fig-img" onclick="openFigureModal(this.src, 'Matriz de Confusión de BETO Mono en Conjunto de Prueba')" />
+              <div class="fig-caption">
+                <span class="fig-badge">EVIDENCIA REPORTADA</span> Matriz de confusión en prueba: 250.847 predicciones individuales.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 10: TRADUCCIÓN Y LONGITUDES           -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="10" data-notes="Hallazgo contra-intuitivo: la imagen eda_01_longitudes_por_fuente.png justifica empíricamente por qué la traducción no funcionó. Reddit tiene textos largos y reflexivos (150+ tokens), mientras Twitter tiene microblogging breve de 10-15 tokens. La discrepancia de longitud y estilo explica la degradación de 0.717 a 0.701 en nativo.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">09</span> Discrepancia de Dominio</div>
+            <h2 class="slide-title">El Dilema del Aumento de Datos por Traducción</h2>
+            <div class="slide-subtitle">¿Mejora realmente traducir 264.000 textos de foros en inglés para detectar depresión en tweets?</div>
+          </div>
+          <span class="pill pill-amber">HALLAZGO METODOLÓGICO</span>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-55-45">
+            <div class="card card-warning">
+              <div class="card-title" style="color: var(--ugr-amber);">
+                <span>💡</span> El Mito de «Más Datos Siempre es Mejor»
+              </div>
+              <ul class="impact-list warning" style="font-size: 0.88rem;">
+                <li><strong>Degradación en Nativo:</strong> Incorporar Reddit traducido degradó el F1 en tweets de 0,717 a 0,701 (-1,6 pts).</li>
+                <li><strong>Imprescindible en Reddit:</strong> En cambio, para clasificar foros de Reddit el modelo multi fue vital (F1: 0,934 vs 0,415 del modelo mono).</li>
+                <li><strong>Discrepancia de Longitud y Registro:</strong> Twitter opera con microtextos informales y elípticos; Reddit con narrativas extensas.</li>
+              </ul>
+            </div>
+
+            <!-- Justificación Visual con Imagen del Reporte -->
+            <div class="report-fig-container">
+              <img src="informe/figures/eda_01_longitudes_por_fuente.png" alt="Longitudes de Texto por Fuente" class="report-fig-img" onclick="openFigureModal(this.src, 'Distribución de Longitud de Textos por Fuente (Twitter vs Reddit)')" />
+              <div class="fig-caption">
+                <span class="fig-badge">EVIDENCIA REPORTADA</span> Divergencia extrema de longitudes entre Twitter y Reddit.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 11: AUDITORÍA SOCIOLINGÜÍSTICA        -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="11" data-notes="Auditoría sociolingüística: la imagen baseline_downsampled_top_features.png muestra los coeficientes reales de la Regresión Logística. Los términos más predictivos eran marcadores dialectales (wey, puebla vs vos, colombia, uribe). Al enmascararlos, todos los modelos caen ~2.5 puntos de AUC, pero la ventaja de BETO se mantiene intacta. La auditoría geográfica debe ser obligatoria.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">10</span> Robustez y Sensibilidad Lingüística</div>
+            <h2 class="slide-title">Auditoría Sociolingüística y Control Dialectal</h2>
+            <div class="slide-subtitle">Evaluando la validez ecológica frente a modismos territoriales y geográficos</div>
+          </div>
+          <span class="pill pill-purple">AUDITORÍA ÉTICA</span>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-55-45">
+            <div class="card">
+              <div class="card-title">
+                <span style="color: var(--ugr-cyan);">🔍</span> Modismos Territoriales en el Texto
+              </div>
+              <p style="font-size: 0.88rem; line-height: 1.45; margin-bottom: 0.6rem;">
+                Al inspeccionar los coeficientes extremos de los modelos lineales, emergen fuertes marcadores regionales diatópicos no clínicos:
+              </p>
+              
+              <div style="background: rgba(0,0,0,0.25); border-radius: 6px; padding: 0.6rem; font-size: 0.82rem; margin-bottom: 0.6rem;">
+                <div style="color: var(--ugr-cyan); font-weight: 700;">Sesgados a Control: <span style="font-family:var(--font-mono); color:#93c5fd;">wey, mexicanos, puebla</span></div>
+                <div style="color: var(--ugr-rose); font-weight: 700; margin-top: 0.3rem;">Sesgados a Depresión: <span style="font-family:var(--font-mono); color:#fca5a5;">vos, joder, uribe, colombia</span></div>
+              </div>
+
+              <div style="font-size: 0.84rem; color: var(--text-body);">
+                <strong>Test de estrés por enmascaramiento:</strong> Ocultar estos términos reduce el AUC en ~2,5 puntos en todos los modelos, pero <strong>BETO conserva su ventaja predictiva (&Delta;F1 = +0,063)</strong>.
+              </div>
+            </div>
+
+            <!-- Justificación Visual con Imagen del Reporte -->
+            <div class="report-fig-container">
+              <img src="informe/figures/baseline_downsampled_top_features.png" alt="Top Coeficientes Léxicos" class="report-fig-img" onclick="openFigureModal(this.src, 'Coeficientes Más Predictivos de la Regresión Logística (Informe)')" />
+              <div class="fig-caption">
+                <span class="fig-badge">EVIDENCIA REPORTADA</span> Coeficientes léxicos: predominio de marcas territoriales.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 12: AGREGACIÓN POR USUARIO            -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="12" data-notes="El gran salto de impacto para la medicina preventiva: pasar del tweet individual al perfil de usuario longitudinal. Al agregar el puntaje temporal de publicaciones de un mismo autor, el AUC sube a 0.982. La persistencia en el tiempo es la señal clínica de máximo valor.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">11</span> Del Mensaje al Paciente</div>
+            <h2 class="slide-title">Monitoreo Longitudinal a Nivel de Usuario</h2>
+            <div class="slide-subtitle">La agregación temporal transforma la señal ruidosa de textos breves en un cribado de alta precisión</div>
+          </div>
+          <span class="pill pill-green">AUC &ge; 0.98</span>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-2">
+            <div class="card card-highlight">
+              <div class="card-title">Salto de Rendimiento por Acumulación Temporal</div>
+              <p style="font-size: 0.9rem; line-height: 1.45; margin-bottom: 0.8rem;">
+                Un tweet individual contiene en promedio 10 tokens: una señal efímera y ruidosa. Sin embargo, al acumular el historial temporal del usuario:
+              </p>
+
+              <table class="metric-table">
+                <thead>
+                  <tr>
+                    <th>Nivel de Análisis</th>
+                    <th>F1-Macro</th>
+                    <th>AUC-ROC</th>
+                    <th>Exhaustividad</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Por Publicación Aislada</strong></td>
+                    <td>0,717</td>
+                    <td>0,808</td>
+                    <td>68,9%</td>
+                  </tr>
+                  <tr class="highlight-row">
+                    <td><strong>Por Usuario Agregado</strong></td>
+                    <td style="color: var(--ugr-green); font-weight: 700;">0,888 - 0,943</td>
+                    <td style="color: var(--ugr-green); font-weight: 700;">0,982 - 0,989</td>
+                    <td style="color: var(--ugr-green); font-weight: 700;">84,2%</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="stat-box" style="margin-top: 0.8rem; padding: 0.8rem;">
+                <div class="stat-number green" style="font-size: 2.1rem;">0,982</div>
+                <div class="stat-label">AUC de BETO agregando publicaciones del autor</div>
+              </div>
+            </div>
+
+            <div class="card card-success">
+              <div class="card-title" style="color: var(--ugr-green);">
+                <span>🎯</span> Relevancia para el Cribado Clínico Real
+              </div>
+              <ul class="impact-list success" style="font-size: 0.9rem;">
+                <li><strong>Amortiguación de fluctuaciones momentáneas:</strong> Un mal día no activa la alarma; la persistencia sistemática de patrones afectivos negativos sí.</li>
+                <li><strong>Tolerancia al error individual:</strong> El sistema es robusto ante publicaciones ambiguas si la trayectoria converge.</li>
+                <li><strong>Centinela longitudinal:</strong> El valor no está en un filtro instantáneo sino en el seguimiento continuo consentido.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 13: APLICACIÓN SINTÉTICA (MOCKUP)     -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="13" data-notes="Mostramos cómo se vería la transferencia tecnológica a una aplicación real: 'VITA-Salud', una plataforma interactiva de soporte a la decisión clínica. Podemos hacer clic en 'Caso A' y 'Caso B' para simular en vivo la respuesta del sistema ante diferentes perfiles.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">12</span> Transferencia Tecnológica</div>
+            <h2 class="slide-title">Visión Aplicada: Plataforma Asistencial «VITA-Salud»</h2>
+            <div class="slide-subtitle">Prototipo sintético de soporte a la decisión clínica y triaje temprano de salud mental</div>
+          </div>
+          <span class="pill pill-purple">CONCEPTO APLICADO</span>
+        </div>
+
+        <div class="slide-body" style="padding: 0;">
+          <div class="mockup-window">
+            <div class="mockup-topbar">
+              <div class="window-dots">
+                <div class="window-dot dot-red"></div>
+                <div class="window-dot dot-yellow"></div>
+                <div class="window-dot dot-green"></div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">Simulación en Vivo:</span>
+                <button class="btn-nav" style="padding: 0.15rem 0.5rem; font-size: 0.68rem; background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #fde68a;" onclick="selectMockupPatient('risk')">Caso A: Indicios Persistentes</button>
+                <button class="btn-nav" style="padding: 0.15rem 0.5rem; font-size: 0.68rem; background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7;" onclick="selectMockupPatient('control')">Caso B: Perfil Estable (Control)</button>
+              </div>
+              <div class="pill pill-green" style="font-size: 0.65rem;">MOTOR BETO ACTIVO</div>
+            </div>
+
+            <div class="mockup-body">
+              <div class="mockup-sidebar">
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                  <div style="width: 32px; height: 32px; border-radius: 50%; background: #1e293b; border: 1px solid var(--ugr-cyan); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--ugr-cyan); font-size: 0.8rem;">
+                    ID
+                  </div>
+                  <div>
+                    <div style="font-weight: 700; color: var(--text-title); font-size: 0.85rem;">Usuario Anonimizado</div>
+                    <div id="mockupPatientId" style="font-size: 0.7rem; color: var(--ugr-cyan); font-family: var(--font-mono);">#USR-7842-AR</div>
+                    <div id="mockupPatientAge" style="font-size: 0.68rem; color: var(--text-muted);">23 años · Historial Activo</div>
+                  </div>
+                </div>
+
+                <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.5rem;">
+                  <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Nivel de Riesgo Predictivo</div>
+                  <div style="display: flex; align-items: baseline; gap: 0.4rem; margin-top: 0.15rem;">
+                    <span id="mockupRiskScore" style="font-size: 1.6rem; font-weight: 800; color: #f59e0b; font-family: var(--font-mono);">76%</span>
+                    <span id="mockupRiskBadge" class="pill pill-amber" style="font-size: 0.65rem;">ATENCIÓN SUGERIDA</span>
+                  </div>
+                </div>
+
+                <div style="font-size: 0.74rem; line-height: 1.4; color: var(--text-body);">
+                  <strong>Filtro Dialectal:</strong> <span style="color:var(--ugr-green);">Activado</span> (normaliza modismos rioplatenses sin alterar semántica).
+                </div>
+
+                <div style="margin-top: auto; padding: 0.6rem; background: rgba(245, 158, 11, 0.1); border-radius: 6px; border: 1px solid rgba(245, 158, 11, 0.25); font-size: 0.68rem; color: #fde68a;">
+                  ⚠ <strong>Aviso Ético:</strong> Apoyo al triaje profesional. No emite diagnósticos médicos automáticos.
+                </div>
+              </div>
+
+              <div class="mockup-main">
+                <div style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 0.75rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                    <div style="font-weight: 700; font-size: 0.8rem; color: var(--text-title);">Evolución Temporal del Riesgo (Últimas 12 Semanas)</div>
+                    <span style="font-size: 0.68rem; color: var(--ugr-cyan); font-family: var(--font-mono);">48 publicaciones analizadas</span>
+                  </div>
+                  
+                  <div style="height: 85px; width: 100%;">
+                    <svg viewBox="0 0 500 100" style="width: 100%; height: 100%;">
+                      <defs>
+                        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.3"/>
+                          <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+                        </linearGradient>
+                      </defs>
+                      <path id="mockupSvgArea" d="M0,80 Q70,75 140,65 T280,45 T420,28 T500,22 L500,100 L0,100 Z" fill="url(#chartGrad)"/>
+                      <path id="mockupSvgPath" d="M0,80 Q70,75 140,65 T280,45 T420,28 T500,22" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+                      <line x1="0" y1="50" x2="500" y2="50" stroke="rgba(245, 158, 11, 0.4)" stroke-dasharray="4"/>
+                      <circle id="mockupSvgDot" cx="500" cy="22" r="4.5" fill="#f59e0b" stroke="#ffffff" stroke-width="1.5"/>
+                      <text x="360" y="45" fill="#f59e0b" font-size="9" font-family="sans-serif">Umbral de Triaje (50%)</text>
+                    </svg>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-muted); margin-top: 0.15rem;">
+                    <span>Semana 1 (Estable)</span>
+                    <span>Semana 6 (Cambio de tono)</span>
+                    <span style="color:#f59e0b; font-weight:700;">Semana 12 (Persistencia)</span>
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem;">
+                  <div style="background: rgba(15, 23, 42, 0.5); padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">AFECTO NEGATIVO</div>
+                    <div id="mockupNegAffect" style="font-size: 1rem; font-weight: 700; color: #f87171;">+62% vs Control</div>
+                    <div style="font-size: 0.62rem; color: var(--text-muted);">Tristeza, soledad, apatía</div>
+                  </div>
+                  <div style="background: rgba(15, 23, 42, 0.5); padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">HORARIO DE ACTIVIDAD</div>
+                    <div style="font-size: 1rem; font-weight: 700; color: #fbbf24;">02:00 - 05:30 hs</div>
+                    <div style="font-size: 0.62rem; color: var(--text-muted);">Alteración circadiana / insomnio</div>
+                  </div>
+                  <div style="background: rgba(15, 23, 42, 0.5); padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border-subtle);">
+                    <div style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">ACCIÓN SUGERIDA</div>
+                    <div style="font-size: 0.9rem; font-weight: 700; color: var(--ugr-cyan);">Derivación Asistida</div>
+                    <div style="font-size: 0.62rem; color: var(--text-muted);">Orientación con líneas oficiales 135</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 14: CONCLUSIONES Y ALCANCE ÉTICO      -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="14" data-notes="Conclusiones oficiales de la tesina según el reglamento: superioridad contextual probada, lección sobre el aumento por traducción, democratización de hardware de 8GB, e imperativo ético de no diagnóstico y control sociolingüístico.">
+        <div class="slide-header">
+          <div>
+            <div class="slide-category"><span class="badge">13</span> Síntesis Reglamentaria</div>
+            <h2 class="slide-title">Conclusiones Clave de la Investigación</h2>
+            <div class="slide-subtitle">Aportes metodológicos y empíricos a la Ciencia de Datos en Salud Mental</div>
+          </div>
+          <span class="pill pill-green">SÍNTESIS</span>
+        </div>
+
+        <div class="slide-body">
+          <div class="grid-2">
+            <div class="card card-success">
+              <div class="card-title" style="color: var(--ugr-green);">
+                <span>1</span> Superioridad Contextual Demostrada
+              </div>
+              <p style="font-size: 0.92rem; line-height: 1.45; color: var(--text-body);">
+                BETO superó categóricamente a las líneas base clásicas (&Delta;F1 = +0,062; &Delta;AUC = +0,052). <strong>H₀ rechazada formalmente</strong> en el 100% de las réplicas bootstrap. El modelado de atención y contexto sintáctico es indispensable en salud mental.
+              </p>
+            </div>
+
+            <div class="card card-warning">
+              <div class="card-title" style="color: var(--ugr-amber);">
+                <span>2</span> Lección del Aumento por Traducción
+              </div>
+              <p style="font-size: 0.92rem; line-height: 1.45; color: var(--text-body);">
+                Traducir 264K posts de Reddit <strong>no benefició a la detección en tweets nativos</strong>. La discordancia de estilo discursivo y longitud impone una frontera que el simple volumen de datos sintéticos no puede resolver.
+              </p>
+            </div>
+
+            <div class="card card-highlight">
+              <div class="card-title">
+                <span style="color: var(--ugr-cyan);">3</span> Viabilidad en Hardware Estándar
+              </div>
+              <p style="font-size: 0.92rem; line-height: 1.45; color: var(--text-body);">
+                Con precisión FP16, secuencias acotadas a 128 tokens y diseño estadístico riguroso, <strong>una GPU local de 8 GB es suficiente</strong> para entrenar modelos de vanguardia sobre millones de textos.
+              </p>
+            </div>
+
+            <div class="card card-highlight">
+              <div class="card-title">
+                <span style="color: var(--ugr-cyan);">4</span> Auditoría Sociolingüística y Delimitación Ética
+              </div>
+              <p style="font-size: 0.92rem; line-height: 1.45; color: var(--text-body);">
+                Los clasificadores son vulnerables a variaciones geográficas. Someter los modelos a pruebas de estrés con marcadores enmascarados y circunscribir la solución a <strong>apoyo computacional no diagnóstico</strong> son requisitos no negociables.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- SLIDE 15: TRABAJO FUTURO Y CIERRE           -->
+      <!-- ========================================== -->
+      <section class="slide" data-slide="15" data-notes="Cierre de la exposición: líneas futuras (protocolo secuencial eRisk, modelos biomédicos en español, corpus panhispánicos balanceados) y apertura inmediata a las preguntas del tribunal. Código abierto y reproducible en GitHub.">
+        <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+          <div class="slide-header" style="margin-bottom: 0.8rem;">
+            <div>
+              <div class="slide-category"><span class="badge">14</span> Horizontes de Investigación</div>
+              <h2 class="slide-title">Trabajo Futuro & Apertura a Preguntas</h2>
+              <div class="slide-subtitle">Hacia una implementación ética, secuencial y transnacional de la tecnología</div>
+            </div>
+            <span class="pill pill-cyan">CIENCIA ABIERTA</span>
+          </div>
+
+          <div class="grid-4" style="height: auto; margin-bottom: 1rem;">
+            <div class="card" style="padding: 0.9rem;">
+              <div style="font-size: 1.3rem; margin-bottom: 0.3rem; color: var(--ugr-cyan);">⏱</div>
+              <div class="card-title" style="font-size: 0.9rem;">Detección Secuencial (eRisk)</div>
+              <p style="font-size: 0.78rem; line-height: 1.4; color: var(--text-body);">
+                Minimizar el número de publicaciones requeridas para emitir la alerta preventiva temprana.
+              </p>
+            </div>
+
+            <div class="card" style="padding: 0.9rem;">
+              <div style="font-size: 1.3rem; margin-bottom: 0.3rem; color: var(--ugr-green);">🧠</div>
+              <div class="card-title" style="font-size: 0.9rem;">Modelos Clínicos en Español</div>
+              <p style="font-size: 0.78rem; line-height: 1.4; color: var(--text-body);">
+                Evaluar arquitecturas biomédicas hispanas (RoBERTa-BNE, MarIA, Bio-BETO) y modelos comprimidos.
+              </p>
+            </div>
+
+            <div class="card" style="padding: 0.9rem;">
+              <div style="font-size: 1.3rem; margin-bottom: 0.3rem; color: var(--ugr-amber);">🌎</div>
+              <div class="card-title" style="font-size: 0.9rem;">Corpus Panhispánico Balanceado</div>
+              <p style="font-size: 0.78rem; line-height: 1.4; color: var(--text-body);">
+                Recolección homogénea por países (Argentina, México, Colombia, España, Chile).
+              </p>
+            </div>
+
+            <div class="card" style="padding: 0.9rem;">
+              <div style="font-size: 1.3rem; margin-bottom: 0.3rem; color: var(--ugr-rose);">🤝</div>
+              <div class="card-title" style="font-size: 0.9rem;">Validación Interdisciplinaria</div>
+              <p style="font-size: 0.78rem; line-height: 1.4; color: var(--text-body);">
+                Ensayos con profesionales de salud mental y comités de bioética para protocolos clínicos.
+              </p>
+            </div>
+          </div>
+
+          <div class="card" style="background: rgba(30, 41, 59, 0.6); border-color: var(--border-accent); padding: 0.9rem 1.6rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem;">
+              <div>
+                <div style="font-size: 0.7rem; text-transform: uppercase; color: var(--ugr-cyan); font-weight: 700;">Repositorio Público y Reproducibilidad Total</div>
+                <div style="font-family: var(--font-mono); font-size: 0.92rem; color: var(--text-title); font-weight: 600;">
+                  github.com/giulicrenna/Deteccion-Temprana-Depresion · Semilla 42
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 0.88rem; font-weight: 600; color: var(--text-title);">Muchas Gracias · Preguntas y Debate</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Giuliano Crenna · Bruno Emmanuel Pace — UGR, 2026</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+      <div style="display: flex; align-items: center; gap: 0.9rem;">
+        <div class="slide-counter">
+          <span class="current" id="currentSlideNum">01</span> / <span id="totalSlidesNum">15</span>
+        </div>
+        <button class="btn-nav" id="btnNotes" title="Alternar Notas de Orador (Tecla N)">
+          📝 Notas
+        </button>
+        <button class="btn-nav" id="btnOverview" title="Vista General de Diapositivas (Tecla O / G)">
+          ▦ Cuadrícula
+        </button>
+      </div>
+
+      <div class="control-buttons" style="display: flex; align-items: center; gap: 0.5rem;">
+        <button class="btn-nav" id="btnPrev" title="Anterior (Flecha Izq / RePág)">
+          &#8592; Anterior
+        </button>
+        <button class="btn-nav" id="btnNext" title="Siguiente (Flecha Der / Espacio / AvPág)">
+          Siguiente &#8594;
+        </button>
+        <button class="btn-nav" id="btnTheme" title="Alternar Tema Claro/Oscuro (Tecla T)">
+          🌓 Tema
+        </button>
+        <button class="btn-nav" id="btnFullscreen" title="Pantalla Completa (Tecla F)">
+          ⛶ Pantalla Completa
+        </button>
+      </div>
+    </div>
+
+    <!-- Speaker Notes Drawer -->
+    <div class="speaker-notes-drawer" id="speakerNotesDrawer">
+      <h4>Guía de Exposición & Puntos Clave para el Tribunal</h4>
+      <div id="speakerNotesContent">
+        Cargando notas...
+      </div>
+    </div>
+
+    <!-- Overview Mode Modal -->
+    <div class="overview-modal" id="overviewModal">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="color: var(--text-title); font-size: 1.4rem; font-weight: 700;">Navegación de Diapositivas (15 Diapositivas)</h2>
+        <button class="btn-nav" id="btnCloseOverview">✕ Cerrar (Esc)</button>
+      </div>
+      <div class="overview-grid" id="overviewGrid"></div>
+    </div>
+
+  </div>
+
+  <script>
+    (function() {
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const totalSlides = slides.length;
+      let currentIdx = 0;
+
+      const currentNumEl = document.getElementById('currentSlideNum');
+      const totalNumEl = document.getElementById('totalSlidesNum');
+      const progressBar = document.getElementById('progressBar');
+      const btnPrev = document.getElementById('btnPrev');
+      const btnNext = document.getElementById('btnNext');
+      const btnFullscreen = document.getElementById('btnFullscreen');
+      const btnTheme = document.getElementById('btnTheme');
+      const btnNotes = document.getElementById('btnNotes');
+      const btnOverview = document.getElementById('btnOverview');
+      const btnCloseOverview = document.getElementById('btnCloseOverview');
+      const notesDrawer = document.getElementById('speakerNotesDrawer');
+      const notesContent = document.getElementById('speakerNotesContent');
+      const overviewModal = document.getElementById('overviewModal');
+      const overviewGrid = document.getElementById('overviewGrid');
+
+      totalNumEl.textContent = totalSlides < 10 ? '0' + totalSlides : totalSlides;
+
+      // Populate Overview Grid
+      slides.forEach((slide, idx) => {
+        const titleEl = slide.querySelector('.slide-title');
+        const title = titleEl ? titleEl.textContent : (idx === 0 ? 'Portada' : 'Diapositiva ' + (idx + 1));
+        const thumb = document.createElement('div');
+        thumb.className = 'overview-thumb';
+        thumb.innerHTML = `
+          <div class="overview-thumb-num">SLIDE ${idx + 1 < 10 ? '0' + (idx + 1) : idx + 1}</div>
+          <div class="overview-thumb-title">${title}</div>
+        `;
+        thumb.addEventListener('click', () => {
+          goToSlide(idx);
+          toggleOverview(false);
+        });
+        overviewGrid.appendChild(thumb);
+      });
+
+      function updateSlide() {
+        slides.forEach((slide, idx) => {
+          slide.classList.remove('active', 'prev');
+          if (idx === currentIdx) {
+            slide.classList.add('active');
+          } else if (idx < currentIdx) {
+            slide.classList.add('prev');
+          }
+        });
+
+        const formatted = (currentIdx + 1) < 10 ? '0' + (currentIdx + 1) : (currentIdx + 1);
+        currentNumEl.textContent = formatted;
+        progressBar.style.width = ((currentIdx) / (totalSlides - 1) * 100) + '%';
+
+        const currentSlide = slides[currentIdx];
+        const notes = currentSlide.getAttribute('data-notes') || 'No hay notas adicionales para esta diapositiva.';
+        notesContent.innerHTML = notes;
+
+        const thumbs = overviewGrid.querySelectorAll('.overview-thumb');
+        thumbs.forEach((t, i) => {
+          t.classList.toggle('current', i === currentIdx);
+        });
+      }
+
+      function goToSlide(idx) {
+        if (idx >= 0 && idx < totalSlides) {
+          currentIdx = idx;
+          updateSlide();
+        }
+      }
+
+      function nextSlide() {
+        if (currentIdx < totalSlides - 1) {
+          currentIdx++;
+          updateSlide();
+        }
+      }
+
+      function prevSlide() {
+        if (currentIdx > 0) {
+          currentIdx--;
+          updateSlide();
+        }
+      }
+
+      function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => console.error(err));
+        } else {
+          if (document.exitFullscreen) document.exitFullscreen();
+        }
+      }
+
+      function toggleTheme() {
+        const isLight = document.body.getAttribute('data-theme') === 'light';
+        document.body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+      }
+
+      function toggleNotes() {
+        notesDrawer.classList.toggle('open');
+      }
+
+      function toggleOverview(force) {
+        const isOpen = typeof force === 'boolean' ? force : !overviewModal.classList.contains('open');
+        overviewModal.classList.toggle('open', isOpen);
+      }
+
+      btnNext.addEventListener('click', nextSlide);
+      btnPrev.addEventListener('click', prevSlide);
+      btnFullscreen.addEventListener('click', toggleFullscreen);
+      btnTheme.addEventListener('click', toggleTheme);
+      btnNotes.addEventListener('click', toggleNotes);
+      btnOverview.addEventListener('click', () => toggleOverview(true));
+      btnCloseOverview.addEventListener('click', () => toggleOverview(false));
+
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && e.target === document.body) {
+          e.preventDefault();
+        }
+
+        switch (e.key) {
+          case 'ArrowRight':
+          case 'PageDown':
+          case ' ':
+          case 'l':
+          case 'L':
+            nextSlide();
+            break;
+          case 'ArrowLeft':
+          case 'PageUp':
+          case 'Backspace':
+          case 'h':
+          case 'H':
+            prevSlide();
+            break;
+          case 'Home':
+            goToSlide(0);
+            break;
+          case 'End':
+            goToSlide(totalSlides - 1);
+            break;
+          case 'f':
+          case 'F':
+            toggleFullscreen();
+            break;
+          case 't':
+          case 'T':
+            toggleTheme();
+            break;
+          case 'n':
+          case 'N':
+            toggleNotes();
+            break;
+          case 'o':
+          case 'O':
+          case 'g':
+          case 'G':
+            toggleOverview();
+            break;
+          case 'Escape':
+            toggleOverview(false);
+            if (notesDrawer.classList.contains('open')) notesDrawer.classList.remove('open');
+            break;
+        }
+      });
+
+      // Swipe navigation
+      let touchStartX = 0;
+      let touchEndX = 0;
+      const viewport = document.getElementById('presentationViewport');
+
+      viewport.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      viewport.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        if (touchEndX < touchStartX - 50) nextSlide();
+        if (touchEndX > touchStartX + 50) prevSlide();
+      }, { passive: true });
+
+      // Interactive Patient Switcher for Slide 13 (Mockup)
+      window.selectMockupPatient = function(type) {
+        const scoreEl = document.getElementById('mockupRiskScore');
+        const badgeEl = document.getElementById('mockupRiskBadge');
+        const idEl = document.getElementById('mockupPatientId');
+        const ageEl = document.getElementById('mockupPatientAge');
+        const negEl = document.getElementById('mockupNegAffect');
+        const pathEl = document.getElementById('mockupSvgPath');
+        const gradEl = document.getElementById('mockupSvgArea');
+        const dotEl = document.getElementById('mockupSvgDot');
+        
+        if (type === 'risk') {
+          if (scoreEl) { scoreEl.textContent = '76%'; scoreEl.style.color = '#f59e0b'; }
+          if (badgeEl) { badgeEl.textContent = 'ATENCIÓN SUGERIDA'; badgeEl.className = 'pill pill-amber'; }
+          if (idEl) idEl.textContent = '#USR-7842-AR';
+          if (ageEl) ageEl.textContent = '23 años · Historial Activo';
+          if (negEl) { negEl.textContent = '+62% vs Control'; negEl.style.color = '#f87171'; }
+          if (pathEl) pathEl.setAttribute('d', 'M0,80 Q70,75 140,65 T280,45 T420,28 T500,22');
+          if (gradEl) gradEl.setAttribute('d', 'M0,80 Q70,75 140,65 T280,45 T420,28 T500,22 L500,100 L0,100 Z');
+          if (dotEl) { dotEl.setAttribute('cx', '500'); dotEl.setAttribute('cy', '22'); dotEl.setAttribute('fill', '#f59e0b'); }
+        } else {
+          if (scoreEl) { scoreEl.textContent = '14%'; scoreEl.style.color = '#10b981'; }
+          if (badgeEl) { badgeEl.textContent = 'ESTABLE / CONTROL'; badgeEl.className = 'pill pill-green'; }
+          if (idEl) idEl.textContent = '#USR-1094-MX';
+          if (ageEl) ageEl.textContent = '29 años · Historial Activo';
+          if (negEl) { negEl.textContent = '-18% vs Control'; negEl.style.color = '#34d399'; }
+          if (pathEl) pathEl.setAttribute('d', 'M0,75 Q70,78 140,82 T280,85 T420,86 T500,88');
+          if (gradEl) gradEl.setAttribute('d', 'M0,75 Q70,78 140,82 T280,85 T420,86 T500,88 L500,100 L0,100 Z');
+          if (dotEl) { dotEl.setAttribute('cx', '500'); dotEl.setAttribute('cy', '88'); dotEl.setAttribute('fill', '#10b981'); }
+        }
+      };
+
+      // Modal Image Viewer for Zooming Report Figures
+      window.openFigureModal = function(src, caption) {
+        let modal = document.getElementById('figModal');
+        if (!modal) {
+          modal = document.createElement('div');
+          modal.id = 'figModal';
+          modal.style.position = 'fixed';
+          modal.style.top = '0';
+          modal.style.left = '0';
+          modal.style.width = '100vw';
+          modal.style.height = '100vh';
+          modal.style.background = 'rgba(0,0,0,0.88)';
+          modal.style.backdropFilter = 'blur(10px)';
+          modal.style.zIndex = '300';
+          modal.style.display = 'flex';
+          modal.style.flexDirection = 'column';
+          modal.style.alignItems = 'center';
+          modal.style.justifyContent = 'center';
+          modal.style.padding = '1.5rem';
+          modal.onclick = function() { modal.style.display = 'none'; };
+          modal.innerHTML = `
+            <div style="max-width: 950px; max-height: 88vh; display: flex; flex-direction: column; align-items: center; background: #0f172a; padding: 1.2rem; border-radius: 12px; border: 1px solid rgba(56,189,248,0.3); box-shadow: 0 25px 50px rgba(0,0,0,0.85);" onclick="event.stopPropagation()">
+              <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 0.6rem; align-items: center;">
+                <span id="figCaption" style="font-weight: 700; color: #f8fafc; font-size: 1rem;"></span>
+                <button onclick="document.getElementById('figModal').style.display='none'" style="background: none; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer;">✕</button>
+              </div>
+              <img id="figImg" style="max-width: 100%; max-height: 75vh; object-fit: contain; border-radius: 6px;" src="" alt="" />
+            </div>
+          `;
+          document.body.appendChild(modal);
+        }
+        document.getElementById('figImg').src = src;
+        document.getElementById('figCaption').textContent = caption;
+        modal.style.display = 'flex';
+      };
+
+      updateSlide();
+    })();
+  </script>
+</body>
+</html>
